@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to read patch notes: what each change means for you</title>
+<meta name="description" content="How to read game patch notes for what matters to your settings: performance, presets, upscalers, console modes, shaders and known issues, sorted by platform.">
+<link rel="canonical" href="https://patchplayguide.com/guides/how-to-read-patch-notes/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to read patch notes: what each change means for you">
+<meta property="og:description" content="How to read game patch notes for what matters to your settings: performance, presets, upscalers, console modes, shaders and known issues, sorted by platform.">
+<meta property="og:url" content="https://patchplayguide.com/guides/how-to-read-patch-notes/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"How to read patch notes","item":"https://patchplayguide.com/guides/how-to-read-patch-notes/"}]},{"@type":"Article","headline":"How to read patch notes: what each kind of change means for your settings","description":"How to read game patch notes for what matters to your settings: performance, presets, upscalers, console modes, shaders and known issues, sorted by platform.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/how-to-read-patch-notes/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Where do I find patch notes for my game?","acceptedAnswer":{"@type":"Answer","text":"On the developer’s or publisher’s website, the game’s news page in the platform store or launcher, and often in the game’s main menu. Use the official source rather than summaries."}},{"@type":"Question","name":"What does “stability improvements” mean?","acceptedAnswer":{"@type":"Answer","text":"Usually crash and freeze fixes. It rarely means higher frame rates."}},{"@type":"Question","name":"Why did my settings change after an update?","acceptedAnswer":{"@type":"Answer","text":"Updates can reset settings, rename presets, remove options or change defaults. Check your settings menu after every larger update."}},{"@type":"Question","name":"Should I trust “up to X% faster” claims?","acceptedAnswer":{"@type":"Answer","text":"Treat them as the best case under the developer’s test conditions. Re-test in your own scenes to see what changes for you."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">How to read patch notes</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · patch notes</p>
+<h1>How to read patch notes: what each kind of change means for your settings</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">Patch notes mix balance changes, bug fixes, new content and technical changes in one list, often hundreds of lines long. Only a handful usually matter for how the game runs and looks on your screen. This guide shows how to find them, how to read the typical wording, and which action each kind of line calls for.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="where">Where to find the real patch notes</h2>
+<p>Use the official source: the developer’s or publisher’s website, the game’s news page on Steam, the platform holder’s news channels, or the update history in the game itself. Console and PC versions often get separate notes, and hotfixes are sometimes only announced on social media or in community forums run by the developer. Summaries on other sites – including ours – are no substitute for the original wording when you decide what to do.</p>
+<p>Two things are easy to miss: the <b>platform labels</b> (a line may apply only to PS5 or only to PC) and the <b>known issues</b> section, often at the very end. Both decide whether a change concerns you.</p></section>
+<section><h2 id="kinds">The kinds of lines that matter</h2>
+<div class="tbl" role="region" aria-label="Patch-note lines and what they mean for settings" tabindex="0"><table><caption>Patch-note lines and what they mean for settings</caption><thead><tr><th scope="col">Kind of line</th><th scope="col">Example wording (generic)</th><th scope="col">What it means for you</th><th scope="col">Action</th></tr></thead><tbody><tr><th scope="row">Performance optimization</th><td>“Improved CPU performance in large battles”</td><td>The area may run better, especially if you were CPU-bound there</td><td>Re-test the area; you may raise a CPU-heavy option</td></tr><tr><th scope="row">Preset or option change</th><td>“High shadows now use…”</td><td>Same name, different cost or look</td><td>Re-test that option in a fixed scene</td></tr><tr><th scope="row">New option</th><td>“Added a sharpening slider”</td><td>A new way to tune; defaults may change</td><td>Try it on its own</td></tr><tr><th scope="row">Removed option</th><td>“Removed the low texture setting”</td><td>Your saved value may have moved</td><td>Check the menu value</td></tr><tr><th scope="row">Upscaler / frame generation update</th><td>“Updated the upscaler version”</td><td>Image and latency can change at the same mode</td><td>Compare sharpness and feel</td></tr><tr><th scope="row">Console mode change</th><td>“Performance mode now targets…”</td><td>Resolution or frame-rate target moved</td><td>Re-check your chosen mode</td></tr><tr><th scope="row">Shader or loading change</th><td>“Shaders are rebuilt on first launch”</td><td>One-time stutter expected</td><td>Let compilation finish before judging</td></tr><tr><th scope="row">Known issue</th><td>“Known issue: flicker with frame generation”</td><td>A bug you may hit</td><td>Avoid the trigger until a fix ships</td></tr></tbody></table></div>
+<p>The <a href="/tools/patch-decoder/">Patch Decoder</a> sorts pasted lines into these kinds automatically and adds the action, so you can scan a long list quickly – but read the original line before acting.</p></section>
+<section><h2 id="wording">Reading the wording</h2>
+<p>Patch notes are written by many people under time pressure, and some words are vaguer than they look:</p>
+<ul class="do">
+<li><b>“Improved performance”</b> without a place or platform often refers to specific scenes or hardware. Test where you play.</li>
+<li><b>“Optimized”</b> can mean faster, or the same speed with less memory, or fewer hitches – not necessarily a higher average frame rate.</li>
+<li><b>“Adjusted”</b> or <b>“updated”</b> describes a change without saying in which direction. Treat it as something to re-test.</li>
+<li><b>“Stability improvements”</b> usually means crash fixes, not performance.</li>
+<li><b>“Various fixes”</b> tells you nothing; if you had a specific problem, test it again.</li>
+<li><b>Numbers</b> such as “up to 20% faster” describe the best case the developer measured, not an average across systems.</li>
+</ul></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="signs">The plus, tilde and minus</h2>
+<figure class="fig"><svg viewBox="0 0 640 220" role="img" aria-labelledby="pn-fig-t"><title id="pn-fig-t">Three columns of an example diff: plus for improvements, tilde for changes, minus for removals and known issues</title><rect class="g-bg" width="640" height="220"/>
+<rect class="g-panel" x="20" y="24" width="190" height="176" rx="8"/><rect class="g-panel" x="225" y="24" width="190" height="176" rx="8"/><rect class="g-panel" x="430" y="24" width="190" height="176" rx="8"/>
+<text class="g-plus" x="36" y="62" style="font:700 30px var(--mono)">+</text><text class="g-tb" x="64" y="58">improvement</text>
+<text class="g-acc" x="241" y="62" style="font:700 30px var(--mono)">~</text><text class="g-tb" x="269" y="58">change</text>
+<text class="g-minus" x="446" y="62" style="font:700 30px var(--mono)">−</text><text class="g-tb" x="474" y="58">removal/issue</text>
+<text class="g-tm" x="36" y="100">added, fixed,</text><text class="g-tm" x="36" y="118">improved, faster</text><text class="g-tm" x="36" y="160">→ re-test, maybe</text><text class="g-tm" x="36" y="178">  raise a setting</text>
+<text class="g-tm" x="241" y="100">adjusted, changed,</text><text class="g-tm" x="241" y="118">now uses, updated</text><text class="g-tm" x="241" y="160">→ re-test the</text><text class="g-tm" x="241" y="178">  named option</text>
+<text class="g-tm" x="446" y="100">removed, disabled,</text><text class="g-tm" x="446" y="118">known issue</text><text class="g-tm" x="446" y="160">→ check your saved</text><text class="g-tm" x="446" y="178">  values, avoid bugs</text></svg><figcaption>The three signs answer the first question for each line: good for me, neutral, or something I must react to. They are the visual language of the Patch Decoder and of this site.</figcaption></figure>
+<p>We mark each relevant line with one of three signs. The sign describes what you need to do, not whether the developer made a good decision. A tilde line can be the most important one in an update, because it changes something you tuned without saying so loudly.</p></section>
+<section><h2 id="platform">Sorting by platform</h2>
+<p>Read only what applies to your platform, but read all of it. PC notes often mention specific graphics vendors or APIs (DirectX 12, Vulkan). Console notes mention modes: performance, quality or fidelity, 120 Hz, VRR, or – on PS5 Pro – enhanced modes. Switch 2 notes may treat docked and handheld play separately. Steam Deck and other handheld PCs are often listed under PC, sometimes with their own lines. A line without a platform usually applies to all.</p></section>
+<section><h2 id="after">After reading: a short plan</h2>
+<p>Write down the two or three lines that matter for you, decide what to test, and then test calmly – after shader compilation is done. The <a href="/guides/after-update-retest-routine/">10-minute re-test routine</a> turns this into a checklist, and the Patch Decoder can export your notes and checklist as text so you can keep them with your settings.</p></section>
+<section><h2 id="hotfix">Hotfixes, staged rollouts and platform delays</h2>
+<p>Big updates are rarely the end of the story. A hotfix often follows within days, and its notes are usually shorter and sometimes published only on social media or the developer’s forum. Updates can also arrive on different platforms on different days, because each platform has its own certification process. When something changes for you a few days after a big patch, check for a hotfix before assuming the main update caused it.</p>
+<p>Some developers also change things on the server side without a client update – for example balancing values or event settings. Such changes rarely affect graphics, but they can affect performance in busy multiplayer modes when more players gather in one place. If performance changes without any download, that is a likely reason.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Where do I find patch notes for my game?</h3><p>On the developer’s or publisher’s website, the game’s news page in the platform store or launcher, and often in the game’s main menu. Use the official source rather than summaries.</p></div><div class="qa"><h3>What does “stability improvements” mean?</h3><p>Usually crash and freeze fixes. It rarely means higher frame rates.</p></div><div class="qa"><h3>Why did my settings change after an update?</h3><p>Updates can reset settings, rename presets, remove options or change defaults. Check your settings menu after every larger update.</p></div><div class="qa"><h3>Should I trust “up to X% faster” claims?</h3><p>Treat them as the best case under the developer’s test conditions. Re-test in your own scenes to see what changes for you.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://steamdb.info/patchnotes/" rel="noopener">SteamDB patch notes archive</a> – historical patch notes and build changes for Steam games</li><li>Steam news pages of individual games – official announcements in the Steam client</li><li>Platform news channels – PlayStation Blog, Xbox Wire, Nintendo news and support pages</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/after-update-retest-routine/"><span class="k">after an update</span>After a big update: a 10-minute re-test routine</a></li><li><a href="/guides/shader-compilation-stutter-after-update/"><span class="k">stutter</span>Shader compilation stutter after an update: what to do</a></li><li><a href="/guides/how-to-test-a-settings-change/"><span class="k">method</span>How to test a settings change properly</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#where">Where to find the real patch notes</a></li><li><a href="#kinds">The kinds of lines that matter</a></li><li><a href="#wording">Reading the wording</a></li><li><a href="#signs">The plus, tilde and minus</a></li><li><a href="#platform">Sorting by platform</a></li><li><a href="#after">After reading: a short plan</a></li><li><a href="#hotfix">Hotfixes, staged rollouts and platform delays</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

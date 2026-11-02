@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" data-ads="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patch Play Guide – game updates, settings and re-tests</title>
+<meta name="description" content="Patch notes translated into settings: what a game update changes on PC, PS5, Xbox, Switch 2 and Steam Deck, plus tools to decode patches and find bottlenecks.">
+<link rel="canonical" href="https://patchplayguide.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Patch Play Guide – game updates, settings and re-tests">
+<meta property="og:description" content="Patch notes translated into settings: what a game update changes on PC, PS5, Xbox, Switch 2 and Steam Deck, plus tools to decode patches and find bottlenecks.">
+<meta property="og:url" content="https://patchplayguide.com/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"}]},{"@type":"WebSite","name":"Patch Play Guide","url":"https://patchplayguide.com/","inLanguage":"en-US","publisher":{"@type":"Organization","name":"AdStern"}}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+
+<section class="hero">
+<div>
+<p class="kicker">Patch notes → your settings → a re-test</p>
+<h1>What did the patch change on your screen?</h1>
+<p class="lede">Patch Play Guide translates game updates and graphics menus into what matters on your own screen: frame rate, image quality, console modes and handheld battery. Every guide ends in something you can do, and every claim is something you can test yourself – on PC, PS5, Xbox, Switch 2 and Steam Deck.</p>
+<p class="row"><a class="btn btn-primary" href="/tools/patch-decoder/">Decode patch notes</a><a class="btn btn-ghost" href="/tools/bottleneck-finder/">Find my bottleneck</a></p>
+</div>
+<figure class="diffcard" aria-labelledby="dc-cap">
+<div class="dc-h"><span>Saltmarsh Protocol · 1.8.0</span><b>Fictional example</b></div>
+<ol>
+<li><span class="s-p" aria-label="Improvement">+</span><span>Crowd simulation uses less CPU time<span class="act">CPU-bound in cities? Try crowd density one step higher.</span></span></li>
+<li><span class="s-t" aria-label="Change">~</span><span>“High” shadows now use the old “Ultra” distance<span class="act">Same name, higher cost – re-test shadows.</span></span></li>
+<li><span class="s-t" aria-label="Change">~</span><span>Shaders are rebuilt on first launch<span class="act">Expect stutter in the first session; judge later.</span></span></li>
+<li><span class="s-m" aria-label="Removal">−</span><span>Low texture option removed on PC<span class="act">8 GB card? Check VRAM after the update.</span></span></li>
+<li><span class="s-p" aria-label="Improvement">+</span><span>New 40 fps mode for 120 Hz displays<span class="act">Enable 120 Hz output on console and TV first.</span></span></li>
+</ol>
+<figcaption id="dc-cap" class="dc-h" style="border:0;margin:6px 0 0;padding:0">Invented game, invented patch – the format we use for every change</figcaption>
+</figure>
+</section>
+<h2 id="tools">Three tools that run in your browser</h2>
+<div class="tools3">
+<a class="tcard" href="/tools/patch-decoder/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M10 14h8M14 10v8" stroke="#47D98A" stroke-width="2.6"/><path d="M10 23c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0" stroke="#FFC531" stroke-width="2.4" fill="none"/><path d="M10 32h8" stroke="#FF6B7F" stroke-width="2.6"/><path d="M23 14h12M23 23h10M23 32h12" stroke="#A5B5C4" stroke-width="2"/></svg><h3>Patch Decoder</h3><p>Paste patch notes and sort every line into + improvement, ~ change or − removal, by category and platform, with a checklist to tick off.</p><span class="go">Open decoder →</span></a>
+<a class="tcard" href="/tools/settings-translator/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M9 13h26M9 22h26M9 31h26" stroke="#3A5267" stroke-width="4"/><path d="M9 13h20" stroke="#7CC4FF" stroke-width="4"/><path d="M9 22h10" stroke="#47D98A" stroke-width="4"/><path d="M9 31h16" stroke="#FF6B7F" stroke-width="4"/></svg><h3>Settings Translator</h3><p>Twenty common graphics options with their typical GPU, CPU and VRAM load. Pick your bottleneck to see what to lower first.</p><span class="go">Open translator →</span></a>
+<a class="tcard" href="/tools/bottleneck-finder/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><circle cx="22" cy="11" r="4" fill="#FFC531"/><path d="M22 15v6M22 21l-9 7M22 21l9 7" stroke="#A5B5C4" stroke-width="2" fill="none"/><circle cx="13" cy="31" r="4" fill="#47D98A"/><circle cx="31" cy="31" r="4" fill="#FF6B7F"/></svg><h3>Bottleneck Finder</h3><p>Low FPS, stutter or input lag? A few questions lead to the likely cause – GPU, CPU, VRAM, shaders or a limiter – and the fix.</p><span class="go">Start the finder →</span></a>
+</div>
+<section class="band setup-panel" id="my-setup" aria-labelledby="ms-h">
+<h2 id="ms-h">My setup</h2>
+<p>Tell us what you play on and the guides will point you to what matters for it. Your choice is stored only in this browser – there is no account, and nothing is sent to us.</p>
+<form id="setup-form">
+<div class="setup-grid">
+<label>Platform<select name="platform"><option value="pc">Desktop or laptop PC</option><option value="handheld">Steam Deck or handheld PC</option><option value="ps5">PS5</option><option value="ps5pro">PS5 Pro</option><option value="xbox">Xbox Series X or S</option><option value="switch2">Nintendo Switch 2</option></select></label>
+<label data-pc-only>GPU class<select name="gpu"><option value="entry">Entry-level</option><option value="mid" selected>Midrange</option><option value="high">High-end</option></select></label>
+<label data-vram>Video memory<select name="vram"><option value="">Not sure</option><option value="6">6 GB or less</option><option value="8">8 GB</option><option value="12">10–12 GB</option><option value="16">16 GB or more</option></select></label>
+</div>
+<div class="row" style="margin-top:14px"><button type="submit" class="btn btn-primary">Save my setup</button><button type="button" id="setup-clear" class="btn btn-ghost">Clear</button></div>
+</form>
+<div id="setup-out" aria-live="polite"></div>
+</section>
+<h2 id="pc">PC settings and performance</h2><p>What each option costs, how upscalers and frame generation work, and how to find and fix your bottleneck.</p><div class="cards"><a class="card" data-slug="graphics-settings-explained" href="/guides/graphics-settings-explained/"><span class="k">PC settings</span><h3>Graphics settings explained: what each option costs</h3><p>What resolution, shadows, textures, ray tracing, fog and view distance do, which part of your PC each one loads, and which to lower first with least loss.</p></a><a class="card" data-slug="frame-generation-explained" href="/guides/frame-generation-explained/"><span class="k">frame generation</span><h3>Frame generation explained: smoother, but at what cost?</h3><p>How DLSS and FSR frame generation insert extra frames, why input latency rises slightly, which base frame rate it needs, and when to turn it on or off.</p></a><a class="card" data-slug="dlss-vs-fsr-vs-xess" href="/guides/dlss-vs-fsr-vs-xess/"><span class="k">upscaling</span><h3>DLSS vs FSR vs XeSS: which upscaler mode to pick</h3><p>How DLSS, FSR and XeSS work, what Quality, Balanced and Performance mean in internal resolution, which runs on your GPU and which mode suits your display.</p></a><a class="card" data-slug="shader-compilation-stutter-after-update" href="/guides/shader-compilation-stutter-after-update/"><span class="k">stutter</span><h3>Shader compilation stutter after an update: what to do</h3><p>Why games stutter after a game or driver update, how shader caches work, what helps (precompilation, patience, storage) and what does not, on PC and Steam Deck.</p></a><a class="card" data-slug="cpu-or-gpu-bottleneck" href="/guides/cpu-or-gpu-bottleneck/"><span class="k">diagnosis</span><h3>CPU or GPU bottleneck? A 5-minute check</h3><p>Find out whether your processor or graphics card limits your frame rate with one resolution test and an overlay, and which settings help in each case.</p></a><a class="card" data-slug="vram-full-what-to-lower" href="/guides/vram-full-what-to-lower/"><span class="k">video memory</span><h3>VRAM full: which settings to lower first</h3><p>How to tell when video memory is full, why it causes stutter and blurry textures, and the order in which to lower textures, ray tracing and frame generation.</p></a><a class="card" data-slug="ray-tracing-settings-explained" href="/guides/ray-tracing-settings-explained/"><span class="k">ray tracing</span><h3>Ray tracing settings explained: what to keep, what to drop</h3><p>What ray-traced reflections, shadows, global illumination and path tracing do, why they cost so much GPU time and VRAM, and which RT options to keep first.</p></a><a class="card" data-slug="frame-cap-vsync-latency-pc" href="/guides/frame-cap-vsync-latency-pc/"><span class="k">smoothness &amp; latency</span><h3>Frame caps, V-Sync and latency on PC explained</h3><p>How V-Sync, frame caps, G-Sync/FreeSync and latency modes like Reflex and Anti-Lag work together on PC, and a simple setup for smooth, responsive play.</p></a><a class="card" data-slug="fps-frame-time-1-percent-lows" href="/guides/fps-frame-time-1-percent-lows/"><span class="k">measuring</span><h3>FPS, frame time and 1% lows explained</h3><p>What average FPS, frame time, 1% and 0.1% lows mean, how they are calculated, why tools disagree, and how to read a frame-time graph to spot stutter.</p></a></div>
+<h2 id="testing">Patches and testing</h2><p>How to read patch notes, re-test after an update and compare settings with numbers you can trust.</p><div class="cards"><a class="card" data-slug="how-to-read-patch-notes" href="/guides/how-to-read-patch-notes/"><span class="k">patch notes</span><h3>How to read patch notes: what each kind of change means for your settings</h3><p>How to read game patch notes for what matters to your settings: performance, presets, upscalers, console modes, shaders and known issues, sorted by platform.</p></a><a class="card" data-slug="after-update-retest-routine" href="/guides/after-update-retest-routine/"><span class="k">after an update</span><h3>After a big update: a 10-minute re-test routine</h3><p>A ten-minute checklist for the first session after a big game or driver update: check settings, let shaders compile, re-run your scene and compare.</p></a><a class="card" data-slug="how-to-test-a-settings-change" href="/guides/how-to-test-a-settings-change/"><span class="k">method</span><h3>How to test a settings change properly</h3><p>A repeatable method for comparing graphics settings: fixed scene, warm-up run, several measured runs, average FPS and 1% lows, and when a difference is real.</p></a></div>
+<h2 id="console">Consoles, handhelds and displays</h2><p>Performance and fidelity modes, PS5 Pro, Xbox Series S and X, Switch 2, Steam Deck and 120 Hz/VRR setup.</p><div class="cards"><a class="card" data-slug="ps5-performance-vs-fidelity-mode" href="/guides/ps5-performance-vs-fidelity-mode/"><span class="k">PS5</span><h3>PS5 performance vs fidelity modes explained</h3><p>What PS5 performance, fidelity and balanced modes trade in resolution, frame rate and effects, how 120 Hz and VRR change the choice, and how to set a default.</p></a><a class="card" data-slug="ps5-pro-enhanced-games" href="/guides/ps5-pro-enhanced-games/"><span class="k">PS5 Pro</span><h3>PS5 Pro enhanced games: what actually changes</h3><p>What the “PS5 Pro Enhanced” label means, how the stronger GPU, ray tracing and PSSR upscaling are used, and how to compare modes on PS5 Pro after an update.</p></a><a class="card" data-slug="xbox-series-s-vs-x-modes" href="/guides/xbox-series-s-vs-x-modes/"><span class="k">Xbox</span><h3>Xbox Series S vs X: why game modes differ</h3><p>Why the same game offers fewer or different modes on Xbox Series S than on Series X: GPU power, memory and resolution targets, plus the settings to check.</p></a><a class="card" data-slug="switch-2-docked-vs-handheld" href="/guides/switch-2-docked-vs-handheld/"><span class="k">Switch 2</span><h3>Switch 2 docked vs handheld: what games change</h3><p>How Nintendo Switch 2 games change between docked and handheld play: resolution, frame rate, 120 Hz and VRR on the built-in screen, battery and how to compare.</p></a><a class="card" data-slug="steam-deck-frame-cap-tdp-battery" href="/guides/steam-deck-frame-cap-tdp-battery/"><span class="k">Steam Deck</span><h3>Steam Deck: frame cap, TDP and battery basics</h3><p>How the Steam Deck performance menu works: frame limit, refresh rate, TDP limit, half-rate shading, scaling filter and per-game profiles for smoother play.</p></a><a class="card" data-slug="vrr-120hz-console-setup" href="/guides/vrr-120hz-console-setup/"><span class="k">display setup</span><h3>VRR and 120 Hz on consoles: setup guide</h3><p>How to set up 120 Hz and VRR for PS5, Xbox Series X|S and Switch 2: TV port, cable, console settings and game mode, plus why VRR ranges and 40 fps modes matter.</p></a></div>
+<section class="band" aria-labelledby="how-h">
+<h2 id="how-h">How Patch Play Guide works</h2>
+<div class="cols2">
+<div><h3>Changes, not headlines</h3><p>A patch note is only useful if you know what to do with it. We mark every relevant change with a plus, tilde or minus and attach an action: re-test this option, check that mode, expect a shader rebuild. The <a href="/guides/how-to-read-patch-notes/">patch-notes guide</a> explains the system.</p>
+<h3>Typical, not invented</h3><p>Where we describe what a setting costs, we say “typical” and use qualitative levels. We do not publish frame-rate percentages we have not measured ourselves, and every guide lists its sources.</p></div>
+<div><h3>Every platform separately</h3><p>PC players change options; console players choose modes; handheld players balance frame rate against battery. Each guide says which platform it covers, and the tools filter by platform.</p>
+<h3>Test it yourself</h3><p>Your system is the only one that matters. The <a href="/guides/how-to-test-a-settings-change/">testing guide</a> and the <a href="/guides/after-update-retest-routine/">10-minute re-test routine</a> show how to check any change with numbers you can trust. More on our <a href="/about/">method and limits</a>.</p></div>
+</div>
+</section>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

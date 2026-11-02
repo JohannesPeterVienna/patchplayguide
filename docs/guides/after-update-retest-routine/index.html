@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>After a big update: a 10-minute re-test routine</title>
+<meta name="description" content="A ten-minute checklist for the first session after a big game or driver update: check settings, let shaders compile, re-run your scene and compare.">
+<link rel="canonical" href="https://patchplayguide.com/guides/after-update-retest-routine/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="After a big update: a 10-minute re-test routine">
+<meta property="og:description" content="A ten-minute checklist for the first session after a big game or driver update: check settings, let shaders compile, re-run your scene and compare.">
+<meta property="og:url" content="https://patchplayguide.com/guides/after-update-retest-routine/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"After a big update: re-test routine","item":"https://patchplayguide.com/guides/after-update-retest-routine/"}]},{"@type":"Article","headline":"After a big update: a 10-minute re-test routine","description":"A ten-minute checklist for the first session after a big game or driver update: check settings, let shaders compile, re-run your scene and compare.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/after-update-retest-routine/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does a game run worse right after an update?","acceptedAnswer":{"@type":"Answer","text":"Most often because the shader cache is rebuilt, so the first session stutters. Settings may also have been reset. Re-test after a calm first play-through."}},{"@type":"Question","name":"How long should I wait before judging performance?","acceptedAnswer":{"@type":"Answer","text":"At least until any shader compilation step has finished and you have played once through your test area. Then measure."}},{"@type":"Question","name":"Do I need special software for the routine?","acceptedAnswer":{"@type":"Answer","text":"No. A frame counter is enough on PC; on console you compare by eye. Frame-time tools give more precise numbers if you want them."}},{"@type":"Question","name":"Should I reinstall the game if it runs worse?","acceptedAnswer":{"@type":"Answer","text":"Rarely. Check shaders, settings and known issues first. A reinstall is a last resort for corrupted files and makes the next session stutter again."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">After a big update: re-test routine</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · after an update</p>
+<h1>After a big update: a 10-minute re-test routine</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">A large game update or a new graphics driver changes more than the patch notes say: settings can be reset, presets can move, and the shader cache is usually rebuilt. Judging the update in its first minutes leads to wrong conclusions. This routine takes about ten minutes and tells you whether something really changed for you – and what to do about it.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="before">Before the update: two minutes of notes</h2>
+<p>The routine works best if you have a reference. Before you install a big update – or right now, for the next one – write down or photograph:</p>
+<ul class="do">
+<li>Your graphics or mode settings (a photo of each menu page is fastest).</li>
+<li>Your test scene or route and its average FPS and 1% lows, or on console how the mode looked and felt.</li>
+<li>The game version and, on PC, the graphics driver version.</li>
+</ul>
+<p>If you have no notes, the routine still works: you compare against your memory of how the game ran, and you create the notes for next time.</p></section>
+<section><h2 id="routine">The routine</h2>
+<div class="tbl" role="region" aria-label="10-minute re-test routine" tabindex="0"><table><caption>10-minute re-test routine</caption><thead><tr><th scope="col">Minute</th><th scope="col">Step</th><th scope="col">Why</th></tr></thead><tbody><tr><th scope="row">0–1</th><td>Read the patch notes for your platform; paste them into the Patch Decoder</td><td>Know what to look for: presets, modes, shaders, known issues</td></tr><tr><th scope="row">1–2</th><td>Check every settings page against your notes or photos</td><td>Updates can reset or move settings silently</td></tr><tr><th scope="row">2–5</th><td>Let shader compilation finish; play calmly through your test area once</td><td>The first run measures compilation, not the game</td></tr><tr><th scope="row">5–8</th><td>Measure your test route twice (or watch it closely on console)</td><td>Two runs show whether the result is stable</td></tr><tr><th scope="row">8–10</th><td>Compare with your notes; decide on one change if needed</td><td>Change one thing at a time</td></tr></tbody></table></div>
+<p>The <a href="/tools/patch-decoder/">Patch Decoder</a> builds a checklist with these base steps plus the actions from the patch lines that concern you, and exports it as text – handy to keep with your test notes.</p></section>
+<section><h2 id="read">Reading the result</h2>
+<figure class="fig"><svg viewBox="0 0 640 240" role="img" aria-labelledby="rt-fig-t"><title id="rt-fig-t">Decision flow after the re-test: same results means done; worse results lead to checking shaders, settings and patch notes; better results allow raising a setting</title><rect class="g-bg" width="640" height="240"/>
+<rect class="g-panel" x="230" y="16" width="180" height="40" rx="6"/><text class="g-t" x="250" y="41">compare with notes</text>
+<path class="g-line" d="M320 56v20M100 76h440M100 76v20M320 76v20M540 76v20"/>
+<rect class="g-panel" x="20" y="96" width="160" height="40" rx="6"/><text class="g-plus" x="34" y="121" style="font:600 14px var(--mono)">+ better</text>
+<rect class="g-panel" x="240" y="96" width="160" height="40" rx="6"/><text class="g-acc" x="254" y="121" style="font:600 14px var(--mono)">~ same</text>
+<rect class="g-panel" x="460" y="96" width="160" height="40" rx="6"/><text class="g-minus" x="474" y="121" style="font:600 14px var(--mono)">− worse</text>
+<text class="g-tm" x="20" y="166">try one setting</text><text class="g-tm" x="20" y="184">a step higher</text>
+<text class="g-tm" x="240" y="166">done – keep notes</text><text class="g-tm" x="240" y="184">for next time</text>
+<text class="g-tm" x="460" y="166">1 shaders done?</text><text class="g-tm" x="460" y="184">2 settings reset?</text><text class="g-tm" x="460" y="202">3 known issue?</text><text class="g-tm" x="460" y="220">4 find bottleneck</text></svg><figcaption>Three possible outcomes. Only a confirmed drop, after shaders are compiled and settings are checked, calls for changing settings.</figcaption></figure>
+<p><b>Same as before.</b> Done. Keep the notes; they are your reference for the next update.</p>
+<p><b>Better.</b> If the update optimized something you had lowered – for example a CPU improvement in crowded areas – try that option one step higher and test again.</p>
+<p><b>Worse.</b> Go through the causes in order: Was the shader cache still being built (does a second run look better)? Did a setting change? Is there a known issue for your platform? Only if all three are ruled out is it likely that the update made the game heavier. Then find your current bottleneck with the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> and lower one option for it, using the <a href="/tools/settings-translator/">Settings Translator</a>.</p></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="consoles">On consoles</h2>
+<p>Consoles have no frame counter in most games, but the routine still works. Check that the mode you chose (performance, quality or fidelity, 120 Hz, VRR) is still selected, both in the game and in the console’s system settings. Then play your usual area and pay attention to smoothness and sharpness. If a patch note says a mode’s target changed, compare both modes again – the best choice may have changed. The guides on <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 modes</a>, <a href="/guides/xbox-series-s-vs-x-modes/">Xbox Series S vs X</a> and <a href="/guides/switch-2-docked-vs-handheld/">Switch 2</a> explain the trade-offs.</p></section>
+<section><h2 id="report">When to report a problem</h2>
+<p>If you have confirmed a clear drop under the same conditions, report it to the developer through their official support or bug-report channel. Include your platform, hardware, game and driver version, the scene, your before-and-after numbers and the settings. Reports with numbers and steps to reproduce are far more useful than “performance is worse”.</p>
+<p>And keep the result in perspective: after an update it is normal for the first session to feel slightly different. Patience for one session, plus a short structured test, avoids most unnecessary changes – and most of the frustration.</p></section>
+<section><h2 id="drivers">Driver updates follow the same rules</h2>
+<p>Graphics driver updates behave like game updates for this routine: the shader cache is rebuilt, defaults in the driver control panel can change, and performance in individual games can shift in either direction. Install drivers when you have time for a calm first session, read the driver’s release notes for your games, and use the same re-test.</p></section>
+<section><h2 id="sheet">A personal reference sheet</h2>
+<p>The routine gets faster each time if you keep one small note per game. It does not need to be elaborate – a text file or a phone note is enough:</p>
+<ul class="do">
+<li>Game, platform, game version and (PC) driver version.</li>
+<li>Settings or mode, with a photo of each menu page.</li>
+<li>Test route: where it starts, where it ends, what you do.</li>
+<li>Results: average FPS and 1% lows (PC), or a one-line impression (console).</li>
+<li>Date, and what changed since the last entry.</li>
+</ul>
+<p>The Patch Decoder’s text export fits right below it. After a few updates you have a history that shows whether a game is getting better or worse on your system – far more useful than any general claim.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Why does a game run worse right after an update?</h3><p>Most often because the shader cache is rebuilt, so the first session stutters. Settings may also have been reset. Re-test after a calm first play-through.</p></div><div class="qa"><h3>How long should I wait before judging performance?</h3><p>At least until any shader compilation step has finished and you have played once through your test area. Then measure.</p></div><div class="qa"><h3>Do I need special software for the routine?</h3><p>No. A frame counter is enough on PC; on console you compare by eye. Frame-time tools give more precise numbers if you want them.</p></div><div class="qa"><h3>Should I reinstall the game if it runs worse?</h3><p>Rarely. Check shaders, settings and known issues first. A reinstall is a last resort for corrupted files and makes the next session stutter again.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li>Official patch notes of your game – publisher website, store news page or in-game news</li><li>Graphics driver release notes – published by NVIDIA, AMD and Intel with each driver</li><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – frame-time capture for before/after comparisons</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/how-to-read-patch-notes/"><span class="k">patch notes</span>How to read patch notes: what each kind of change means for your settings</a></li><li><a href="/guides/how-to-test-a-settings-change/"><span class="k">method</span>How to test a settings change properly</a></li><li><a href="/guides/shader-compilation-stutter-after-update/"><span class="k">stutter</span>Shader compilation stutter after an update: what to do</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#before">Before the update: two minutes of notes</a></li><li><a href="#routine">The routine</a></li><li><a href="#read">Reading the result</a></li><li><a href="#consoles">On consoles</a></li><li><a href="#report">When to report a problem</a></li><li><a href="#drivers">Driver updates follow the same rules</a></li><li><a href="#sheet">A personal reference sheet</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

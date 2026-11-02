@@ -1,0 +1,10 @@
+{
+  "name": "patchplayguide",
+  "private": true,
+  "description": "patchplayguide.com – static site for GitHub Pages (docs/), built without dependencies",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "test": "node --test tests/logic.test.js && node tests/check-pages.mjs",
+    "test:browser": "node tests/browser.mjs"
+  }
+}

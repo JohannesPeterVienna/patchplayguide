@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steam Deck: frame cap, TDP and battery basics</title>
+<meta name="description" content="How the Steam Deck performance menu works: frame limit, refresh rate, TDP limit, half-rate shading, scaling filter and per-game profiles for smoother play.">
+<link rel="canonical" href="https://patchplayguide.com/guides/steam-deck-frame-cap-tdp-battery/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Steam Deck: frame cap, TDP and battery basics">
+<meta property="og:description" content="How the Steam Deck performance menu works: frame limit, refresh rate, TDP limit, half-rate shading, scaling filter and per-game profiles for smoother play.">
+<meta property="og:url" content="https://patchplayguide.com/guides/steam-deck-frame-cap-tdp-battery/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"Steam Deck frame cap, TDP and battery","item":"https://patchplayguide.com/guides/steam-deck-frame-cap-tdp-battery/"}]},{"@type":"Article","headline":"Steam Deck: frame cap, TDP and battery basics","description":"How the Steam Deck performance menu works: frame limit, refresh rate, TDP limit, half-rate shading, scaling filter and per-game profiles for smoother play.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/steam-deck-frame-cap-tdp-battery/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the best frame cap on Steam Deck?","acceptedAnswer":{"@type":"Answer","text":"The highest one your game holds nearly all the time. 40 fps at 40 Hz is a popular middle ground for demanding games; lighter games can run at 60."}},{"@type":"Question","name":"Does lowering TDP improve battery life?","acceptedAnswer":{"@type":"Answer","text":"Yes, if the game still holds its frame cap. Lower it gradually while watching the overlay; too low a limit causes drops and stutter."}},{"@type":"Question","name":"Should I use the FSR scaling filter?","acceptedAnswer":{"@type":"Answer","text":"It is useful when a game renders below 1280×800 and has no good built-in upscaler. If the game offers its own upscaler, that one is usually better."}},{"@type":"Question","name":"What does half rate shading do?","acceptedAnswer":{"@type":"Answer","text":"It reduces shading work in parts of the image in supported games. It saves GPU time at the cost of some sharpness."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Steam Deck frame cap, TDP and battery</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · Steam Deck</p>
+<h1>Steam Deck: frame cap, TDP and battery basics</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">The Steam Deck gives you more control than any console: a performance menu with frame limit, refresh rate, power limit and scaling options, saved per game if you want. Used together, they turn a game that swings between 35 and 55 frames per second and empties the battery in 90 minutes into one that runs evenly and lasts much longer. This guide explains each option and a simple order to set them.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="menu">Where the settings are</h2>
+<p>Press the <b>…</b> (Quick Access) button and open the <b>Performance</b> tab (the battery icon). There you find the performance overlay level, the frame-rate limit, the refresh rate, an option to allow tearing, half-rate shading, a TDP limit, manual GPU clock control and the scaling filter. Turn on “Use per-game profile” to store these settings for the game you are playing instead of globally. Option names and layout can change with SteamOS updates.</p>
+<div class="tbl" role="region" aria-label="Steam Deck performance options and what they do" tabindex="0"><table><caption>Steam Deck performance options and what they do</caption><thead><tr><th scope="col">Option</th><th scope="col">What it does</th><th scope="col">Typical use</th></tr></thead><tbody><tr><th scope="row">Performance overlay</th><td>Shows FPS, frame time, CPU/GPU load, power and battery</td><td>Level 2 or higher while tuning, off afterwards</td></tr><tr><th scope="row">Refresh rate</th><td>Sets the screen’s refresh rate (LCD: 40–60 Hz; OLED: up to 90 Hz)</td><td>Match it to your frame cap, e.g. 40 Hz for 40 fps</td></tr><tr><th scope="row">Framerate limit</th><td>Caps FPS at an even share of the refresh rate</td><td>Pick a cap the game can hold nearly all the time</td></tr><tr><th scope="row">Allow tearing</th><td>Shows frames immediately instead of waiting for the refresh</td><td>Lower latency, visible tearing; usually off</td></tr><tr><th scope="row">Half rate shading</th><td>Shades some screen areas at reduced rate</td><td>Saves GPU work in supported games, softer image</td></tr><tr><th scope="row">TDP limit</th><td>Caps the processor’s power (default maximum 15 W)</td><td>Lower it to save battery when the game has headroom</td></tr><tr><th scope="row">Manual GPU clock</th><td>Fixes the GPU frequency</td><td>Rarely needed; for advanced tuning</td></tr><tr><th scope="row">Scaling filter</th><td>How a lower game resolution is scaled to the screen (e.g. FSR, linear, integer)</td><td>FSR when rendering below 1280×800</td></tr></tbody></table></div></section>
+<section><h2 id="cap">Frame cap first</h2>
+<p>An uncapped game on the Steam Deck runs as fast as it can, so the frame rate swings with the scene and the APU uses its full power all the time. A cap that the game can hold almost everywhere gives you even frame pacing and leaves power unused – which saves battery and heat.</p>
+<p><b>The 40 fps trick.</b> Set the refresh rate to 40 Hz and cap at 40 fps. Each frame then takes 25 ms, exactly halfway between 30 fps (33.3 ms) and 60 fps (16.7 ms), and it fits the refresh rate evenly. Many games that cannot hold 60 run comfortably at 40, and it feels clearly smoother than 30. On the OLED model with its higher refresh range, 45 fps at 90 Hz is another even combination.</p>
+<figure class="fig"><svg viewBox="0 0 640 200" role="img" aria-labelledby="sd-fig-t"><title id="sd-fig-t">Even cap and refresh combinations on Steam Deck: 30 at 60 Hz, 40 at 40 Hz, 45 at 90 Hz, 60 at 60 Hz</title><rect class="g-bg" width="640" height="200"/>
+<text class="g-tm" x="20" y="30">CAP · REFRESH · TIME PER FRAME (even combinations)</text>
+<rect class="g-panel" x="20" y="48" width="140" height="120" rx="8"/><rect class="g-panel" x="173" y="48" width="140" height="120" rx="8"/><rect class="g-panel" x="327" y="48" width="140" height="120" rx="8"/><rect class="g-panel" x="480" y="48" width="140" height="120" rx="8"/>
+<text class="g-tb" x="36" y="82">30 fps</text><text class="g-tm" x="36" y="108">@ 60 Hz</text><text class="g-tm" x="36" y="132">33.3 ms</text><text class="g-tm" x="36" y="154">most battery</text>
+<text class="g-tb" x="189" y="82" style="fill:#FFC531">40 fps</text><text class="g-tm" x="189" y="108">@ 40 Hz</text><text class="g-tm" x="189" y="132">25.0 ms</text><text class="g-tm" x="189" y="154">sweet spot</text>
+<text class="g-tb" x="343" y="82">45 fps</text><text class="g-tm" x="343" y="108">@ 90 Hz (OLED)</text><text class="g-tm" x="343" y="132">22.2 ms</text><text class="g-tm" x="343" y="154">OLED only</text>
+<text class="g-tb" x="496" y="82">60 fps</text><text class="g-tm" x="496" y="108">@ 60 Hz</text><text class="g-tm" x="496" y="132">16.7 ms</text><text class="g-tm" x="496" y="154">lighter games</text></svg><figcaption>Combinations where each frame lasts a whole number of screen refreshes. They avoid uneven frame pacing without needing variable refresh rate.</figcaption></figure></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="res">Resolution and upscaling</h2>
+<p>The Steam Deck screen is 1280×800. Many games run well at that resolution with medium settings; demanding ones need a lower internal resolution. If the game has its own upscaler – FSR, XeSS or an engine upscaler – use it with the output at 1280×800; at such a low output resolution, the Quality mode is usually the best compromise (see <a href="/guides/dlss-vs-fsr-vs-xess/">DLSS vs FSR vs XeSS</a>). Alternatively, set the game to a lower resolution such as 960×600 and use the Steam Deck’s FSR scaling filter, which sharpens the upscaled image at the system level.</p>
+<p>Textures can often stay at medium or high – the Steam Deck has 16 GB of shared memory – but the GPU is modest, so lighting, shadows and volumetrics are the effects to lower first.</p></section>
+<section><h2 id="tdp">TDP and battery</h2>
+<p>The TDP limit caps how much power the processor may use. With a frame cap in place, many games do not need the full budget; lowering the TDP limit until the frame rate starts to drop, then raising it a step, saves battery. Be careful: CPU and GPU share the budget, so a TDP that is too low makes both slower and can cause stutter in CPU-heavy moments.</p>
+<ul class="do">
+<li>Set the frame cap first, then lower the TDP while watching the overlay.</li>
+<li>Screen brightness has a large effect on battery life – lower it indoors.</li>
+<li>Use per-game profiles so a light game does not inherit the settings of a demanding one.</li>
+<li>Check the Steam Deck Compatibility rating (Verified, Playable, Unsupported, Unknown) on the store page for known issues.</li>
+</ul></section>
+<section><h2 id="order">A simple order for any game</h2>
+<ol>
+<li>Start with the game’s medium or “Steam Deck” preset if it has one.</li>
+<li>Turn on the performance overlay and play a demanding section.</li>
+<li>Choose a cap the game can hold nearly always: 30, 40 (with 40 Hz), 45 (OLED, 90 Hz) or 60.</li>
+<li>If it cannot hold the cap, lower render resolution or use an upscaler before lowering textures.</li>
+<li>Lower the TDP limit for battery if the frame rate stays stable.</li>
+<li>Save the per-game profile.</li>
+</ol>
+<p>After a game update, check the profile is still active and expect some shader compilation – Steam’s Shader Pre-Caching helps here, see <a href="/guides/shader-compilation-stutter-after-update/">shader stutter after an update</a>.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>What is the best frame cap on Steam Deck?</h3><p>The highest one your game holds nearly all the time. 40 fps at 40 Hz is a popular middle ground for demanding games; lighter games can run at 60.</p></div><div class="qa"><h3>Does lowering TDP improve battery life?</h3><p>Yes, if the game still holds its frame cap. Lower it gradually while watching the overlay; too low a limit causes drops and stutter.</p></div><div class="qa"><h3>Should I use the FSR scaling filter?</h3><p>It is useful when a game renders below 1280×800 and has no good built-in upscaler. If the game offers its own upscaler, that one is usually better.</p></div><div class="qa"><h3>What does half rate shading do?</h3><p>It reduces shading work in parts of the image in supported games. It saves GPU time at the cost of some sharpness.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://www.steamdeck.com/" rel="noopener">Steam Deck</a> – official specifications for LCD and OLED models</li><li><a href="https://help.steampowered.com/" rel="noopener">Steam Support</a> – Steam Deck Quick Access menu and performance settings</li><li>Steam Deck Compatibility program – ratings shown on each game’s Steam store page</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/dlss-vs-fsr-vs-xess/"><span class="k">upscaling</span>DLSS vs FSR vs XeSS: which upscaler mode to pick</a></li><li><a href="/guides/frame-cap-vsync-latency-pc/"><span class="k">smoothness &amp;amp; latency</span>Frame caps, V-Sync and latency on PC explained</a></li><li><a href="/guides/switch-2-docked-vs-handheld/"><span class="k">Switch 2</span>Switch 2 docked vs handheld: what games change</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#menu">Where the settings are</a></li><li><a href="#cap">Frame cap first</a></li><li><a href="#res">Resolution and upscaling</a></li><li><a href="#tdp">TDP and battery</a></li><li><a href="#order">A simple order for any game</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

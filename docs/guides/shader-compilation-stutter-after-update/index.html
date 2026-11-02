@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shader compilation stutter after an update: what to do</title>
+<meta name="description" content="Why games stutter after a game or driver update, how shader caches work, what helps (precompilation, patience, storage) and what does not, on PC and Steam Deck.">
+<link rel="canonical" href="https://patchplayguide.com/guides/shader-compilation-stutter-after-update/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shader compilation stutter after an update: what to do">
+<meta property="og:description" content="Why games stutter after a game or driver update, how shader caches work, what helps (precompilation, patience, storage) and what does not, on PC and Steam Deck.">
+<meta property="og:url" content="https://patchplayguide.com/guides/shader-compilation-stutter-after-update/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"Shader stutter after an update","item":"https://patchplayguide.com/guides/shader-compilation-stutter-after-update/"}]},{"@type":"Article","headline":"Shader compilation stutter after an update: what to do","description":"Why games stutter after a game or driver update, how shader caches work, what helps (precompilation, patience, storage) and what does not, on PC and Steam Deck.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/shader-compilation-stutter-after-update/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does my game stutter after an update and then get better?","acceptedAnswer":{"@type":"Answer","text":"The update or a new driver invalidated the shader cache. The game compiles shaders again the first time each effect appears; once they are cached, the stutter fades."}},{"@type":"Question","name":"Should I delete the shader cache to fix stutter?","acceptedAnswer":{"@type":"Answer","text":"Usually not. Deleting it forces everything to be compiled again. Only clear it when a fix for a specific problem, such as a corrupted cache, tells you to."}},{"@type":"Question","name":"Do graphics settings affect shader stutter?","acceptedAnswer":{"@type":"Answer","text":"Only a little. Lower settings do not remove compilation, and changing settings can even require new shader variants."}},{"@type":"Question","name":"Does an SSD fix shader stutter?","acceptedAnswer":{"@type":"Answer","text":"It does not stop compilation, but it speeds up cache and asset loading, so hitches are shorter. Modern games generally expect an SSD."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Shader stutter after an update</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · stutter</p>
+<h1>Shader compilation stutter after an update: what to do</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">The game ran smoothly yesterday. After an update it hitches every time you turn a corner or an explosion goes off – and then, a few minutes later, it is fine again. That pattern almost always means shader compilation: the game is building the small GPU programs it needs for your specific graphics card and driver, and an update threw away the old ones.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="what">What shaders are, and why they are compiled on your PC</h2>
+<p>Shaders are the small programs that run on the graphics card to calculate the color of surfaces, light, shadows and effects. A large game uses thousands of combinations of them. With modern graphics interfaces such as DirectX 12 and Vulkan, shaders are combined with GPU state into so-called pipeline state objects, and these have to be compiled into machine code for your exact graphics card and driver version.</p>
+<p>Consoles have one fixed hardware configuration, so developers can ship the compiled shaders with the game. PCs come in countless combinations of graphics cards and drivers, so compilation usually happens on your machine – either up front in a “compiling shaders” step, or on the fly the first time a material or effect appears on screen. When it happens on the fly, the frame has to wait for the compiler, and you see a hitch.</p></section>
+<section><h2 id="cache">Why updates bring the stutter back</h2>
+<p>Compiled shaders are stored in a cache on your drive so that they can be reused next time. That cache is tied to the game’s shader code and to the graphics driver. When either changes, old entries no longer match:</p>
+<div class="tbl" role="region" aria-label="What usually invalidates the shader cache" tabindex="0"><table><caption>What usually invalidates the shader cache</caption><thead><tr><th scope="col">Event</th><th scope="col">Effect on the cache</th><th scope="col">What you notice</th></tr></thead><tbody><tr><th scope="row">Game update that changes shaders or materials</th><td>Affected shaders must be compiled again</td><td>Stutter in areas and effects you had already seen</td></tr><tr><th scope="row">Graphics driver update</th><td>Driver cache usually rebuilt</td><td>Stutter in every game for the first sessions</td></tr><tr><th scope="row">Changing graphics settings or upscaler</th><td>New shader variants may be needed</td><td>Short stutter after the change</td></tr><tr><th scope="row">Moving to a new GPU</th><td>Cache rebuilt completely</td><td>Stutter everywhere at first</td></tr><tr><th scope="row">Clearing the cache manually</th><td>Everything compiled again</td><td>Stutter returns until rebuilt</td></tr></tbody></table></div>
+<p>This is why a patch can seem to make a game “run worse” for an evening, and then the problem disappears. Judging performance in the first minutes after an update – or after a driver update – mostly measures the compiler, not the game.</p></section>
+<section><h2 id="recognize">How to recognize shader stutter</h2>
+<figure class="fig"><svg viewBox="0 0 640 240" role="img" aria-labelledby="sh-fig-t"><title id="sh-fig-t">Frame-time graph: spikes when new effects first appear in the first run, almost flat on the second run through the same area</title><rect class="g-bg" width="640" height="240"/>
+<text class="g-tm" x="20" y="28">FRAME TIME (ms) – ILLUSTRATION</text>
+<text class="g-tm" x="20" y="58">first run</text><text class="g-tm" x="20" y="168">second run</text>
+<path class="g-grid" d="M100 110h520M100 210h520"/>
+<path class="g-minus-s" d="M100 100 L160 100 L165 50 L170 100 L260 100 L264 40 L268 100 L340 100 L344 62 L348 100 L450 100 L454 56 L458 100 L620 100"/>
+<path class="g-plus-s" d="M100 200 L300 200 L304 186 L308 200 L620 200"/>
+<text class="g-tm" x="168" y="46">new effect</text><text class="g-tm" x="270" y="36">new area</text></svg><figcaption>Typical pattern: sharp spikes the first time something appears, much smaller ones the second time. Stutter that repeats in the same places every run has a different cause.</figcaption></figure>
+<ul class="do">
+<li>It happens the <b>first time</b> you see an area, an enemy type or an effect – and much less the second time.</li>
+<li>It started right after a game or driver update, or after changing settings.</li>
+<li>The average frame rate is fine; individual frames take much longer (the frame-time graph shows spikes).</li>
+<li>It gets better over a session, and better again in the next one.</li>
+</ul>
+<p>Stutter that returns in the same places on every run is more likely asset streaming, full video memory or a CPU spike – the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> separates these cases.</p></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="fix">What helps</h2>
+<ul class="do">
+<li><b>Let precompilation finish.</b> If the game shows a “compiling shaders” step or progress bar in the menu, wait for it. Skipping it moves the work into gameplay.</li>
+<li><b>Give it time.</b> Play calmly through the first areas after an update before judging performance. Re-test afterwards with the <a href="/guides/after-update-retest-routine/">10-minute routine</a>.</li>
+<li><b>Keep the game on an SSD.</b> Cache reads and asset loading are slower on hard drives, which makes hitches worse.</li>
+<li><b>On Steam and Steam Deck,</b> leave Shader Pre-Caching enabled in the Steam settings; for supported games, Steam can download precompiled shader data for your configuration.</li>
+<li><b>Avoid driver updates right before an important session</b> – install them when you have time for the cache to rebuild.</li>
+<li><b>Check the driver’s shader cache size setting</b> if your driver offers one; a cache that is too small can evict entries and compile them again.</li>
+</ul></section>
+<section><h2 id="dont">What does not help</h2>
+<p>Lowering graphics settings rarely removes shader stutter – the compiler still has to build the shaders that are needed, and different settings can even require new variants. Clearing the shader cache “to fix stutter” usually makes things worse for a while, because everything has to be compiled again; do it only when a specific guide for a specific problem (for example a corrupted cache after a crash) recommends it.</p>
+<p>A faster processor does shorten each compile, because compilation is CPU work, but it does not remove the pattern. The real fix is on the developer side: precompiling all needed shaders during loading. Many updates mention exactly this. The <a href="/tools/patch-decoder/">Patch Decoder</a> puts such lines in the “Shaders &amp; loading” category, and a tilde (~) on “shaders are rebuilt” is your cue to expect a stuttery first session.</p></section>
+<section><h2 id="consoles">Consoles and handhelds</h2>
+<p>On PS5, Xbox and Switch 2, shaders are typically compiled for the fixed hardware and shipped with the game, so post-update shader stutter is much less common than on PC. On the Steam Deck the situation is in between: it is one hardware configuration, which is what makes downloadable precompiled shader data from Steam effective there. Windows handheld PCs behave like any other PC.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Why does my game stutter after an update and then get better?</h3><p>The update or a new driver invalidated the shader cache. The game compiles shaders again the first time each effect appears; once they are cached, the stutter fades.</p></div><div class="qa"><h3>Should I delete the shader cache to fix stutter?</h3><p>Usually not. Deleting it forces everything to be compiled again. Only clear it when a fix for a specific problem, such as a corrupted cache, tells you to.</p></div><div class="qa"><h3>Do graphics settings affect shader stutter?</h3><p>Only a little. Lower settings do not remove compilation, and changing settings can even require new shader variants.</p></div><div class="qa"><h3>Does an SSD fix shader stutter?</h3><p>It does not stop compilation, but it speeds up cache and asset loading, so hitches are shorter. Modern games generally expect an SSD.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://www.vulkan.org/" rel="noopener">Vulkan</a> – graphics API background, including pipeline caches</li><li>Microsoft DirectX 12 documentation on pipeline state objects – Microsoft Learn, Direct3D 12 programming guide</li><li><a href="https://help.steampowered.com/" rel="noopener">Steam Support</a> – Shader Pre-Caching setting in the Steam client</li><li>GPU driver documentation – NVIDIA Control Panel “Shader Cache Size”; AMD Software: Adrenalin Edition shader cache options</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/after-update-retest-routine/"><span class="k">after an update</span>After a big update: a 10-minute re-test routine</a></li><li><a href="/guides/fps-frame-time-1-percent-lows/"><span class="k">measuring</span>FPS, frame time and 1% lows explained</a></li><li><a href="/guides/how-to-read-patch-notes/"><span class="k">patch notes</span>How to read patch notes: what each kind of change means for your settings</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#what">What shaders are, and why they are compiled on your PC</a></li><li><a href="#cache">Why updates bring the stutter back</a></li><li><a href="#recognize">How to recognize shader stutter</a></li><li><a href="#fix">What helps</a></li><li><a href="#dont">What does not help</a></li><li><a href="#consoles">Consoles and handhelds</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

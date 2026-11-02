@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU or GPU bottleneck? A 5-minute check</title>
+<meta name="description" content="Find out whether your processor or graphics card limits your frame rate with one resolution test and an overlay, and which settings help in each case.">
+<link rel="canonical" href="https://patchplayguide.com/guides/cpu-or-gpu-bottleneck/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CPU or GPU bottleneck? A 5-minute check">
+<meta property="og:description" content="Find out whether your processor or graphics card limits your frame rate with one resolution test and an overlay, and which settings help in each case.">
+<meta property="og:url" content="https://patchplayguide.com/guides/cpu-or-gpu-bottleneck/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"CPU or GPU bottleneck?","item":"https://patchplayguide.com/guides/cpu-or-gpu-bottleneck/"}]},{"@type":"Article","headline":"CPU or GPU bottleneck? A 5-minute check","description":"Find out whether your processor or graphics card limits your frame rate with one resolution test and an overlay, and which settings help in each case.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/cpu-or-gpu-bottleneck/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is a CPU bottleneck bad?","acceptedAnswer":{"@type":"Answer","text":"Not necessarily. Every system has a bottleneck. It only matters if the frame rate it allows is lower than you want."}},{"@type":"Question","name":"Why does my GPU never reach 100%?","acceptedAnswer":{"@type":"Answer","text":"Usually because the CPU or a frame limiter (cap, V-Sync, power mode) holds the frame rate down. Some games also report lower usage even when GPU-bound."}},{"@type":"Question","name":"Does a higher resolution reduce CPU bottlenecks?","acceptedAnswer":{"@type":"Answer","text":"It shifts more load to the GPU, so the GPU may become the limit, but the frame rate does not go up. It can, however, give you better image quality for free when you are CPU-bound."}},{"@type":"Question","name":"Which tools show GPU usage?","acceptedAnswer":{"@type":"Answer","text":"The overlays in GPU driver software, the Steam overlay performance monitor, the Steam Deck performance overlay and tools such as PresentMon."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">CPU or GPU bottleneck?</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · diagnosis</p>
+<h1>CPU or GPU bottleneck? A 5-minute check</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">Every system has a bottleneck – the part that is busiest while the others wait. Knowing which one it is decides which settings help. The good news: you do not need benchmarks or special knowledge. One resolution test and a glance at GPU usage answer the question for the game you are playing right now.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="idea">What a bottleneck is</h2>
+<p>For each frame, the CPU prepares the work – game logic, physics, animation, the list of objects to draw – and the GPU draws it. The two work in parallel on consecutive frames, so the frame rate is set by whichever takes longer per frame. If the CPU needs 8 milliseconds and the GPU 14, the GPU is the bottleneck and the game runs at about 71 frames per second (1000 ÷ 14). Speeding up the CPU’s part changes nothing.</p>
+<p>The bottleneck is not a property of your PC alone. It depends on the game, the scene, the settings and the resolution. The same PC can be GPU-bound in a forest at 4K and CPU-bound in a crowded city at 1080p. That is why the check below is done in the game and place where you have the problem.</p></section>
+<section><h2 id="check">The 5-minute check</h2>
+<ol>
+<li><b>Pick a spot.</b> Go to a demanding place where the frame rate is low, and stand still or repeat the same short movement.</li>
+<li><b>Note the frame rate.</b> Use the game’s counter or an overlay. Wait a few seconds for it to settle.</li>
+<li><b>Lower the render resolution sharply.</b> Set the upscaler to Performance, or the render scale to about 50%. Do not change anything else.</li>
+<li><b>Compare.</b> If the frame rate rises clearly – roughly by a quarter or more – the GPU was the limit. If it barely moves, something else limits you.</li>
+<li><b>Confirm with GPU usage.</b> In an overlay, a GPU near 95–100% load points to a GPU limit. Clearly lower usage while the frame rate is low points to the CPU or a frame limiter.</li>
+<li><b>Restore your settings.</b> The test was a diagnosis, not a recommendation.</li>
+</ol>
+<figure class="fig"><svg viewBox="0 0 640 220" role="img" aria-labelledby="bn-fig-t"><title id="bn-fig-t">Two scales: GPU-bound when GPU time per frame is larger, CPU-bound when CPU time per frame is larger</title><rect class="g-bg" width="640" height="220"/>
+<text class="g-tm" x="20" y="30">TIME PER FRAME – THE LONGER BAR SETS THE FRAME RATE</text>
+<text class="g-t" x="20" y="72">CPU</text><rect x="70" y="56" width="160" height="22" fill="#47D98A"/><text class="g-tm" x="240" y="72">8 ms</text>
+<text class="g-t" x="20" y="104">GPU</text><rect x="70" y="88" width="280" height="22" fill="#7CC4FF"/><text class="g-tm" x="360" y="104">14 ms → ≈ 71 fps, GPU-bound</text>
+<path class="g-grid" d="M20 128h600"/>
+<text class="g-t" x="20" y="164">CPU</text><rect x="70" y="148" width="240" height="22" fill="#47D98A"/><text class="g-tm" x="320" y="164">12 ms → ≈ 83 fps, CPU-bound</text>
+<text class="g-t" x="20" y="196">GPU</text><rect x="70" y="180" width="140" height="22" fill="#7CC4FF"/><text class="g-tm" x="220" y="196">7 ms (after lowering resolution)</text></svg><figcaption>Worked example: lowering the resolution shrinks the GPU’s time per frame from 14 to 7 ms. The frame rate does not double – it rises only until the CPU, at 12 ms, becomes the slower part.</figcaption></figure></section>
+<section><h2 id="gpu">If you are GPU-bound</h2>
+<p>This is the easier case, because graphics settings work directly. In order of value:</p>
+<ul class="do">
+<li>Use an upscaler and step its mode down (Quality → Balanced) – see <a href="/guides/dlss-vs-fsr-vs-xess/">DLSS vs FSR vs XeSS</a>.</li>
+<li>Lower ray tracing quality or turn off individual ray-traced effects.</li>
+<li>Drop volumetric fog, shadows and ambient occlusion one step from maximum.</li>
+<li>Keep textures high if your VRAM allows – they cost little GPU time.</li>
+</ul>
+<p>Being GPU-bound is normal and not a problem in itself; most games at high settings are. It only matters when the frame rate is lower than you want.</p></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="cpu">If you are CPU-bound</h2>
+<p>Resolution and most effects will not help, so you can keep image quality high. What helps is less work per frame for the processor:</p>
+<ul class="do">
+<li>Lower view distance or level of detail, crowd and traffic density, and physics or destruction detail.</li>
+<li>Close background programs that use the CPU heavily: browsers with video, recording, downloads.</li>
+<li>Check that the game runs from an SSD; streaming from a slow drive adds CPU waiting time.</li>
+<li>Consider a frame cap a little below your average to make frame times more even.</li>
+<li>Check patch notes: CPU-related optimizations (for example in crowded areas) are common in updates.</li>
+</ul>
+<div class="tbl" role="region" aria-label="Signs of each bottleneck" tabindex="0"><table><caption>Signs of each bottleneck</caption><thead><tr><th scope="col">Observation</th><th scope="col">GPU-bound</th><th scope="col">CPU-bound</th></tr></thead><tbody><tr><th scope="row">Lower render resolution</th><td>Frame rate rises clearly</td><td>Frame rate barely changes</td></tr><tr><th scope="row">GPU usage in an overlay</th><td>Near 95–100%</td><td>Clearly below full load</td></tr><tr><th scope="row">Where FPS drops</th><td>Heavy effects, ray tracing, high resolution</td><td>Cities, crowds, big battles, many players</td></tr><tr><th scope="row">What helps</th><td>Upscaler mode, ray tracing, volumetrics, shadows</td><td>View distance, crowds, physics, background apps</td></tr></tbody></table></div></section>
+<section><h2 id="other">When neither seems to be the limit</h2>
+<p>If the GPU is not fully used and lowering resolution does nothing, check for a <b>frame limiter</b> first: an in-game cap, V-Sync, a driver limit, or a laptop or handheld power mode. These hold the frame rate down while both CPU and GPU have time to spare – nothing is “too slow”. Laptops on battery and hot systems can also throttle clocks. And if video memory is full, stutter and blurry textures appear regardless of CPU or GPU load, see <a href="/guides/vram-full-what-to-lower/">VRAM full</a>.</p>
+<p>The <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> walks through these cases one question at a time, and the <a href="/tools/settings-translator/">Settings Translator</a> sorts twenty options for the bottleneck you found.</p></section>
+<section><h2 id="moves">Why the bottleneck moves within one game</h2>
+<p>A game is not one workload. An empty desert at sunset with volumetric fog stresses the GPU; a market full of characters stresses the CPU; a cutscene with close-up faces may stress neither. That is why the check should be done where your problem is, and why one setting rarely fixes everything. Many players end up with a combination: an upscaler mode chosen for GPU-heavy areas and a lower crowd density for the busiest hub.</p>
+<p>Patches can move the bottleneck too. An update that optimizes crowd simulation can turn a CPU-bound city into a GPU-bound one, and suddenly resolution matters there. After a big update, repeat the five-minute check in your problem area before changing settings – it takes less time than reading a long forum thread.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Is a CPU bottleneck bad?</h3><p>Not necessarily. Every system has a bottleneck. It only matters if the frame rate it allows is lower than you want.</p></div><div class="qa"><h3>Why does my GPU never reach 100%?</h3><p>Usually because the CPU or a frame limiter (cap, V-Sync, power mode) holds the frame rate down. Some games also report lower usage even when GPU-bound.</p></div><div class="qa"><h3>Does a higher resolution reduce CPU bottlenecks?</h3><p>It shifts more load to the GPU, so the GPU may become the limit, but the frame rate does not go up. It can, however, give you better image quality for free when you are CPU-bound.</p></div><div class="qa"><h3>Which tools show GPU usage?</h3><p>The overlays in GPU driver software, the Steam overlay performance monitor, the Steam Deck performance overlay and tools such as PresentMon.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – frame-time and GPU busy measurements on Windows</li><li><a href="https://help.steampowered.com/" rel="noopener">Steam Support</a> – Steam overlay performance monitor</li><li>GPU vendor overlays – NVIDIA App and AMD Software: Adrenalin Edition</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/graphics-settings-explained/"><span class="k">PC settings</span>Graphics settings explained: what each option costs</a></li><li><a href="/guides/fps-frame-time-1-percent-lows/"><span class="k">measuring</span>FPS, frame time and 1% lows explained</a></li><li><a href="/guides/how-to-test-a-settings-change/"><span class="k">method</span>How to test a settings change properly</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#idea">What a bottleneck is</a></li><li><a href="#check">The 5-minute check</a></li><li><a href="#gpu">If you are GPU-bound</a></li><li><a href="#cpu">If you are CPU-bound</a></li><li><a href="#other">When neither seems to be the limit</a></li><li><a href="#moves">Why the bottleneck moves within one game</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

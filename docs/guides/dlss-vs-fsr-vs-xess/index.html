@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DLSS vs FSR vs XeSS: which upscaler mode to pick</title>
+<meta name="description" content="How DLSS, FSR and XeSS work, what Quality, Balanced and Performance mean in internal resolution, which runs on your GPU and which mode suits your display.">
+<link rel="canonical" href="https://patchplayguide.com/guides/dlss-vs-fsr-vs-xess/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DLSS vs FSR vs XeSS: which upscaler mode to pick">
+<meta property="og:description" content="How DLSS, FSR and XeSS work, what Quality, Balanced and Performance mean in internal resolution, which runs on your GPU and which mode suits your display.">
+<meta property="og:url" content="https://patchplayguide.com/guides/dlss-vs-fsr-vs-xess/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"DLSS vs FSR vs XeSS","item":"https://patchplayguide.com/guides/dlss-vs-fsr-vs-xess/"}]},{"@type":"Article","headline":"DLSS vs FSR vs XeSS: which upscaler mode to pick","description":"How DLSS, FSR and XeSS work, what Quality, Balanced and Performance mean in internal resolution, which runs on your GPU and which mode suits your display.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/dlss-vs-fsr-vs-xess/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is DLSS Quality better than native resolution?","acceptedAnswer":{"@type":"Answer","text":"Sometimes it looks comparable or more stable than native with a weak anti-aliasing method, sometimes slightly softer. It depends on the game and the output resolution; compare in a scene with fine detail."}},{"@type":"Question","name":"Can I use FSR on an NVIDIA card?","acceptedAnswer":{"@type":"Answer","text":"FSR 2 and FSR 3 upscaling are designed to run on graphics cards from all major vendors, so yes, if the game offers it. FSR 4 targets recent Radeon cards."}},{"@type":"Question","name":"Which upscaler mode for 1080p?","acceptedAnswer":{"@type":"Answer","text":"Quality is the usual choice. Lower modes render very few pixels at 1080p output and tend to look soft."}},{"@type":"Question","name":"Does upscaling help if I am CPU-bound?","acceptedAnswer":{"@type":"Answer","text":"Very little. Upscaling reduces GPU work; if the processor is the limit, the frame rate hardly changes."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">DLSS vs FSR vs XeSS</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · upscaling</p>
+<h1>DLSS vs FSR vs XeSS: which upscaler mode to pick</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">Upscalers render the game at a lower internal resolution and reconstruct a sharper image for your display. Used well, they are the cheapest way to gain GPU performance. The names – DLSS, FSR, XeSS, TSR, PSSR – and the modes from Quality to Ultra Performance hide a simple question: how many pixels does the game really render, and how good is the reconstruction?</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="what">What an upscaler does</h2>
+<p>A temporal upscaler renders each frame at a reduced resolution, with a tiny camera offset that changes from frame to frame. It then combines information from the current and previous frames, guided by motion vectors from the game, to rebuild detail at the output resolution. Because it accumulates samples over time, the result can look close to native resolution – and it replaces the game’s own anti-aliasing.</p>
+<p>The quality depends on how the reconstruction decides which old information to keep. Machine-learning upscalers use a trained neural network for that decision; others use hand-written rules. Errors show up as ghosting behind moving objects, shimmering on fine detail such as fences and foliage, or softness in motion.</p></section>
+<section><h2 id="modes">What the modes mean in pixels</h2>
+<div class="tbl" role="region" aria-label="Common upscaler modes and their typical internal resolution" tabindex="0"><table><caption>Common upscaler modes and their typical internal resolution</caption><thead><tr><th scope="col">Mode</th><th scope="col">Typical scale per axis</th><th scope="col">Pixels rendered (share of output)</th><th scope="col">From 4K output (3840×2160)</th><th scope="col">From 1440p output</th></tr></thead><tbody><tr><th scope="row">Quality</th><td>≈ 67%</td><td>≈ 44%</td><td>≈ 2560×1440</td><td>≈ 1707×960</td></tr><tr><th scope="row">Balanced</th><td>≈ 58%</td><td>≈ 34%</td><td>≈ 2227×1253</td><td>≈ 1485×835</td></tr><tr><th scope="row">Performance</th><td>50%</td><td>25%</td><td>1920×1080</td><td>1280×720</td></tr><tr><th scope="row">Ultra Performance</th><td>≈ 33%</td><td>≈ 11%</td><td>1280×720</td><td>≈ 853×480</td></tr></tbody></table></div><p class="small">These ratios are the commonly documented defaults for DLSS and FSR. XeSS uses similar mode names, but its ratios have changed between versions, and games may use their own values or a free slider – check the internal resolution the game shows.</p>
+<p>Two lessons follow from the table. First, even “Quality” renders less than half the pixels of native resolution, which is why it often gains a lot of performance. Second, the <b>output resolution matters</b>: Performance mode at 4K renders a full 1080p image and usually looks good; Performance mode at 1080p output renders only 960×540 and looks noticeably softer. The lower your display resolution, the higher the mode you should pick.</p></section>
+<section><h2 id="compare">DLSS, FSR, XeSS and the others</h2>
+<div class="tbl" role="region" aria-label="Upscalers at a glance (as of November 2026; check vendor pages for current details)" tabindex="0"><table><caption>Upscalers at a glance (as of November 2026; check vendor pages for current details)</caption><thead><tr><th scope="col">Upscaler</th><th scope="col">From</th><th scope="col">Runs on</th><th scope="col">Approach</th></tr></thead><tbody><tr><th scope="row">DLSS Super Resolution</th><td>NVIDIA</td><td>GeForce RTX graphics cards</td><td>Machine-learning model on tensor cores</td></tr><tr><th scope="row">FSR 2 / FSR 3 upscaling</th><td>AMD</td><td>Graphics cards from all major vendors</td><td>Hand-tuned temporal algorithm</td></tr><tr><th scope="row">FSR 4</th><td>AMD</td><td>Recent Radeon cards (RX 9000 series)</td><td>Machine-learning model</td></tr><tr><th scope="row">XeSS</th><td>Intel</td><td>Intel Arc with dedicated hardware; other GPUs through a compatible path</td><td>Machine-learning model</td></tr><tr><th scope="row">TSR / engine upscalers</th><td>Engine makers (e.g. Unreal Engine’s TSR)</td><td>All supported GPUs</td><td>Engine-integrated temporal upscaling</td></tr><tr><th scope="row">PSSR</th><td>Sony</td><td>PS5 Pro</td><td>Machine-learning upscaling in supported games</td></tr></tbody></table></div>
+<p>As a rule of thumb, the machine-learning upscalers tend to hold fine detail and stability better at aggressive modes, while FSR 2 and 3 upscaling run almost everywhere. Results vary by game, because each integration and its motion vectors differ. If your card supports several, try them in the same scene: walk past foliage and fences and look for shimmer and ghosting.</p></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="pick">Which mode to pick</h2>
+<figure class="fig"><svg viewBox="0 0 640 220" role="img" aria-labelledby="up-fig-t"><title id="up-fig-t">Recommended starting mode by output resolution: 1080p Quality, 1440p Quality or Balanced, 4K Balanced or Performance</title><rect class="g-bg" width="640" height="220"/>
+<text class="g-tm" x="20" y="30">STARTING POINT BY OUTPUT RESOLUTION (then test)</text>
+<rect class="g-panel" x="20" y="48" width="190" height="150" rx="8"/><rect class="g-panel" x="225" y="48" width="190" height="150" rx="8"/><rect class="g-panel" x="430" y="48" width="190" height="150" rx="8"/>
+<text class="g-tb" x="36" y="78">1080p</text><text class="g-tb" x="241" y="78">1440p</text><text class="g-tb" x="446" y="78">4K</text>
+<rect class="g-acc" x="36" y="96" width="120" height="26" rx="4"/><text class="g-tk" x="46" y="114">Quality</text>
+<rect class="g-acc" x="241" y="96" width="150" height="26" rx="4"/><text class="g-tk" x="251" y="114">Quality/Balanced</text>
+<rect class="g-acc" x="446" y="96" width="160" height="26" rx="4"/><text class="g-tk" x="456" y="114">Balanced/Perf.</text>
+<text class="g-tm" x="36" y="150">renders ≈ 720p</text><text class="g-tm" x="241" y="150">renders ≈ 960p–835p</text><text class="g-tm" x="446" y="150">renders ≈ 1253p–1080p</text>
+<text class="g-tm" x="36" y="176">avoid Performance</text><text class="g-tm" x="241" y="176">Performance if needed</text><text class="g-tm" x="446" y="176">Ultra Perf. last resort</text></svg><figcaption>A practical starting point. Keep the internal resolution from dropping too low: the reconstruction needs enough real pixels to work with.</figcaption></figure>
+<ul class="do">
+<li>Set the display’s native resolution as output; never lower the output resolution when an upscaler is available.</li>
+<li>Start with Quality. If you need more frames, step to Balanced, then Performance – one step at a time, testing each.</li>
+<li>If the image looks soft, a sharpening slider can help; too much sharpening creates halos and shimmering.</li>
+<li>Prefer an upscaler mode over lowering many effects: it usually costs less visible quality for the same gain.</li>
+<li>If you are CPU-bound, upscaling gains little – the GPU was not the limit. See <a href="/guides/cpu-or-gpu-bottleneck/">CPU or GPU bottleneck?</a></li>
+</ul></section>
+<section><h2 id="patches">Upscalers and game updates</h2>
+<p>Game updates often change upscalers: a new DLSS, FSR or XeSS version, a new default mode, a sharpening change or a fix for ghosting. The same mode name can then look or perform differently. When the <a href="/tools/patch-decoder/">Patch Decoder</a> sorts an upscaling line as a change (~), compare your current mode in a fixed scene before and after. On consoles, the developer chooses the upscaler; you choose the mode – see <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 performance vs fidelity modes</a>.</p></section>
+<section><h2 id="compare-own">How to compare upscalers yourself</h2>
+<p>Comparisons in videos are compressed and rarely show your game at your resolution. A two-minute comparison of your own is more reliable. Pick a scene with fine, high-contrast detail – a chain-link fence, power lines, grass or hair – and some movement, ideally a character running past a detailed background. Then switch between the available upscalers at the same mode and look for four things:</p>
+<ul class="do">
+<li><b>Stability:</b> do thin lines shimmer or crawl while the camera moves slowly?</li>
+<li><b>Ghosting:</b> do moving objects leave a faint trail, especially against the sky?</li>
+<li><b>Sharpness in motion:</b> does the image blur when you turn and sharpen again when you stop?</li>
+<li><b>Particles and transparency:</b> do sparks, rain or smoke break up or smear?</li>
+</ul>
+<p>Note the frame rate of each option as well – upscalers have a small cost of their own, and the machine-learning ones can cost slightly more on some cards. If two options look equal to you, take the faster one; if one is clearly more stable, a slightly lower frame rate is usually worth it. Re-check after updates that mention a new upscaler version.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Is DLSS Quality better than native resolution?</h3><p>Sometimes it looks comparable or more stable than native with a weak anti-aliasing method, sometimes slightly softer. It depends on the game and the output resolution; compare in a scene with fine detail.</p></div><div class="qa"><h3>Can I use FSR on an NVIDIA card?</h3><p>FSR 2 and FSR 3 upscaling are designed to run on graphics cards from all major vendors, so yes, if the game offers it. FSR 4 targets recent Radeon cards.</p></div><div class="qa"><h3>Which upscaler mode for 1080p?</h3><p>Quality is the usual choice. Lower modes render very few pixels at 1080p output and tend to look soft.</p></div><div class="qa"><h3>Does upscaling help if I am CPU-bound?</h3><p>Very little. Upscaling reduces GPU work; if the processor is the limit, the frame rate hardly changes.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://www.nvidia.com/en-us/geforce/technologies/dlss/" rel="noopener">NVIDIA DLSS technology overview</a></li><li><a href="https://gpuopen.com/" rel="noopener">AMD GPUOpen</a> – FidelityFX Super Resolution documentation</li><li>Intel XeSS – documented on Intel’s gaming technology pages</li><li>Unreal Engine documentation on Temporal Super Resolution – Epic Games developer documentation</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/frame-generation-explained/"><span class="k">frame generation</span>Frame generation explained: smoother, but at what cost?</a></li><li><a href="/guides/graphics-settings-explained/"><span class="k">PC settings</span>Graphics settings explained: what each option costs</a></li><li><a href="/guides/steam-deck-frame-cap-tdp-battery/"><span class="k">Steam Deck</span>Steam Deck: frame cap, TDP and battery basics</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#what">What an upscaler does</a></li><li><a href="#modes">What the modes mean in pixels</a></li><li><a href="#compare">DLSS, FSR, XeSS and the others</a></li><li><a href="#pick">Which mode to pick</a></li><li><a href="#patches">Upscalers and game updates</a></li><li><a href="#compare-own">How to compare upscalers yourself</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

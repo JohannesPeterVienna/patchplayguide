@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" data-ads="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Patch Play Guide – method, sources and limits</title>
+<meta name="description" content="Who publishes Patch Play Guide, how guides and tools are written and checked, which sources we rely on, how we handle patch notes and what the site cannot do.">
+<link rel="canonical" href="https://patchplayguide.com/about/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About Patch Play Guide – method, sources and limits">
+<meta property="og:description" content="Who publishes Patch Play Guide, how guides and tools are written and checked, which sources we rely on, how we handle patch notes and what the site cannot do.">
+<meta property="og:url" content="https://patchplayguide.com/about/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"About","item":"https://patchplayguide.com/about/"}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/" aria-current="page">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">About</li></ol></nav>
+<article class="doc legal"><p class="kicker">About &amp; method</p><h1>About Patch Play Guide</h1><p class="lede">Patch Play Guide explains what game updates and graphics settings change on your own screen – on PC, PS5, Xbox, Switch 2 and handheld PCs – and how to check it yourself. It is built for players who want to understand their settings rather than copy a list.</p>
+<h2 id="who">Who publishes the site</h2>
+<p>The site is published by AdStern, an advertising agency based in Vienna, Austria; the full details are in the <a href="/imprint/">imprint</a>. Patch Play Guide is financed by advertising on guide and tool pages. No game publisher, platform holder or hardware manufacturer pays for coverage, and the guides contain no affiliate links. We are not affiliated with any company whose products we mention.</p>
+<h2 id="method">How the guides are written</h2>
+<p>Every guide is written for this site, in our own words, around one question a player actually has – “why does my game stutter after an update?” rather than a product announcement. Each guide explains the mechanism behind the problem, gives a concrete order of actions, and states which platforms it applies to. Technical statements are based on vendor documentation, platform documentation and long-established, widely documented graphics behavior; each page lists its sources at the end.</p>
+<p>We deliberately describe the cost of settings in qualitative terms – minimal, low, moderate, high – and call them “typical”. Performance depends on the game, the scene, the hardware and the driver, and percentages from one test system are often copied far beyond the conditions they were measured under. We do not publish benchmark figures we have not measured ourselves. If we publish our own measurements in the future, each will state the exact hardware, software versions, scene and method.</p>
+<h2 id="patches">How we handle patch notes</h2>
+<p>Patch notes belong to their publishers. We never copy them. The <a href="/tools/patch-decoder/">Patch Decoder</a> works with a clearly <b>fictional</b> example game and with lines you paste yourself from the official source; the sorting happens in your browser. We currently do not publish summaries of specific real-world patches, because each summary would have to be verified line by line against the official notes and kept up to date with hotfixes. Our guides instead teach you to read any patch note and to <a href="/guides/after-update-retest-routine/">re-test after an update</a>.</p>
+<h2 id="tools">How the tools work</h2>
+<ul>
+<li><b>Patch Decoder</b> sorts lines with a published set of word rules, in a fixed order, into a change type (+, ~, −), a category and platforms. The rules and their limits are described on the tool page.</li>
+<li><b>Settings Translator</b> rates twenty common options with qualitative GPU, CPU and VRAM levels and a “visible loss” rating, and ranks them with a simple published formula for your bottleneck.</li>
+<li><b>Bottleneck Finder</b> is a decision tree of ten questions and seventeen results; each result links to the guide that explains it.</li>
+</ul>
+<p>The logic of all three tools is covered by automated tests: for example, that every answer in the finder leads somewhere, that every result is reachable, and that the decoder sorts reference lines correctly.</p>
+<h2 id="checks">How pages are checked</h2>
+<p>Before publication, every page goes through a separate review: technical statements against the sources listed on the page, every calculation (such as frame times or upscaler resolutions) recalculated, platform menu paths checked against the platforms’ documentation, and consistency checked across pages so the site does not contradict itself. Statements we could not verify with certainty are phrased cautiously or left out. Each page shows the date of its last review and has a change log; when we correct something, the date and the log change.</p>
+<h2 id="limits">What the site cannot do</h2>
+<p>We cannot see your system. A guide can tell you what usually helps; only a test on your hardware tells you what helps you. Platform menus and vendor features change with system and driver updates – if a menu path on our pages no longer matches, the platform’s support site has the current one, and we appreciate a <a href="/contact/">note</a>. We do not give advice on hardware purchases, modding, cheating or circumventing platform rules.</p>
+<h2 id="images">No logos, key art or screenshots</h2>
+<p>All diagrams on this site are our own drawings. We show no game logos, characters, key art or screenshots, and mention game, platform and technology names only as text to describe compatibility and settings.</p>
+<h2 id="data">Your data</h2>
+<p>Everything you enter in the tools, including “My setup”, stays in your browser’s local storage. There is no account. Advertising and analytics are described in the <a href="/privacy/">privacy policy</a>.</p>
+<h2 id="history">History</h2>
+<p>Patch Play Guide started as a single page with local tools for organizing patch notes and comparing frame rates. In November 2026 it was rebuilt from scratch with the in-depth guides and the three tools you see now.</p><p class="small">Last updated: November 2, 2026</p></article>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

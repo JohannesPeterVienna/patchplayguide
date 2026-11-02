@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-ads="yes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FPS, frame time and 1% lows explained</title>
+<meta name="description" content="What average FPS, frame time, 1% and 0.1% lows mean, how they are calculated, why tools disagree, and how to read a frame-time graph to spot stutter.">
+<link rel="canonical" href="https://patchplayguide.com/guides/fps-frame-time-1-percent-lows/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FPS, frame time and 1% lows explained">
+<meta property="og:description" content="What average FPS, frame time, 1% and 0.1% lows mean, how they are calculated, why tools disagree, and how to read a frame-time graph to spot stutter.">
+<meta property="og:url" content="https://patchplayguide.com/guides/fps-frame-time-1-percent-lows/">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#0E1A24">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261102a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://patchplayguide.com/guides/"},{"@type":"ListItem","position":3,"name":"FPS, frame time and 1% lows","item":"https://patchplayguide.com/guides/fps-frame-time-1-percent-lows/"}]},{"@type":"Article","headline":"FPS, frame time and 1% lows explained","description":"What average FPS, frame time, 1% and 0.1% lows mean, how they are calculated, why tools disagree, and how to read a frame-time graph to spot stutter.","inLanguage":"en-US","datePublished":"2026-11-02","dateModified":"2026-11-02","mainEntityOfPage":"https://patchplayguide.com/guides/fps-frame-time-1-percent-lows/","author":{"@type":"Organization","name":"Patch Play Guide editorial team (AdStern)","url":"https://patchplayguide.com/about/"},"publisher":{"@type":"Organization","name":"AdStern","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are good 1% lows?","acceptedAnswer":{"@type":"Answer","text":"There is no universal number. What matters is how close they are to the average: lows far below the average mean noticeable stutter. Compare them between settings in the same scene and tool."}},{"@type":"Question","name":"Why do different tools show different 1% lows?","acceptedAnswer":{"@type":"Answer","text":"They calculate them differently – as a percentile or as the average of the slowest frames – and may weight frames differently. Only compare numbers from the same tool."}},{"@type":"Question","name":"How do I convert FPS to frame time?","acceptedAnswer":{"@type":"Answer","text":"Divide 1000 by the frame rate: 60 fps is 16.7 ms per frame, 120 fps is 8.3 ms."}},{"@type":"Question","name":"Is a higher average FPS always better?","acceptedAnswer":{"@type":"Answer","text":"Not if it comes with worse frame pacing. An even, slightly lower frame rate often feels smoother than a higher, uneven one."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261102a" defer></script>
+<script src="/assets/js/site.js?v=20261102a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">FPS, frame time and 1% lows</li></ol></nav>
+<div class="layout"><article class="doc">
+<p class="kicker">Guide · measuring</p>
+<h1>FPS, frame time and 1% lows explained</h1>
+<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">Average FPS is the number everybody quotes, and the one that tells you least about how smooth a game feels. Two runs with the same average can feel completely different if one of them has regular hitches. Frame time and 1% lows show what the average hides. This guide explains the numbers, how tools calculate them and how to read a frame-time graph.</p>
+<div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="frametime">Frame time: the number behind FPS</h2>
+<p>Frame time is how long one frame takes, in milliseconds. It is the inverse of the frame rate: <b>frame time = 1000 ÷ FPS</b>. At 60 fps each frame takes 16.7 ms on average, at 120 fps 8.3 ms, at 30 fps 33.3 ms. Frame time is the better unit for comparisons because it is linear in effort: saving 5 ms means the same amount of work saved whether you start at 30 or at 60 fps, while the FPS change looks very different.</p>
+<div class="tbl" role="region" aria-label="Frame rate and frame time" tabindex="0"><table><caption>Frame rate and frame time</caption><thead><tr><th scope="col">FPS</th><th scope="col">Frame time</th><th scope="col">Change from previous row</th></tr></thead><tbody><tr><th scope="row">30</th><td>33.3 ms</td><td>–</td></tr><tr><th scope="row">40</th><td>25.0 ms</td><td>−8.3 ms</td></tr><tr><th scope="row">60</th><td>16.7 ms</td><td>−8.3 ms</td></tr><tr><th scope="row">90</th><td>11.1 ms</td><td>−5.6 ms</td></tr><tr><th scope="row">120</th><td>8.3 ms</td><td>−2.8 ms</td></tr><tr><th scope="row">144</th><td>6.9 ms</td><td>−1.4 ms</td></tr><tr><th scope="row">240</th><td>4.2 ms</td><td>−2.8 ms</td></tr></tbody></table></div><p class="small">Calculated as 1000 ÷ FPS, rounded to 0.1 ms. Going from 30 to 40 fps saves as much time per frame as going from 40 to 60.</p></section>
+<section><h2 id="average">Why the average hides stutter</h2>
+<p>Average FPS is the number of frames divided by the duration of the run. Imagine one second with 59 frames of 16 ms and one frame of 56 ms: the average is 60 fps, but that one long frame is a visible hitch. Repeat it every second and the game stutters constantly while the counter still says 60. This is why reviewers and careful testers report low percentiles alongside the average.</p>
+<figure class="fig"><svg viewBox="0 0 640 230" role="img" aria-labelledby="ft-fig-t"><title id="ft-fig-t">Two frame-time graphs with the same average: one flat line, one with regular spikes</title><rect class="g-bg" width="640" height="230"/>
+<text class="g-tm" x="20" y="28">RUN A – EVEN PACING</text><text class="g-tm" x="20" y="128">RUN B – SAME AVERAGE, REGULAR SPIKES</text>
+<path class="g-grid" d="M20 90h600M20 200h600"/>
+<path class="g-plus-s" d="M20 70 L620 70"/>
+<path class="g-minus-s" d="M20 180 L100 180 L104 140 L108 182 L220 182 L224 136 L228 182 L340 182 L344 142 L348 182 L460 182 L464 138 L468 182 L580 182 L584 140 L588 182 L620 182"/>
+<text class="g-tm" x="470" y="62">≈16.7 ms each</text><text class="g-tm" x="470" y="130">spikes ≈ 50 ms</text></svg><figcaption>Both runs could report the same average FPS. Run B’s spikes are what you feel as stutter; they show up in the 1% lows and clearly in the graph. Illustration, not a measurement.</figcaption></figure></section>
+<section><h2 id="lows">What 1% and 0.1% lows are</h2>
+<p>The <b>1% low</b> describes the slowest one percent of frames in a run. There are two common ways to calculate it, and tools differ:</p>
+<ul class="do">
+<li><b>Percentile method:</b> take the 99th percentile frame time – the frame time that 99% of frames are faster than – and convert it to FPS.</li>
+<li><b>Average-of-the-worst method:</b> take the slowest 1% of frames, average their frame times, and convert to FPS.</li>
+</ul>
+<p>The second method is more sensitive to individual extreme spikes and usually gives a lower number. Some tools also weight frames by time rather than counting them. The <b>0.1% low</b> works the same way for the slowest 0.1% of frames and highlights rare, large hitches – but in a short run it is based on very few frames and fluctuates a lot. The practical consequence: compare 1% lows only from the same tool with the same method, and use runs long enough to contain a few thousand frames.</p></section>
+<div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="graph">Reading a frame-time graph</h2>
+<ul class="do">
+<li><b>A flat line</b> means even pacing – the ideal, regardless of its height.</li>
+<li><b>Single tall spikes</b> are hitches: shader compilation, asset streaming, a background task. If they appear only on the first run, think <a href="/guides/shader-compilation-stutter-after-update/">shaders</a>.</li>
+<li><b>A regular sawtooth or alternating pattern</b> suggests frame pacing issues, often with V-Sync or a mismatched cap.</li>
+<li><b>A higher, noisy band in certain areas</b> means those scenes are heavier – often a CPU limit in crowded places.</li>
+</ul>
+<p>Tools such as PresentMon, CapFrameX and the overlays from GPU vendors show the graph live or record it for later analysis. On Steam Deck, the performance overlay at a higher level shows a frame-time graph as well.</p></section>
+<section><h2 id="feel">What matters for how a game feels</h2>
+<p>Smoothness depends on even frame times and on how they line up with the display. A steady 40 fps on a 40 Hz Steam Deck screen can feel better than an uneven 50 fps on a 60 Hz screen. A VRR display tolerates fluctuations within its range, but no display hides a 100 ms hitch. Responsiveness depends on the frame rate the game actually renders plus any queuing – see <a href="/guides/frame-cap-vsync-latency-pc/">frame caps, V-Sync and latency</a>. When you compare settings, look at both average FPS and 1% lows, as described in <a href="/guides/how-to-test-a-settings-change/">how to test a settings change</a>.</p></section>
+<section><h2 id="mistakes">Common misreadings</h2>
+<p>Comparing an average from one tool with a 1% low from another; judging from a run of a few seconds; comparing runs where one was capped; and forgetting that the first run after an update includes shader compilation. Each of these can make a setting look better or worse than it is. Write down the tool, method and conditions next to every number.</p></section>
+<section><h2 id="targets">Frame-time targets for common displays</h2>
+<p>A useful way to think about smoothness is the frame-time budget of your display. On a 60 Hz display each refresh lasts 16.7 ms; to show a new frame every refresh, every frame has to fit in that budget. On 120 Hz the budget is 8.3 ms, on 144 Hz 6.9 ms. Frames that exceed the budget cause a missed refresh without VRR, or a longer refresh with VRR. That is why 1% lows matter more as refresh rates rise: the budget shrinks, and occasional long frames become more visible against a very short normal frame time.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>What are good 1% lows?</h3><p>There is no universal number. What matters is how close they are to the average: lows far below the average mean noticeable stutter. Compare them between settings in the same scene and tool.</p></div><div class="qa"><h3>Why do different tools show different 1% lows?</h3><p>They calculate them differently – as a percentile or as the average of the slowest frames – and may weight frames differently. Only compare numbers from the same tool.</p></div><div class="qa"><h3>How do I convert FPS to frame time?</h3><p>Divide 1000 by the frame rate: 60 fps is 16.7 ms per frame, 120 fps is 8.3 ms.</p></div><div class="qa"><h3>Is a higher average FPS always better?</h3><p>Not if it comes with worse frame pacing. An even, slightly lower frame rate often feels smoother than a higher, uneven one.</p></div></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – frame-time capture and metrics</li><li>CapFrameX – frame-time analysis tool; documents its percentile calculations</li><li><a href="https://blurbusters.com/" rel="noopener">Blur Busters</a> – display motion and frame pacing</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<aside id="setup-note" class="setup-note" hidden></aside>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/how-to-test-a-settings-change/"><span class="k">method</span>How to test a settings change properly</a></li><li><a href="/guides/frame-cap-vsync-latency-pc/"><span class="k">smoothness &amp;amp; latency</span>Frame caps, V-Sync and latency on PC explained</a></li><li><a href="/guides/cpu-or-gpu-bottleneck/"><span class="k">diagnosis</span>CPU or GPU bottleneck? A 5-minute check</a></li></ul></nav>
+</article>
+<aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol><li><a href="#frametime">Frame time: the number behind FPS</a></li><li><a href="#average">Why the average hides stutter</a></li><li><a href="#lows">What 1% and 0.1% lows are</a></li><li><a href="#graph">Reading a frame-time graph</a></li><li><a href="#feel">What matters for how a game feels</a></li><li><a href="#mistakes">Common misreadings</a></li><li><a href="#targets">Frame-time targets for common displays</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav><div class="ad" data-slot="side" hidden><span class="ad-label">Advertisement</span></div></aside></div>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>
