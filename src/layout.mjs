@@ -123,7 +123,7 @@ function relatedHtml(related, lookup) {
   if (!related || !related.length) return '';
   return `<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul>${related.map((r) => { const m = lookup(r); return `<li><a href="${m.path}"><span class="k">${esc(m.kicker)}</span>${esc(m.h1)}</a></li>`; }).join('')}</ul></nav>`;
 }
-const meta = (n) => `<p class="meta"><span class="stamp">Reviewed ${SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
+const meta = (n) => `<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed ${SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
 
 export function articleLd(g, path) {
   return {
@@ -152,7 +152,7 @@ ${adSlot('lede')}
 ${body}
 ${faqHtml(g.faq)}
 ${sourcesHtml(g.sources)}
-${changelogHtml(g.changelog || [[SITE.reviewedIso, 'Published after a full fact check of every statement on this page.']])}
+${changelogHtml(g.changelog || [[SITE.reviewedIso, 'First published.']])}
 <aside id="setup-note" class="setup-note" hidden></aside>
 ${relatedHtml(g.related, lookup)}
 </article>
@@ -180,7 +180,7 @@ ${adSlot('tool')}
 ${rest.map((s) => `<section>${s}</section>`).join('\n')}
 ${faqHtml(t.faq)}
 ${sourcesHtml(t.sources)}
-${changelogHtml(t.changelog || [[SITE.reviewedIso, 'Published after a full review of the tool logic and every statement on this page.']])}
+${changelogHtml(t.changelog || [[SITE.reviewedIso, 'First published.']])}
 </div>
 ${relatedHtml(t.related, lookup)}
 </article>`;

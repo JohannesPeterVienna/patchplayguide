@@ -70,7 +70,7 @@ ${fig('tc-fig', 'Alternating test runs A1, B1, A2, B2 after a warm-up run, then 
   ],
   sources: [
     ['PresentMon', 'https://github.com/GameTechDev/PresentMon', 'open-source frame-time capture'],
-    ['CapFrameX', null, 'free frame-time capture and analysis tool for Windows'],
+    ['CapFrameX', 'https://www.capframex.com/', 'free frame-time capture and analysis tool for Windows'],
     ['GPU vendor overlays', null, 'NVIDIA App and AMD Software: Adrenalin Edition performance metrics']
   ],
   related: ['fps-frame-time-1-percent-lows', 'after-update-retest-routine', 'cpu-or-gpu-bottleneck']

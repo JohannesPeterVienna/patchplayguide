@@ -24,7 +24,7 @@ export function home({ GUIDES }) {
 <div>
 <p class="kicker">Patch notes → your settings → a re-test</p>
 <h1>What did the patch change on your screen?</h1>
-<p class="lede">Patch Play Guide translates game updates and graphics menus into what matters on your own screen: frame rate, image quality, console modes and handheld battery. Every guide ends in something you can do, and every claim is something you can test yourself – on PC, PS5, Xbox, Switch 2 and Steam Deck.</p>
+<p class="lede">Patch Play Guide translates game updates and graphics menus into what matters on your own screen: frame rate, image quality, console modes and handheld battery. Every guide ends in something you can test yourself – on PC, PS5, Xbox, Switch 2 and Steam Deck.</p>
 <p class="row"><a class="btn btn-primary" href="/tools/patch-decoder/">Decode patch notes</a><a class="btn btn-ghost" href="/tools/bottleneck-finder/">Find my bottleneck</a></p>
 </div>
 <figure class="diffcard" aria-labelledby="dc-cap">
@@ -112,7 +112,7 @@ export const STATIC_PAGES = [
 </ul>
 <p>The logic of all three tools is covered by automated tests: for example, that every answer in the finder leads somewhere, that every result is reachable, and that the decoder sorts reference lines correctly.</p>
 <h2 id="checks">How pages are checked</h2>
-<p>Before publication, every page goes through a separate review: technical statements against the sources listed on the page, every calculation (such as frame times or upscaler resolutions) recalculated, platform menu paths checked against the platforms’ documentation, and consistency checked across pages so the site does not contradict itself. Statements we could not verify with certainty are phrased cautiously or left out. Each page shows the date of its last review and has a change log; when we correct something, the date and the log change.</p>
+<p>Guides are written from vendor and platform documentation as known at the time of writing and are reviewed by a second editor before publishing; calculations such as frame times and upscaler resolutions are recalculated. Platform menu paths and vendor features can change between system and driver updates, so a path on our pages may no longer match your console or PC – please report any difference via the <a href="/contact/">contact page</a>. Statements we could not verify with certainty are phrased cautiously or left out. Each page shows the date of its last review and has a change log; when we correct something, the date and the log change.</p>
 <h2 id="limits">What the site cannot do</h2>
 <p>We cannot see your system. A guide can tell you what usually helps; only a test on your hardware tells you what helps you. Platform menus and vendor features change with system and driver updates – if a menu path on our pages no longer matches, the platform’s support site has the current one, and we appreciate a <a href="/contact/">note</a>. We do not give advice on hardware purchases, modding, cheating or circumventing platform rules.</p>
 <h2 id="images">No logos, key art or screenshots</h2>

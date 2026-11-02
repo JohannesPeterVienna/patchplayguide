@@ -38,11 +38,11 @@
 <div class="layout"><article class="doc">
 <p class="kicker">Guide · diagnosis</p>
 <h1>CPU or GPU bottleneck? A 5-minute check</h1>
-<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
 <p class="lede">Every system has a bottleneck – the part that is busiest while the others wait. Knowing which one it is decides which settings help. The good news: you do not need benchmarks or special knowledge. One resolution test and a glance at GPU usage answer the question for the game you are playing right now.</p>
 <div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="idea">What a bottleneck is</h2>
-<p>For each frame, the CPU prepares the work – game logic, physics, animation, the list of objects to draw – and the GPU draws it. The two work in parallel on consecutive frames, so the frame rate is set by whichever takes longer per frame. If the CPU needs 8 milliseconds and the GPU 14, the GPU is the bottleneck and the game runs at about 71 frames per second (1000 ÷ 14). Speeding up the CPU’s part changes nothing.</p>
+<p>For each frame, the CPU prepares the work – game logic, physics, animation, the list of objects to draw – and the GPU draws it. The two work in parallel on consecutive frames, so the frame rate is set by whichever takes longer per frame. If the CPU needs 12 milliseconds and the GPU 14, the GPU is the bottleneck and the game runs at about 71 frames per second (1000 ÷ 14). Speeding up the CPU’s part changes nothing.</p>
 <p>The bottleneck is not a property of your PC alone. It depends on the game, the scene, the settings and the resolution. The same PC can be GPU-bound in a forest at 4K and CPU-bound in a crowded city at 1080p. That is why the check below is done in the game and place where you have the problem.</p></section>
 <section><h2 id="check">The 5-minute check</h2>
 <ol>
@@ -53,13 +53,13 @@
 <li><b>Confirm with GPU usage.</b> In an overlay, a GPU near 95–100% load points to a GPU limit. Clearly lower usage while the frame rate is low points to the CPU or a frame limiter.</li>
 <li><b>Restore your settings.</b> The test was a diagnosis, not a recommendation.</li>
 </ol>
-<figure class="fig"><svg viewBox="0 0 640 220" role="img" aria-labelledby="bn-fig-t"><title id="bn-fig-t">Two scales: GPU-bound when GPU time per frame is larger, CPU-bound when CPU time per frame is larger</title><rect class="g-bg" width="640" height="220"/>
+<figure class="fig"><div class="fig-scroll" tabindex="0" role="group" aria-label="Diagram, scrolls sideways on small screens"><svg viewBox="0 0 640 220" role="img" aria-labelledby="bn-fig-t"><title id="bn-fig-t">Two scales: GPU-bound when GPU time per frame is larger, CPU-bound when CPU time per frame is larger</title><rect class="g-bg" width="640" height="220"/>
 <text class="g-tm" x="20" y="30">TIME PER FRAME – THE LONGER BAR SETS THE FRAME RATE</text>
-<text class="g-t" x="20" y="72">CPU</text><rect x="70" y="56" width="160" height="22" fill="#47D98A"/><text class="g-tm" x="240" y="72">8 ms</text>
+<text class="g-t" x="20" y="72">CPU</text><rect x="70" y="56" width="240" height="22" fill="#47D98A"/><text class="g-tm" x="320" y="72">12 ms</text>
 <text class="g-t" x="20" y="104">GPU</text><rect x="70" y="88" width="280" height="22" fill="#7CC4FF"/><text class="g-tm" x="360" y="104">14 ms → ≈ 71 fps, GPU-bound</text>
 <path class="g-grid" d="M20 128h600"/>
 <text class="g-t" x="20" y="164">CPU</text><rect x="70" y="148" width="240" height="22" fill="#47D98A"/><text class="g-tm" x="320" y="164">12 ms → ≈ 83 fps, CPU-bound</text>
-<text class="g-t" x="20" y="196">GPU</text><rect x="70" y="180" width="140" height="22" fill="#7CC4FF"/><text class="g-tm" x="220" y="196">7 ms (after lowering resolution)</text></svg><figcaption>Worked example: lowering the resolution shrinks the GPU’s time per frame from 14 to 7 ms. The frame rate does not double – it rises only until the CPU, at 12 ms, becomes the slower part.</figcaption></figure></section>
+<text class="g-t" x="20" y="196">GPU</text><rect x="70" y="180" width="140" height="22" fill="#7CC4FF"/><text class="g-tm" x="220" y="196">7 ms (after lowering resolution)</text></svg></div><figcaption>Worked example: with the CPU at 12 ms and the GPU at 14 ms, the GPU sets the pace at about 71 fps. Lowering the resolution shrinks the GPU’s time to 7 ms – but the frame rate does not double: the CPU, at 12 ms, becomes the limit at about 83 fps.</figcaption></figure></section>
 <section><h2 id="gpu">If you are GPU-bound</h2>
 <p>This is the easier case, because graphics settings work directly. In order of value:</p>
 <ul class="do">
@@ -88,7 +88,7 @@
 <p>Patches can move the bottleneck too. An update that optimizes crowd simulation can turn a CPU-bound city into a GPU-bound one, and suddenly resolution matters there. After a big update, repeat the five-minute check in your problem area before changing settings – it takes less time than reading a long forum thread.</p></section>
 <section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Is a CPU bottleneck bad?</h3><p>Not necessarily. Every system has a bottleneck. It only matters if the frame rate it allows is lower than you want.</p></div><div class="qa"><h3>Why does my GPU never reach 100%?</h3><p>Usually because the CPU or a frame limiter (cap, V-Sync, power mode) holds the frame rate down. Some games also report lower usage even when GPU-bound.</p></div><div class="qa"><h3>Does a higher resolution reduce CPU bottlenecks?</h3><p>It shifts more load to the GPU, so the GPU may become the limit, but the frame rate does not go up. It can, however, give you better image quality for free when you are CPU-bound.</p></div><div class="qa"><h3>Which tools show GPU usage?</h3><p>The overlays in GPU driver software, the Steam overlay performance monitor, the Steam Deck performance overlay and tools such as PresentMon.</p></div></section>
 <section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – frame-time and GPU busy measurements on Windows</li><li><a href="https://help.steampowered.com/" rel="noopener">Steam Support</a> – Steam overlay performance monitor</li><li>GPU vendor overlays – NVIDIA App and AMD Software: Adrenalin Edition</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
-<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> First published.</li></ul></section>
 <aside id="setup-note" class="setup-note" hidden></aside>
 <nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/graphics-settings-explained/"><span class="k">PC settings</span>Graphics settings explained: what each option costs</a></li><li><a href="/guides/fps-frame-time-1-percent-lows/"><span class="k">measuring</span>FPS, frame time and 1% lows explained</a></li><li><a href="/guides/how-to-test-a-settings-change/"><span class="k">method</span>How to test a settings change properly</a></li></ul></nav>
 </article>

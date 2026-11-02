@@ -149,8 +149,8 @@ ${tbl('Frame rate and frame time', ['FPS', 'Frame time', 'Change from previous r
   ['90', '11.1 ms', '−5.6 ms'],
   ['120', '8.3 ms', '−2.8 ms'],
   ['144', '6.9 ms', '−1.4 ms'],
-  ['240', '4.2 ms', '−2.8 ms']
-], 'Calculated as 1000 ÷ FPS, rounded to 0.1 ms. Going from 30 to 40 fps saves as much time per frame as going from 40 to 60.')}`,
+  ['240', '4.2 ms', '−2.7 ms']
+], 'Calculated as 1000 ÷ FPS, rounded to 0.1 ms; differences are taken between the rounded values. Going from 30 to 40 fps saves as much time per frame as going from 40 to 60.')}`,
     `<h2 id="average">Why the average hides stutter</h2>
 <p>Average FPS is the number of frames divided by the duration of the run. Imagine one second with 59 frames of 16 ms and one frame of 56 ms: the average is 60 fps, but that one long frame is a visible hitch. Repeat it every second and the game stutters constantly while the counter still says 60. This is why reviewers and careful testers report low percentiles alongside the average.</p>
 ${fig('ft-fig', 'Two frame-time graphs with the same average: one flat line, one with regular spikes',
@@ -191,7 +191,7 @@ ${fig('ft-fig', 'Two frame-time graphs with the same average: one flat line, one
   ],
   sources: [
     ['PresentMon', 'https://github.com/GameTechDev/PresentMon', 'frame-time capture and metrics'],
-    ['CapFrameX', null, 'frame-time analysis tool; documents its percentile calculations'],
+    ['CapFrameX', 'https://www.capframex.com/', 'frame-time analysis tool; documents its percentile calculations'],
     ['Blur Busters', 'https://blurbusters.com/', 'display motion and frame pacing']
   ],
   related: ['how-to-test-a-settings-change', 'frame-cap-vsync-latency-pc', 'cpu-or-gpu-bottleneck']

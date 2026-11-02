@@ -38,7 +38,7 @@
 <div class="layout"><article class="doc">
 <p class="kicker">Guide · upscaling</p>
 <h1>DLSS vs FSR vs XeSS: which upscaler mode to pick</h1>
-<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
 <p class="lede">Upscalers render the game at a lower internal resolution and reconstruct a sharper image for your display. Used well, they are the cheapest way to gain GPU performance. The names – DLSS, FSR, XeSS, TSR, PSSR – and the modes from Quality to Ultra Performance hide a simple question: how many pixels does the game really render, and how good is the reconstruction?</p>
 <div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="what">What an upscaler does</h2>
@@ -52,7 +52,7 @@
 <p>As a rule of thumb, the machine-learning upscalers tend to hold fine detail and stability better at aggressive modes, while FSR 2 and 3 upscaling run almost everywhere. Results vary by game, because each integration and its motion vectors differ. If your card supports several, try them in the same scene: walk past foliage and fences and look for shimmer and ghosting.</p></section>
 <div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="pick">Which mode to pick</h2>
-<figure class="fig"><svg viewBox="0 0 640 220" role="img" aria-labelledby="up-fig-t"><title id="up-fig-t">Recommended starting mode by output resolution: 1080p Quality, 1440p Quality or Balanced, 4K Balanced or Performance</title><rect class="g-bg" width="640" height="220"/>
+<figure class="fig"><div class="fig-scroll" tabindex="0" role="group" aria-label="Diagram, scrolls sideways on small screens"><svg viewBox="0 0 640 220" role="img" aria-labelledby="up-fig-t"><title id="up-fig-t">Recommended starting mode by output resolution: 1080p Quality, 1440p Quality or Balanced, 4K Balanced or Performance</title><rect class="g-bg" width="640" height="220"/>
 <text class="g-tm" x="20" y="30">STARTING POINT BY OUTPUT RESOLUTION (then test)</text>
 <rect class="g-panel" x="20" y="48" width="190" height="150" rx="8"/><rect class="g-panel" x="225" y="48" width="190" height="150" rx="8"/><rect class="g-panel" x="430" y="48" width="190" height="150" rx="8"/>
 <text class="g-tb" x="36" y="78">1080p</text><text class="g-tb" x="241" y="78">1440p</text><text class="g-tb" x="446" y="78">4K</text>
@@ -60,7 +60,7 @@
 <rect class="g-acc" x="241" y="96" width="150" height="26" rx="4"/><text class="g-tk" x="251" y="114">Quality/Balanced</text>
 <rect class="g-acc" x="446" y="96" width="160" height="26" rx="4"/><text class="g-tk" x="456" y="114">Balanced/Perf.</text>
 <text class="g-tm" x="36" y="150">renders ≈ 720p</text><text class="g-tm" x="241" y="150">renders ≈ 960p–835p</text><text class="g-tm" x="446" y="150">renders ≈ 1253p–1080p</text>
-<text class="g-tm" x="36" y="176">avoid Performance</text><text class="g-tm" x="241" y="176">Performance if needed</text><text class="g-tm" x="446" y="176">Ultra Perf. last resort</text></svg><figcaption>A practical starting point. Keep the internal resolution from dropping too low: the reconstruction needs enough real pixels to work with.</figcaption></figure>
+<text class="g-tm" x="36" y="176">avoid Performance</text><text class="g-tm" x="241" y="176">Performance if needed</text><text class="g-tm" x="446" y="176">Ultra Perf. last resort</text></svg></div><figcaption>A practical starting point. Keep the internal resolution from dropping too low: the reconstruction needs enough real pixels to work with.</figcaption></figure>
 <ul class="do">
 <li>Set the display’s native resolution as output; never lower the output resolution when an upscaler is available.</li>
 <li>Start with Quality. If you need more frames, step to Balanced, then Performance – one step at a time, testing each.</li>
@@ -81,7 +81,7 @@
 <p>Note the frame rate of each option as well – upscalers have a small cost of their own, and the machine-learning ones can cost slightly more on some cards. If two options look equal to you, take the faster one; if one is clearly more stable, a slightly lower frame rate is usually worth it. Re-check after updates that mention a new upscaler version.</p></section>
 <section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>Is DLSS Quality better than native resolution?</h3><p>Sometimes it looks comparable or more stable than native with a weak anti-aliasing method, sometimes slightly softer. It depends on the game and the output resolution; compare in a scene with fine detail.</p></div><div class="qa"><h3>Can I use FSR on an NVIDIA card?</h3><p>FSR 2 and FSR 3 upscaling are designed to run on graphics cards from all major vendors, so yes, if the game offers it. FSR 4 targets recent Radeon cards.</p></div><div class="qa"><h3>Which upscaler mode for 1080p?</h3><p>Quality is the usual choice. Lower modes render very few pixels at 1080p output and tend to look soft.</p></div><div class="qa"><h3>Does upscaling help if I am CPU-bound?</h3><p>Very little. Upscaling reduces GPU work; if the processor is the limit, the frame rate hardly changes.</p></div></section>
 <section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://www.nvidia.com/en-us/geforce/technologies/dlss/" rel="noopener">NVIDIA DLSS technology overview</a></li><li><a href="https://gpuopen.com/" rel="noopener">AMD GPUOpen</a> – FidelityFX Super Resolution documentation</li><li>Intel XeSS – documented on Intel’s gaming technology pages</li><li>Unreal Engine documentation on Temporal Super Resolution – Epic Games developer documentation</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
-<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> First published.</li></ul></section>
 <aside id="setup-note" class="setup-note" hidden></aside>
 <nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/frame-generation-explained/"><span class="k">frame generation</span>Frame generation explained: smoother, but at what cost?</a></li><li><a href="/guides/graphics-settings-explained/"><span class="k">PC settings</span>Graphics settings explained: what each option costs</a></li><li><a href="/guides/steam-deck-frame-cap-tdp-battery/"><span class="k">Steam Deck</span>Steam Deck: frame cap, TDP and battery basics</a></li></ul></nav>
 </article>

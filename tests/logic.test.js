@@ -81,6 +81,22 @@ test('decoder: change type', () => {
   // documented limitation on the tool page
   assert.equal(D.detectType('Removed an issue that caused stutter'), 'minus');
 });
+test('decoder: review cases – "no longer crashes" is a fix, "can now be disabled" is a change', () => {
+  assert.equal(D.detectType('The game no longer crashes when alt-tabbing'), 'plus');
+  assert.equal(D.detectType('Menus no longer flicker with HDR enabled'), 'plus');
+  assert.equal(D.detectType('Characters no longer appear in T-pose'), 'plus');
+  assert.equal(D.detectType('Motion blur can now be disabled'), 'tilde');
+  assert.equal(D.detectType('Film grain can now be turned off'), 'tilde');
+  assert.equal(D.detectType('The legacy renderer is no longer available'), 'minus');
+});
+test('decoder: generic Hz rule, handheld bug fixes, RTX', () => {
+  assert.equal(D.classify('Added a 144 Hz option for supported displays').cat, 'modes');
+  assert.equal(D.classify('New 90hz mode on Steam Deck OLED').cat, 'modes');
+  const fix = D.classify('Fixed audio desync in handheld mode on Switch 2');
+  assert.equal(fix.type, 'plus'); assert.equal(fix.cat, 'other'); assert.deepEqual(fix.platforms, ['switch2']);
+  assert.equal(D.classify('Handheld mode on Switch 2 now targets 1080p').cat, 'modes');
+  assert.deepEqual(D.classify('Improved performance on RTX cards').platforms, ['pc']);
+});
 test('decoder: category order (stability before upscaling, shaders before performance)', () => {
   assert.equal(D.classify('Fixed a crash when enabling DLSS').cat, 'stability');
   assert.equal(D.classify('Reduced shader stutter in the hub').cat, 'shaders');

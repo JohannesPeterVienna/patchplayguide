@@ -54,7 +54,7 @@ const cats = tbl('Categories and what they usually mean for your settings', ['Ca
   ['Input &amp; latency', 'latency, Reflex, Anti-Lag, controller, dead zone', 'Feel changes even when FPS does not'],
   ['Graphics options', 'shadows, textures, reflections, ray tracing, fog, preset', 'Re-test the named option in one fixed scene'],
   ['Performance', 'FPS, CPU, GPU, VRAM, stutter, frame pacing', 'Re-run your usual test route and compare'],
-  ['Gameplay &amp; other', 'everything else', 'No settings action needed']
+  ['Gameplay, audio &amp; other', 'everything else, e.g. balance or audio fixes', 'No settings action needed']
 ]);
 
 export default {
@@ -79,9 +79,9 @@ ${signs}
     `<h2 id="rules">How the sorting works – and where it fails</h2>
 <p>The decoder does not use artificial intelligence. It applies a short, published list of word rules, in a fixed order, to every line. That makes it predictable: the same line always gets the same labels, and you can see why.</p>
 ${pipeline}
-<p><b>Change type.</b> A line that starts with “+”, “~” or “−” (the minus sign, not a hyphen) keeps that sign. A line that starts with “Known issue” is a minus; one that starts with “Fixed”, “Resolved” or “Addressed” is a plus. Otherwise the first matching word decides: removal words such as “removed”, “no longer” and “disabled” win over improvement words such as “added”, “improved” and “optimized”, which win over change words such as “adjusted” and “now”. A line without any of these words is treated as a change (~), the cautious default.</p>
+<p><b>Change type.</b> A line that starts with “+”, “~” or “−” (the minus sign, not a hyphen) keeps that sign. A line that starts with “Known issue” is a minus; one that starts with “Fixed”, “Resolved” or “Addressed” is a plus. Otherwise the first matching word decides: removal words such as “removed”, “no longer” and “disabled” win over improvement words such as “added”, “improved” and “optimized”, which win over change words such as “adjusted” and “now”. Two phrases are checked first: “no longer crashes / stutters / flickers …” is a fix (+), and “can now be disabled” is a change (~), not a removal. A line without any of these words is treated as a change (~), the cautious default.</p>
 ${cats}
-<p><b>Category.</b> Categories are checked from the most specific to the most general. Crashes come first, so “Fixed a crash when enabling DLSS” is a stability fix rather than an upscaling change. Shader and loading terms come before performance terms, so “shader stutter” lands in Shaders, not in general Performance.</p>
+<p><b>Category.</b> Categories are checked from the most specific to the most general. Crashes come first, so “Fixed a crash when enabling DLSS” is a stability fix rather than an upscaling change. Shader and loading terms come before performance terms, so “shader stutter” lands in Shaders, not in general Performance. A fix that only happens “in handheld mode” or “when docked” – say, an audio desync – is not treated as a mode change.</p>
 <p><b>Platforms.</b> The decoder looks for platform names: PC words (Windows, Steam, DirectX, NVIDIA, AMD), PS5 and PlayStation, Xbox and Series X|S, Switch 2, and handheld PCs such as Steam Deck. “Handheld mode” next to “Switch 2” counts as the Switch’s mode. A line that names no platform applies to all platforms and stays visible under every platform filter.</p>
 <p><b>Limits.</b> Word rules cannot understand context. “Removed an issue that caused stutter” is a fix, but the word “removed” makes it a minus. Lines written in other languages, or patch notes that describe several changes in one sentence, will be sorted less reliably. Treat the labels as a first pass that saves reading time, and read the original line before you act on it.</p>`,
     `<h2 id="fictional">Why the example game is fictional</h2>

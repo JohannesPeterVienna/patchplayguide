@@ -15,7 +15,7 @@
     input: 'Input & latency',
     graphics: 'Graphics options',
     performance: 'Performance',
-    other: 'Gameplay & other'
+    other: 'Gameplay, audio & other'
   };
   var PLATFORMS = { pc: 'PC', ps5: 'PS5', xbox: 'Xbox', switch2: 'Switch 2', handheld: 'Handheld PC' };
   var TYPES = { plus: '+', tilde: '~', minus: '−' };
@@ -57,6 +57,8 @@
   };
 
   var TYPE_RULES = [
+    ['plus', /\bno longer (?:crash(?:es)?|stutters?|flickers?|freez(?:e|es)|hitch(?:es)?|appears?|occurs?|see|causes?)\b/i],
+    ['tilde', /\bcan now be (?:disabled|turned off|switched off|toggled)\b/i],
     ['minus', /\b(known issues?|removed?|removes|removing|no longer|disabled?|disables|deprecated|regression|temporarily unavailable|reverted|nerf(?:ed|s)?|reduced (?:the )?max(?:imum)?)\b/i],
     ['plus', /\b(add(?:ed|s)?|new|improved?|improves|improvements?|optimi[sz](?:ed|es|ation)|fix(?:ed|es)?|resolved|faster|smoother|support for|now supports?|enabled|reduced (?:stutter|hitch(?:ing)?|load(?:ing)? times?|memory|cpu|gpu|vram|latency))\b/i],
     ['tilde', /\b(change[ds]?|adjust(?:ed|s)?|tweak(?:ed|s)?|update[ds]?|rebalanc(?:ed|es)|rework(?:ed|s)?|now|moved|renamed|default)\b/i]
@@ -66,7 +68,7 @@
     ['stability', /\b(crash(?:es|ed|ing)?|freez(?:e|es|ing)|hang(?:s|ing)?|stability|softlock|error code|disconnect(?:s|ed|ion)?)\b/i],
     ['shaders', /\b(shaders?|pso|pipeline cache|compil(?:e|es|ed|ing|ation)|pre-?compil\w*|shader cache|loading screens?|load times?)\b/i],
     ['upscaling', /\b(dlss|fsr|xess|pssr|upscal\w*|super resolution|sharpen\w*|frame gen\w*|multi frame|ray reconstruction)\b/i],
-    ['modes', /\b(performance mode|quality mode|fidelity mode|resolution mode|balanced mode|graphics mode|\d{2} ?fps mode|120 ?hz|vrr|variable refresh|pro enhanced|ps5 pro|docked|handheld mode|tdp|battery)\b/i],
+    ['modes', /\b(performance mode|quality mode|fidelity mode|resolution mode|balanced mode|graphics mode|\d{2} ?fps mode|\d{2,3} ?hz|vrr|variable refresh|pro enhanced|ps5 pro|docked|handheld mode|tdp|battery)\b/i],
     ['input', /\b(latency|input lag|input|reflex|anti-lag|controller|gamepad|mouse|sensitivity|dead ?zones?|aim assist|key ?bind\w*)\b/i],
     ['graphics', /\b(shadows?|textures?|reflections?|ray[- ]?trac\w*|path[- ]?trac\w*|lighting|global illumination|fog|volumetric\w*|ambient occlusion|anti-?aliasing|taa|msaa|lod|draw distance|view distance|foliage|grass|preset|graphics|resolution|hdr|field of view|fov|motion blur|depth of field|particles?|tessellation)\b/i],
     ['performance', /\b(fps|frame ?rates?|performance|cpu|gpu|vram|memory|ram|stutter\w*|hitch\w*|frame ?times?|frame pacing|optimi[sz]\w*)\b/i]
@@ -77,7 +79,7 @@
     ['handheld', /\b(steam deck|rog ally|legion go|handheld pcs?|handhelds?)\b/i],
     ['ps5', /\b(ps5(?: pro)?|playstation(?: 5)?)\b/i],
     ['xbox', /\b(xbox|series [xs]|series x\|s)\b/i],
-    ['pc', /\b(pc|windows|steam|epic games store|directx ?1[12]|dx1[12]|vulkan|nvidia|geforce|radeon|amd|intel arc|mouse and keyboard)\b/i]
+    ['pc', /\b(pc|windows|steam|epic games store|directx ?1[12]|dx1[12]|vulkan|nvidia|geforce|rtx|radeon|amd|intel arc|mouse and keyboard)\b/i]
   ];
 
   function cleanLine(raw) {
@@ -97,7 +99,10 @@
     return 'tilde';
   }
 
+  var FIX_START = /^(fix(?:ed|es)?|resolved|addressed|corrected)\b/i;
   function detectCategory(s) {
+    // a bug fix that merely happens "in handheld mode" / "when docked" is not a mode change
+    if (FIX_START.test(s)) s = s.replace(/\b(handheld mode|docked mode|when docked|docked)\b/ig, '');
     for (var i = 0; i < CAT_RULES.length; i++) if (CAT_RULES[i][1].test(s)) return CAT_RULES[i][0];
     return 'other';
   }

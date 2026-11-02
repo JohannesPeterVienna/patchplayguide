@@ -38,7 +38,7 @@
 <div class="layout"><article class="doc">
 <p class="kicker">Guide · method</p>
 <h1>How to test a settings change properly</h1>
-<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
 <p class="lede">Most “this setting gives +20 FPS” claims come from a single glance at a counter. Frame rates jump around by several percent from one second to the next, so a single reading can easily show a gain that is not there. A proper comparison takes about ten minutes, needs no paid tools, and gives you numbers you can trust and compare after the next patch.</p>
 <div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="principles">Four principles</h2>
@@ -66,14 +66,14 @@
 <li>Switch back and measure A2, then switch again and measure B2. Alternating reduces the effect of the system warming up.</li>
 <li>Compare the averages of A and B, for both average FPS and 1% lows.</li>
 </ol>
-<figure class="fig"><svg viewBox="0 0 640 200" role="img" aria-labelledby="tc-fig-t"><title id="tc-fig-t">Alternating test runs A1, B1, A2, B2 after a warm-up run, then averaging A and B</title><rect class="g-bg" width="640" height="200"/>
+<figure class="fig"><div class="fig-scroll" tabindex="0" role="group" aria-label="Diagram, scrolls sideways on small screens"><svg viewBox="0 0 640 200" role="img" aria-labelledby="tc-fig-t"><title id="tc-fig-t">Alternating test runs A1, B1, A2, B2 after a warm-up run, then averaging A and B</title><rect class="g-bg" width="640" height="200"/>
 <rect class="g-panel" x="20" y="60" width="96" height="60" rx="6"/><text class="g-tm" x="32" y="96">warm-up</text>
 <rect class="g-panel" x="136" y="60" width="96" height="60" rx="6"/><text class="g-tb" x="170" y="96">A1</text>
 <rect class="g-acc" x="252" y="60" width="96" height="60" rx="6"/><text class="g-tk" x="288" y="96">B1</text>
 <rect class="g-panel" x="368" y="60" width="96" height="60" rx="6"/><text class="g-tb" x="402" y="96">A2</text>
 <rect class="g-acc" x="484" y="60" width="96" height="60" rx="6"/><text class="g-tk" x="520" y="96">B2</text>
 <text class="g-tm" x="20" y="40">ALTERNATE SETTINGS · SAME ROUTE · NOTE AVERAGE FPS AND 1% LOWS</text>
-<text class="g-t" x="136" y="160">compare (A1+A2)/2 with (B1+B2)/2</text></svg><figcaption>Alternating A and B instead of measuring A twice and then B twice spreads slow drifts – heat, background tasks – evenly over both settings.</figcaption></figure></section>
+<text class="g-t" x="136" y="160">compare (A1+A2)/2 with (B1+B2)/2</text></svg></div><figcaption>Alternating A and B instead of measuring A twice and then B twice spreads slow drifts – heat, background tasks – evenly over both settings.</figcaption></figure></section>
 <section><h2 id="real">When is a difference real?</h2>
 <p>Look at how much the runs of the same setting differ from each other. If A1 and A2 differ by 3%, a 2% difference between A and B is noise. A useful rule: treat a difference as real only when it is clearly larger than the spread between repeated runs of the same setting – and when it points the same way in every pair.</p>
 <p>Also check whether it matters. A 3% gain from 140 to 144 FPS is invisible to most people; the same 3% from 58 to 60 FPS on a 60 Hz display can be the difference between smooth and uneven motion. Improvements in 1% lows are often more noticeable than in the average.</p>
@@ -87,8 +87,8 @@
 <li>Trusting one run because the result is the one you hoped for.</li>
 </ul></section>
 <section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>How many test runs do I need?</h3><p>At least two per setting, better three, after a warm-up run. Alternate the settings so slow changes affect both equally.</p></div><div class="qa"><h3>Are built-in benchmarks reliable?</h3><p>They are very repeatable, which is good for comparisons. They do not always represent the heaviest gameplay, especially CPU-heavy scenes with many characters.</p></div><div class="qa"><h3>What are 1% lows?</h3><p>The frame rate during the slowest one percent of frames in a run. They show stutter and hitches that the average hides.</p></div><div class="qa"><h3>Should I disable the frame cap for testing?</h3><p>Yes, for performance comparisons. With a cap, both settings may hit the limit and look identical even when one is much faster.</p></div></section>
-<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – open-source frame-time capture</li><li>CapFrameX – free frame-time capture and analysis tool for Windows</li><li>GPU vendor overlays – NVIDIA App and AMD Software: Adrenalin Edition performance metrics</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
-<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li><a href="https://github.com/GameTechDev/PresentMon" rel="noopener">PresentMon</a> – open-source frame-time capture</li><li><a href="https://www.capframex.com/" rel="noopener">CapFrameX</a> – free frame-time capture and analysis tool for Windows</li><li>GPU vendor overlays – NVIDIA App and AMD Software: Adrenalin Edition performance metrics</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> First published.</li></ul></section>
 <aside id="setup-note" class="setup-note" hidden></aside>
 <nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/fps-frame-time-1-percent-lows/"><span class="k">measuring</span>FPS, frame time and 1% lows explained</a></li><li><a href="/guides/after-update-retest-routine/"><span class="k">after an update</span>After a big update: a 10-minute re-test routine</a></li><li><a href="/guides/cpu-or-gpu-bottleneck/"><span class="k">diagnosis</span>CPU or GPU bottleneck? A 5-minute check</a></li></ul></nav>
 </article>

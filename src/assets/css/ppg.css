@@ -88,6 +88,16 @@ code, kbd { font-family: var(--mono); font-size: .88em; background: var(--line-s
 .mast :focus-visible, .tool :focus-visible, .foot :focus-visible { outline-color: var(--signal); }
 
 main { padding: 20px 0 48px; }
+@media (max-width: 759px) {
+  .mast-in { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 2px; padding-top: 6px; padding-bottom: 2px; }
+  .brand .mark { width: 30px; height: 30px; }
+  .brand b { font-size: 1.1rem; }
+  .brand small { display: none; }
+  .main-nav { overflow-x: auto; min-width: 0; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); }
+  .main-nav::-webkit-scrollbar { display: none; }
+  .main-nav ul { flex-wrap: nowrap; padding-right: 48px; }
+  .main-nav a { white-space: nowrap; padding: 9px 8px; }
+}
 .crumbs ol { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; font: 400 .78rem/1.4 var(--mono); color: var(--muted); }
 .crumbs li + li::before { content: "/"; margin-right: 4px; color: var(--muted); }
 .crumbs a { color: var(--muted); }
@@ -123,7 +133,16 @@ thead th { font: 600 .78rem/1.3 var(--mono); text-transform: uppercase; letter-s
 tbody th { font-weight: 600; }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .fig { margin: 1.6em 0; }
+.fig-scroll { overflow-x: auto; border-radius: 8px; background: var(--ink); }
 .fig svg { display: block; width: 100%; height: auto; border-radius: 8px; background: var(--ink); }
+@media (max-width: 700px) {
+  /* keep diagram labels ≥ 11 px: the smallest label is 12 units in a 640-unit viewBox */
+  .fig svg { min-width: 600px; }
+  .fig-scroll { -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); }
+  .fig-scroll:focus, .fig-scroll:hover { -webkit-mask-image: none; mask-image: none; }
+  .fig figcaption::before { content: "Swipe sideways for the whole diagram. "; font-weight: 600; }
+}
+.byline { font-size: .9rem; color: var(--muted); margin: -6px 0 6px; }
 .fig figcaption { font-size: .9rem; color: var(--muted); margin-top: 8px; }
 /* svg vocabulary (diagrams sit on ink panels in both themes) */
 .g-bg { fill: var(--ink); }

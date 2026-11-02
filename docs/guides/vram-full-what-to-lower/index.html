@@ -38,7 +38,7 @@
 <div class="layout"><article class="doc">
 <p class="kicker">Guide · video memory</p>
 <h1>VRAM full: which settings to lower first</h1>
-<p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed November 2, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
 <p class="lede">When a game needs more video memory than the graphics card has, it does not simply run slower. It starts to swap data over the much slower connection to system memory, and you see blurry textures that load late, sudden stutter and sometimes crashes. The fix is usually one or two settings – the right ones.</p>
 <div class="ad" data-slot="lede" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="what">What lives in video memory</h2>
@@ -58,14 +58,14 @@
 <p>After each change, <b>restart the game</b> if it says a restart is required – some games only release memory then – and test in the same scene for a few minutes. Lower one step at a time; the lowest texture setting is rarely needed.</p></section>
 <div class="ad" data-slot="mid" hidden><span class="ad-label">Advertisement</span></div>
 <section><h2 id="budget">How much VRAM do games need?</h2>
-<figure class="fig"><svg viewBox="0 0 640 210" role="img" aria-labelledby="vr-fig-t"><title id="vr-fig-t">Stacked bar illustrating how textures, render targets, ray tracing data and frame generation buffers add up against a VRAM limit</title><rect class="g-bg" width="640" height="210"/>
+<figure class="fig"><div class="fig-scroll" tabindex="0" role="group" aria-label="Diagram, scrolls sideways on small screens"><svg viewBox="0 0 640 210" role="img" aria-labelledby="vr-fig-t"><title id="vr-fig-t">Stacked bar illustrating how textures, render targets, ray tracing data and frame generation buffers add up against a VRAM limit</title><rect class="g-bg" width="640" height="210"/>
 <text class="g-tm" x="20" y="30">ILLUSTRATIVE VRAM BUDGET – proportions vary by game</text>
 <rect x="40" y="70" width="230" height="44" fill="#7CC4FF"/><text class="g-tk" x="50" y="97">textures</text>
 <rect x="270" y="70" width="110" height="44" fill="#47D98A"/><text class="g-tk" x="280" y="97">buffers</text>
 <rect x="380" y="70" width="100" height="44" fill="#FFC531"/><text class="g-tk" x="390" y="97">ray tracing</text>
 <rect x="480" y="70" width="80" height="44" fill="#FF6B7F"/><text class="g-tk" x="486" y="97">frame gen</text>
 <path class="g-acc-s" d="M500 52v84"/><text class="g-t" x="430" y="160">card limit</text>
-<text class="g-tm" x="40" y="190">Everything right of the limit spills into slower system memory → stutter or blurry textures.</text></svg><figcaption>The order of the table follows this picture: textures are usually the biggest block, while ray tracing and frame generation add memory on top. The proportions are illustrative.</figcaption></figure>
+<text class="g-tm" x="40" y="190">Everything right of the limit spills into slower system memory → stutter or blurry textures.</text></svg></div><figcaption>The order of the table follows this picture: textures are usually the biggest block, while ray tracing and frame generation add memory on top. The proportions are illustrative.</figcaption></figure>
 <p>Requirements rose quickly with recent games, especially at high texture settings with ray tracing. Cards with 8 GB of VRAM are more often the limit in new releases at high texture settings than cards with 12 GB or more – but the answer depends entirely on the game, the resolution and the settings. The reliable sources are the game’s official system requirements and its own VRAM indicator, not general rules.</p>
 <p>If you save your graphics card’s memory size under <a href="/#my-setup">My setup</a>, the <a href="/tools/settings-translator/">Settings Translator</a> reminds you to watch the VRAM column.</p></section>
 <section><h2 id="patches">VRAM and game updates</h2>
@@ -83,7 +83,7 @@
 <p>Resolution also matters: running at 4K or with a high upscaler mode enlarges every intermediate image, so the same texture setting that fits at 1440p may overflow at 4K. When you move to a higher-resolution display, re-check your texture setting first.</p></section>
 <section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>What happens when VRAM is full?</h3><p>Data is moved to system memory, which the GPU reaches much more slowly. You see stutter, late-loading or blurry textures, and sometimes crashes.</p></div><div class="qa"><h3>Which setting uses the most VRAM?</h3><p>In most games, texture quality. Ray tracing, frame generation and high render resolutions add significant amounts on top.</p></div><div class="qa"><h3>Does lowering resolution save VRAM?</h3><p>Some – the intermediate images get smaller – but usually less than lowering textures one step.</p></div><div class="qa"><h3>Is high VRAM usage in an overlay always a problem?</h3><p>No. Many games allocate more memory than they strictly need when it is free. It is a problem when high usage comes with stutter or blurry textures.</p></div></section>
 <section id="sources" class="sources"><h2>Sources and further reading</h2><ul><li>Official system requirements of each game – store pages and publisher websites</li><li><a href="https://www.pcgamingwiki.com/" rel="noopener">PCGamingWiki</a> – notes on memory-related issues per game</li><li><a href="https://www.nvidia.com/en-us/geforce/technologies/dlss/" rel="noopener">NVIDIA DLSS technology overview</a> – frame generation background</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
-<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> Published after a full fact check of every statement on this page.</li></ul></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-02">2026-11-02</time> First published.</li></ul></section>
 <aside id="setup-note" class="setup-note" hidden></aside>
 <nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/graphics-settings-explained/"><span class="k">PC settings</span>Graphics settings explained: what each option costs</a></li><li><a href="/guides/ray-tracing-settings-explained/"><span class="k">ray tracing</span>Ray tracing settings explained: what to keep, what to drop</a></li><li><a href="/guides/frame-generation-explained/"><span class="k">frame generation</span>Frame generation explained: smoother, but at what cost?</a></li></ul></nav>
 </article>

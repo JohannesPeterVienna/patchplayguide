@@ -81,7 +81,7 @@ export const bottleneck = {
   lede: 'Every system has a bottleneck – the part that is busiest while the others wait. Knowing which one it is decides which settings help. The good news: you do not need benchmarks or special knowledge. One resolution test and a glance at GPU usage answer the question for the game you are playing right now.',
   sections: [
     `<h2 id="idea">What a bottleneck is</h2>
-<p>For each frame, the CPU prepares the work – game logic, physics, animation, the list of objects to draw – and the GPU draws it. The two work in parallel on consecutive frames, so the frame rate is set by whichever takes longer per frame. If the CPU needs 8 milliseconds and the GPU 14, the GPU is the bottleneck and the game runs at about 71 frames per second (1000 ÷ 14). Speeding up the CPU’s part changes nothing.</p>
+<p>For each frame, the CPU prepares the work – game logic, physics, animation, the list of objects to draw – and the GPU draws it. The two work in parallel on consecutive frames, so the frame rate is set by whichever takes longer per frame. If the CPU needs 12 milliseconds and the GPU 14, the GPU is the bottleneck and the game runs at about 71 frames per second (1000 ÷ 14). Speeding up the CPU’s part changes nothing.</p>
 <p>The bottleneck is not a property of your PC alone. It depends on the game, the scene, the settings and the resolution. The same PC can be GPU-bound in a forest at 4K and CPU-bound in a crowded city at 1080p. That is why the check below is done in the game and place where you have the problem.</p>`,
     `<h2 id="check">The 5-minute check</h2>
 <ol>
@@ -95,12 +95,12 @@ export const bottleneck = {
 ${fig('bn-fig', 'Two scales: GPU-bound when GPU time per frame is larger, CPU-bound when CPU time per frame is larger',
 `<rect class="g-bg" width="640" height="220"/>
 <text class="g-tm" x="20" y="30">TIME PER FRAME – THE LONGER BAR SETS THE FRAME RATE</text>
-<text class="g-t" x="20" y="72">CPU</text><rect x="70" y="56" width="160" height="22" fill="#47D98A"/><text class="g-tm" x="240" y="72">8 ms</text>
+<text class="g-t" x="20" y="72">CPU</text><rect x="70" y="56" width="240" height="22" fill="#47D98A"/><text class="g-tm" x="320" y="72">12 ms</text>
 <text class="g-t" x="20" y="104">GPU</text><rect x="70" y="88" width="280" height="22" fill="#7CC4FF"/><text class="g-tm" x="360" y="104">14 ms → ≈ 71 fps, GPU-bound</text>
 <path class="g-grid" d="M20 128h600"/>
 <text class="g-t" x="20" y="164">CPU</text><rect x="70" y="148" width="240" height="22" fill="#47D98A"/><text class="g-tm" x="320" y="164">12 ms → ≈ 83 fps, CPU-bound</text>
 <text class="g-t" x="20" y="196">GPU</text><rect x="70" y="180" width="140" height="22" fill="#7CC4FF"/><text class="g-tm" x="220" y="196">7 ms (after lowering resolution)</text>`,
-'Worked example: lowering the resolution shrinks the GPU’s time per frame from 14 to 7 ms. The frame rate does not double – it rises only until the CPU, at 12 ms, becomes the slower part.', '0 0 640 220')}`,
+'Worked example: with the CPU at 12 ms and the GPU at 14 ms, the GPU sets the pace at about 71 fps. Lowering the resolution shrinks the GPU’s time to 7 ms – but the frame rate does not double: the CPU, at 12 ms, becomes the limit at about 83 fps.', '0 0 640 220')}`,
     `<h2 id="gpu">If you are GPU-bound</h2>
 <p>This is the easier case, because graphics settings work directly. In order of value:</p>
 <ul class="do">

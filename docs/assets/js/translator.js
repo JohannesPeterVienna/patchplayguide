@@ -35,7 +35,7 @@
     var q = $('tr-q').value;
     var list = T.search(q, T.rank(b));
     $('tr-first').innerHTML = first.length
-      ? '<h3>Lower these first when the ' + LABEL[b] + ' is the limit</h3><ol>' + first.map(function (o) { return '<li><a href="#opt-' + o.id + '">' + o.name + '</a></li>'; }).join('') + '</ol>'
+      ? '<h3>Lower these first when the ' + LABEL[b] + ' is the limit</h3><ol>' + first.map(function (o) { return '<li><a href="#opt-' + o.id + '">' + o.name + '</a></li>'; }).join('') + '</ol>' + (b === 'vram' ? '<p class="tool-sub" style="margin-top:8px">Note: frame generation also needs video memory. It is not a quality option you lower first, but switching it off frees VRAM too – see the <a href="/guides/vram-full-what-to-lower/">VRAM guide</a>.</p>' : '')
       : '<h3>Not sure what limits you?</h3><p>Run the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> first. Below, options are sorted by their combined typical load.</p>';
     $('tr-summary').textContent = list.length + ' of ' + T.OPTIONS.length + ' options' + (q ? ' match “' + q + '”' : '') + ' · sorted for: ' + (LABEL[b] ? LABEL[b] + ' bottleneck' : 'combined load');
     $('tr-grid').innerHTML = list.map(function (o) {
