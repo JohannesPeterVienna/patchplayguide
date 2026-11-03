@@ -249,7 +249,7 @@ function stubFc({ status, withEnum = true, optOut = false, throwOn } = {}) {
   return { fc, calls };
 }
 test('privacy settings: U.S. regulation -> opt-out dialog with callback; otherwise revocation message', () => {
-  for (const st of [0, 2, 3]) {
+  for (const st of [2, 3]) {
     const { fc, calls } = stubFc({ status: st, optOut: true });
     let got = null;
     assert.equal(C.openPrivacyChoices(fc, (o) => { got = o; }), 'us');
@@ -260,13 +260,40 @@ test('privacy settings: U.S. regulation -> opt-out dialog with callback; otherwi
     assert.equal(C.openPrivacyChoices(fc, () => {}), 'revocation', JSON.stringify(opt));
     assert.deepEqual(calls, ['revocation']);
   }
-  const { fc } = stubFc({ status: 1 });
-  fc.usstatesoptout.InitialUsStatesOptOutStatusEnum = { DOES_NOT_APPLY: 9 };
+  // enum values from the CMP win over the defaults 2/3
+  const { fc } = stubFc({ status: 9 });
+  fc.usstatesoptout.InitialUsStatesOptOutStatusEnum = { NOT_OPTED_OUT: 9, OPTED_OUT: 10 };
   assert.equal(C.openPrivacyChoices(fc, () => {}), 'us');
+  const other = stubFc({ status: 2 });
+  other.fc.usstatesoptout.InitialUsStatesOptOutStatusEnum = { NOT_OPTED_OUT: 9, OPTED_OUT: 10 };
+  assert.equal(C.openPrivacyChoices(other.fc, () => {}), 'revocation');
   assert.equal(C.openPrivacyChoices(undefined), 'none');
   assert.equal(C.openPrivacyChoices(stubFc({ throwOn: 'revocation' }).fc), 'none');
   // opted out -> stays denied
   assert.deepEqual(C.decide({ gdprApplies: false }, { adStoragePurposeConsentStatus: 1, adUserDataPurposeConsentStatus: 1, adPersonalizationPurposeConsentStatus: 1, analyticsStoragePurposeConsentStatus: 1 }, C.US_OPTED_OUT), C.allDenied());
+});
+test('privacy settings: EU + status 0 (UNKNOWN) -> revocation message, so consent can be withdrawn', () => {
+  for (const withEnum of [true, false]) {
+    const { fc, calls } = stubFc({ status: 0, withEnum });
+    assert.equal(C.openPrivacyChoices(fc, () => {}, { gdprApplies: true, eventStatus: 'tcloaded' }), 'revocation');
+    assert.deepEqual(calls, ['revocation']);
+  }
+  // UNKNOWN without TCF data or outside the GDPR: also the revocation message, never the U.S. dialog
+  for (const tc of [undefined, null, { gdprApplies: false }]) {
+    const { fc, calls } = stubFc({ status: 0 });
+    assert.equal(C.openPrivacyChoices(fc, () => {}, tc), 'revocation');
+    assert.deepEqual(calls, ['revocation']);
+  }
+});
+test('privacy settings: U.S. status 2 -> U.S. dialog; the same status with gdprApplies -> revocation message', () => {
+  for (const tc of [undefined, { gdprApplies: false, eventStatus: 'tcloaded' }]) {
+    const { fc, calls } = stubFc({ status: 2 });
+    assert.equal(C.openPrivacyChoices(fc, () => {}, tc), 'us');
+    assert.deepEqual(calls, ['us']);
+  }
+  const { fc, calls } = stubFc({ status: 2 });
+  assert.equal(C.openPrivacyChoices(fc, () => {}, { gdprApplies: true }), 'revocation');
+  assert.deepEqual(calls, ['revocation']);
 });
 test('GPP: current U.S. opt-out state; no signal -> denied', () => {
   assert.equal(C.usFromGpp({ signalStatus: 'ready', parsedSections: { usnat: [{ SaleOptOut: 2, SharingOptOut: 2, TargetedAdvertisingOptOut: 2 }, { Gpc: false }] } }), 2);

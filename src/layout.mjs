@@ -7,7 +7,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261103a'
+  v: '20261103b'
 };
 const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026' };
 /** Last change of a guide/tool: the newest change-log date (first publication when there is none). */

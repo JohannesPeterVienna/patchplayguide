@@ -56,6 +56,7 @@
   /* ---------- consent → Consent Mode update + GA4 ---------- */
   var gtag = window.gtag || function () { (window.dataLayer = window.dataLayer || []).push(arguments); };
   var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, sent: '' };
+  var lastTc = null; // latest TCF data, kept across the click-time withdrawal
   var gaOn = false;
 
   function startGA() {
@@ -107,6 +108,7 @@
         if (typeof window.__tcfapi !== 'function') return;
         window.__tcfapi('addEventListener', 2, function (tc, ok) {
           cmp.tc = ok ? tc : null;
+          if (ok && tc) lastTc = tc;
           if (ok && tc && tc.eventStatus === 'useractioncomplete' && typeof window.googlefc.getGoogleConsentModeValues === 'function') cmp.cmReady = true;
           applyConsent();
         });
@@ -142,7 +144,7 @@
                 listenToGpp();
               } catch (e) { cmp.gpp = null; }
               applyConsent();
-            });
+            }, lastTc || prev.tc);   // latest TCF data: GDPR applies -> revocation message
           } catch (e) { /* CMP unavailable */ }
         });
         loadAdScript();
