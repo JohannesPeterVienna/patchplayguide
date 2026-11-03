@@ -127,10 +127,24 @@
     return { text: text, type: detectType(raw), cat: detectCategory(text), platforms: detectPlatforms(text) };
   }
 
-  function classifyAll(input) {
-    return String(input || '').split(/\r?\n/).map(classify).filter(function (x) {
-      return x && x.text.length >= 3 && !/^#+\s|^(patch notes?|version|update)\s*[\d.]*:?$/i.test(x.text);
-    }).slice(0, 300);
+  var LIMIT = 300;
+  function keep(x) { return x && x.text.length >= 3 && !/^#+\s|^(patch notes?|version|update)\s*[\d.]*:?$/i.test(x.text); }
+
+  /**
+   * Sorts pasted lines with an honest limit: the limit is checked BEFORE processing – only the first
+   * LIMIT non-empty lines are sorted; `skipped` counts the non-empty lines beyond it (never silent).
+   */
+  function classifyInput(input) {
+    var lines = String(input || '').split(/\r?\n/).filter(function (l) { return l.trim() !== ''; });
+    var skipped = Math.max(0, lines.length - LIMIT);
+    return { items: lines.slice(0, LIMIT).map(classify).filter(keep), skipped: skipped, limit: LIMIT, lines: lines.length };
+  }
+  function classifyAll(input) { return classifyInput(input).items; }
+
+  /** Visible notice for lines beyond the limit ('' when nothing was skipped). */
+  function limitNotice(skipped) {
+    if (!skipped) return '';
+    return skipped + (skipped === 1 ? ' line' : ' lines') + ' beyond the limit ' + (skipped === 1 ? 'was' : 'were') + ' not sorted (the decoder sorts the first ' + LIMIT + ' non-empty lines). Paste the rest separately.';
   }
 
   function actionFor(item) {
@@ -170,8 +184,11 @@
     return list;
   }
 
-  function exportText(title, items, checks, done) {
+  /** opts: { skipped } – lines beyond the limit are named in the export, too. */
+  function exportText(title, items, checks, done, opts) {
     var lines = ['Patch Play Guide – after-update notes', title, ''];
+    var notice = limitNotice(opts && opts.skipped);
+    if (notice) lines.push('NOTE: ' + notice, '');
     ['plus', 'tilde', 'minus'].forEach(function (t) {
       items.filter(function (it) { return it.type === t; }).forEach(function (it) {
         lines.push(TYPES[t] + ' [' + CATEGORIES[it.cat] + '] ' + it.text + (it.platforms.length ? ' (' + it.platforms.map(function (p) { return PLATFORMS[p]; }).join(', ') + ')' : ' (all platforms)'));
@@ -185,7 +202,7 @@
   var api = {
     CATEGORIES: CATEGORIES, PLATFORMS: PLATFORMS, TYPES: TYPES, EXAMPLE: EXAMPLE, ACTIONS: ACTIONS,
     cleanLine: cleanLine, detectType: detectType, detectCategory: detectCategory, detectPlatforms: detectPlatforms,
-    classify: classify, classifyAll: classifyAll, actionFor: actionFor, filter: filter, counts: counts,
+    classify: classify, classifyAll: classifyAll, classifyInput: classifyInput, limitNotice: limitNotice, LIMIT: LIMIT, actionFor: actionFor, filter: filter, counts: counts,
     checklist: checklist, exportText: exportText
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

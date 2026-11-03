@@ -70,6 +70,7 @@ ${fig('rt-fig', 'Ray tracing pipeline: build acceleration structure, trace rays,
 
 export const frameCap = {
   slug: 'frame-cap-vsync-latency-pc',
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-03', 'Frame-cap example corrected: a cap removes peaks, frames below it stay below.']],
   group: 'pc',
   kicker: 'Guide · smoothness &amp; latency',
   short: 'Frame caps, V-Sync and latency',
@@ -109,7 +110,7 @@ ${fig('fc-fig', 'Frame rate band: below VRR range, inside VRR range up to a cap 
     `<h2 id="novrr">Without a VRR display</h2>
 <p>Without VRR you have to choose. <b>V-Sync on</b> gives a tear-free image; it works best when the game can hold the full refresh rate at all times, otherwise judder appears. A cap at exactly the refresh rate, or at half of it (30 fps on 60 Hz), keeps frame pacing even. <b>V-Sync off</b> gives the lowest latency with visible tearing; competitive players often accept this, usually with a high uncapped or capped frame rate well above the refresh rate.</p>`,
     `<h2 id="cap">Why a frame cap helps even without latency concerns</h2>
-<p>A cap that your PC can hold nearly all the time turns a frame rate that swings between 70 and 110 into a steady 90 – with even frame times, which often feels smoother than the higher but uneven rate. It also lowers power use, heat and fan noise, which matters on laptops and handheld PCs. In-game limiters are generally preferred over external ones because they can pace frames inside the game’s own loop, but driver and overlay limiters (for example in the NVIDIA App, AMD Software or RivaTuner Statistics Server) are good alternatives when a game has no limiter.</p>`,
+<p>A cap that your PC can hold nearly all the time turns a frame rate that swings between 95 and 130 into a steady 90 – with even frame times, which often feels smoother than the higher but uneven rate. It also lowers power use, heat and fan noise, which matters on laptops and handheld PCs. In-game limiters are generally preferred over external ones because they can pace frames inside the game’s own loop, but driver and overlay limiters (for example in the NVIDIA App, AMD Software or RivaTuner Statistics Server) are good alternatives when a game has no limiter. A cap only removes the peaks: if a scene drops below the cap – say to 70 fps – it stays at 70, so pick a cap below your usual lows.</p>`,
     `<h2 id="fg">With frame generation</h2>
 <p>Frame generation changes the picture: displayed frames are partly generated, and latency follows the rendered frames. Games that support it usually force the matching latency-reduction mode. Keep the output frame rate inside the VRR range and follow the vendor’s guidance for V-Sync and caps with frame generation – see <a href="/guides/frame-generation-explained/">frame generation explained</a>.</p>`,
     `<h2 id="check">Checking the result</h2>

@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITE, page, renderGuide, renderTool, words } from './layout.mjs';
+import { SITE, page, renderGuide, renderTool, words, modifiedIso } from './layout.mjs';
 import { GUIDES } from './guides/index.mjs';
 import { TOOLS } from './tools/index.mjs';
 import { home, guidesIndex, STATIC_PAGES, NOT_FOUND, OLD_URLS } from './pages.mjs';
@@ -31,6 +31,7 @@ TOOLS.forEach((t) => { META[t.slug] = { path: `/tools/${t.slug}/`, kicker: 'Tool
 const lookup = (slug) => { if (!META[slug]) throw new Error('unknown related slug ' + slug); return META[slug]; };
 
 const sitemap = [];
+const lastmod = { '/privacy/': '2026-11-03' }; // path -> date of last change
 const report = [];
 
 // home (AdSense loader so the CMP appears, but no ad slots)
@@ -44,12 +45,12 @@ sitemap.push(gi.path);
 
 for (const g of GUIDES) {
   write(`/guides/${g.slug}/`, renderGuide(g, lookup));
-  sitemap.push(`/guides/${g.slug}/`);
+  sitemap.push(`/guides/${g.slug}/`); lastmod[`/guides/${g.slug}/`] = modifiedIso(g);
   report.push({ path: `/guides/${g.slug}/`, words: words(g.lede + g.sections.join(' ') + g.faq.flat().join(' ')) });
 }
 for (const t of TOOLS) {
   write(`/tools/${t.slug}/`, renderTool(t, lookup));
-  sitemap.push(`/tools/${t.slug}/`);
+  sitemap.push(`/tools/${t.slug}/`); lastmod[`/tools/${t.slug}/`] = modifiedIso(t);
   report.push({ path: `/tools/${t.slug}/`, words: words(t.lede + t.sections.join(' ') + t.faq.flat().join(' ')) });
 }
 for (const p of STATIC_PAGES) {
@@ -80,7 +81,7 @@ fs.writeFileSync(path.join(OUT, 'CNAME'), SITE.domain + '\n');
 fs.writeFileSync(path.join(OUT, 'ads.txt'), 'google.com, pub-7811071715414905, DIRECT, f08c47fec0942fa0\n');
 fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.origin}/sitemap.xml\n`);
 fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((u) => `  <url><loc>${SITE.origin}${u}</loc><lastmod>${SITE.reviewedIso}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((u) => `  <url><loc>${SITE.origin}${u}</loc><lastmod>${lastmod[u] || SITE.reviewedIso}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 
 console.log(`Built ${sitemap.length} indexable pages, ${OLD_URLS.length} redirect pages, 404.`);
 for (const r of report) console.log(String(r.words).padStart(5), r.path);

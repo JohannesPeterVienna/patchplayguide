@@ -16,8 +16,14 @@
   var root = document.documentElement;
   var adsAllowed = root.getAttribute('data-ads') === 'yes';
 
+  // set by the first inline script in <head>: local preview/test or ?stats_test=1 -> no Google script at all
+  var NO_GOOGLE = (function () {
+    if (window.PPG_NO_GOOGLE) return true;
+    try { return window.PPGConsent ? window.PPGConsent.noGoogle(location.hostname, location.protocol, location.search) : true; } catch (e) { return true; }
+  })();
+
   function loadAdScript() {
-    if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
+    if (NO_GOOGLE || document.querySelector('script[src*="adsbygoogle.js"]')) return;
     var s = document.createElement('script');
     s.async = true;
     s.crossOrigin = 'anonymous';
@@ -49,11 +55,11 @@
 
   /* ---------- consent → Consent Mode update + GA4 ---------- */
   var gtag = window.gtag || function () { (window.dataLayer = window.dataLayer || []).push(arguments); };
-  var cmp = { tc: null, cmReady: false, us: null, sent: '' };
+  var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, sent: '' };
   var gaOn = false;
 
   function startGA() {
-    if (gaOn) return;
+    if (gaOn || NO_GOOGLE) return;
     gaOn = true;
     var s = document.createElement('script');
     s.async = true;
@@ -73,18 +79,31 @@
     var C = window.PPGConsent;
     if (!C) return;
     var values = cmp.cmReady && C.region(cmp.tc) !== 'none' ? cmValues() : null;
-    var d = C.decide(cmp.tc, values, cmp.us);
+    var d = C.decide(cmp.tc, values, C.usEffective(cmp.us, cmp.gpp));
     var analytics = d.analytics_storage === 'granted';
     window['ga-disable-' + GA_ID] = !analytics;
     var key = JSON.stringify(d);
     if (key !== cmp.sent) { cmp.sent = key; gtag('consent', 'update', d); }
     if (analytics) startGA();
   }
+  // later U.S. opt-out changes arrive through the GPP signal; without GPP a U.S. visitor stays denied
+  function listenToGpp() {
+    if (cmp.gppOn || typeof window.__gpp !== 'function') return;
+    cmp.gppOn = true;
+    try {
+      window.__gpp('addEventListener', function (evt, ok) {
+        if (!ok || !evt) return;
+        var pd = evt.pingData || (evt.data && evt.data.pingData) || null;
+        if (pd && window.PPGConsent) { cmp.gpp = window.PPGConsent.usFromGpp(pd); applyConsent(); }
+      });
+    } catch (e) { cmp.gppOn = false; cmp.gpp = null; }
+  }
   function listenToCmp() {
     window.googlefc = window.googlefc || {};
     window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
     window.googlefc.callbackQueue.push({
       CONSENT_API_READY: function () {
+        listenToGpp();
         if (typeof window.__tcfapi !== 'function') return;
         window.__tcfapi('addEventListener', 2, function (tc, ok) {
           cmp.tc = ok ? tc : null;
@@ -98,6 +117,7 @@
           var u = window.googlefc.usstatesoptout;
           cmp.us = u && typeof u.getInitialUsStatesOptOutStatus === 'function' ? u.getInitialUsStatesOptOutStatus() : null;
         } catch (e) { cmp.us = null; }
+        listenToGpp();
         applyConsent();
       }
     });
@@ -108,11 +128,22 @@
     for (var i = 0; i < btns.length; i++) {
       btns[i].addEventListener('click', function () {
         // treat as withdrawn until the CMP reports the new choice
+        var prev = { tc: cmp.tc, cmReady: cmp.cmReady };
         cmp.tc = null; cmp.cmReady = false; applyConsent();
         window.googlefc = window.googlefc || {};
         window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
         window.googlefc.callbackQueue.push(function () {
-          try { window.googlefc.showRevocationMessage(); } catch (e) { /* CMP unavailable */ }
+          try {
+            // U.S. state regulation applies -> U.S. opt-out dialog; otherwise the GDPR revocation message
+            window.PPGConsent.openPrivacyChoices(window.googlefc, function (userDidOptOut) {
+              try {
+                if (userDidOptOut) cmp.gpp = window.PPGConsent.US_OPTED_OUT; // personalisation + analytics stay denied
+                else { cmp.tc = prev.tc; cmp.cmReady = prev.cmReady; }
+                listenToGpp();
+              } catch (e) { cmp.gpp = null; }
+              applyConsent();
+            });
+          } catch (e) { /* CMP unavailable */ }
         });
         loadAdScript();
       });
@@ -129,30 +160,51 @@
     switch2: ['Nintendo Switch 2', [['switch-2-docked-vs-handheld', 'Switch 2 docked vs handheld'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]]
   };
   var GPU = { entry: 'entry-level GPU', mid: 'midrange GPU', high: 'high-end GPU' };
+  var VRAM = { '6': '6 GB or less', '8': '8 GB', '12': '10–12 GB', '16': '16 GB or more' };
+  function own(o, k) { return typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k); }
+  /** Saved setup, validated against our own lists; anything unknown is dropped (bad platform -> no setup). */
+  function cleanSetup(s) {
+    if (!s || typeof s !== 'object' || Object.prototype.toString.call(s) !== '[object Object]' || !own(PLATFORMS, s.platform)) return null;
+    var vram = typeof s.vram === 'number' ? String(s.vram) : s.vram;
+    return { platform: s.platform, gpu: own(GPU, s.gpu) ? s.gpu : '', vram: own(VRAM, vram) ? vram : '' };
+  }
   function readSetup() {
-    try { var s = JSON.parse(localStorage.getItem('ppg-setup') || 'null'); return s && PLATFORMS[s.platform] ? s : null; } catch (e) { return null; }
+    try { return cleanSetup(JSON.parse(localStorage.getItem('ppg-setup') || 'null')); } catch (e) { return null; }
   }
   function saveSetup(s) {
-    try { localStorage.setItem('ppg-setup', JSON.stringify(s)); } catch (e) { /* storage blocked */ }
+    var c = cleanSetup(s);
+    if (!c) return;
+    try { localStorage.setItem('ppg-setup', JSON.stringify(c)); } catch (e) { /* storage blocked */ }
   }
   function setupText(s) {
     var p = PLATFORMS[s.platform];
-    var gpu = (s.platform === 'pc' || s.platform === 'handheld') && GPU[s.gpu] ? ' · ' + GPU[s.gpu] : '';
-    var vram = s.platform === 'pc' && s.vram ? ' · ' + s.vram + ' GB VRAM' : '';
+    var gpu = (s.platform === 'pc' || s.platform === 'handheld') && own(GPU, s.gpu) ? ' · ' + GPU[s.gpu] : '';
+    var vram = s.platform === 'pc' && own(VRAM, s.vram) ? ' · ' + VRAM[s.vram] + ' VRAM' : '';
     return p[0] + gpu + vram;
   }
   function linksFor(s, exclude) {
     return PLATFORMS[s.platform][1].filter(function (l) { return location.pathname.indexOf(l[0]) === -1 && l[0] !== exclude; });
   }
+  // DOM helpers: text only via textContent
+  function el(tag, text, cls) { var n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
+  function guideLink(l) { var a = el('a', l[1]); a.href = '/guides/' + l[0] + '/'; return a; }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
   function showSetupNote() {
     var box = document.getElementById('setup-note');
     if (!box) return;
     var s = readSetup();
     if (!s) return;
     var links = linksFor(s);
-    box.innerHTML = '<p class="setup-h">Your saved setup: <b>' + setupText(s) + '</b></p>' +
-      (links.length ? '<p>Most relevant for it: ' + links.map(function (l) { return '<a href="/guides/' + l[0] + '/">' + l[1] + '</a>'; }).join(' · ') + '.</p>' : '') +
-      '<p class="small">Stored only in this browser. <a href="/#my-setup">Change or clear it</a>.</p>';
+    clear(box);
+    var h = el('p', 'Your saved setup: ', 'setup-h'); h.appendChild(el('b', setupText(s))); box.appendChild(h);
+    if (links.length) {
+      var p = el('p', 'Most relevant for it: ');
+      links.forEach(function (l, i) { if (i) p.appendChild(document.createTextNode(' · ')); p.appendChild(guideLink(l)); });
+      p.appendChild(document.createTextNode('.'));
+      box.appendChild(p);
+    }
+    var sm = el('p', 'Stored only in this browser. ', 'small'); var ch = el('a', 'Change or clear it'); ch.href = '/#my-setup'; sm.appendChild(ch); sm.appendChild(document.createTextNode('.'));
+    box.appendChild(sm);
     box.hidden = false;
   }
   function setupForm() {
@@ -172,9 +224,13 @@
     }
     function show(saved) {
       var cur = readSetup();
-      if (!cur) { out.innerHTML = '<p>No setup saved. Nothing is stored until you press “Save my setup”.</p>'; return; }
-      out.innerHTML = '<p>' + (saved ? 'Saved: ' : 'Saved setup: ') + '<b>' + setupText(cur) + '</b>. Start here:</p><ul>' +
-        linksFor(cur).map(function (l) { return '<li><a href="/guides/' + l[0] + '/">' + l[1] + '</a></li>'; }).join('') + '</ul>';
+      clear(out);
+      if (!cur) { out.appendChild(el('p', 'No setup saved. Nothing is stored until you press “Save my setup”.')); return; }
+      var p = el('p', saved ? 'Saved: ' : 'Saved setup: '); p.appendChild(el('b', setupText(cur))); p.appendChild(document.createTextNode('. Start here:'));
+      out.appendChild(p);
+      var ul = el('ul');
+      linksFor(cur).forEach(function (l) { var li = el('li'); li.appendChild(guideLink(l)); ul.appendChild(li); });
+      out.appendChild(ul);
     }
     form.platform.addEventListener('change', toggle);
     form.addEventListener('submit', function (e) {
@@ -201,7 +257,7 @@
       if (k) k.setAttribute('data-rec', on ? 'For your setup' : '');
     }
   }
-  window.PPGSetup = { read: readSetup, text: setupText };
+  window.PPGSetup = { read: readSetup, text: setupText, clean: cleanSetup };
 
   privacyButtons();
   if (adsAllowed) { loadAdScript(); renderSlots(); }

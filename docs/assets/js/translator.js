@@ -22,7 +22,7 @@
     var msg = 'Your setup: <b>' + window.PPGSetup.text(s) + '</b>. ';
     if (console_) msg += 'Consoles mostly offer modes instead of these options – the matrix explains what a mode trades, and the console guides show how to pick one.';
     else if (s.platform === 'handheld') msg += 'On handhelds, render resolution, upscaler mode and a frame cap matter most because CPU and GPU share one power budget.';
-    else if (s.vram && Number(s.vram) <= 8) msg += 'With ' + s.vram + ' GB of VRAM, watch the VRAM column: texture quality, ray tracing and frame generation are the usual memory hogs in recent games.';
+    else if (s.vram && Number(s.vram) <= 8) msg += 'With ' + Number(s.vram) + ' GB of VRAM, watch the VRAM column: texture quality, ray tracing and frame generation are the usual memory hogs in recent games.';
     else msg += 'Pick your bottleneck to see which options to lower first.';
     box.innerHTML = msg;
   }
@@ -52,7 +52,8 @@
   $('tr-q').addEventListener('input', render);
   var savedB = null;
   try { savedB = localStorage.getItem(KEY); } catch (e) { /* none */ }
-  var r = savedB && tool.querySelector('input[name="tr-b"][value="' + savedB + '"]');
+  // only our own bottleneck keys are used from storage (anything else is ignored)
+  var r = (savedB === 'unsure' || (typeof savedB === 'string' && Object.prototype.hasOwnProperty.call(LABEL, savedB))) && tool.querySelector('input[name="tr-b"][value="' + savedB + '"]');
   if (r) r.checked = true;
   setupHint();
   render();

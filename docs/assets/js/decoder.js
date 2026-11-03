@@ -6,7 +6,7 @@
   if (!D || !tool) return;
   var $ = function (id) { return document.getElementById(id); };
   var KEY_TEXT = 'ppg-decoder-text', KEY_DONE = 'ppg-decoder-done', KEY_MODE = 'ppg-decoder-mode';
-  var state = { mode: 'example', items: [], done: {} };
+  var state = { mode: 'example', items: [], done: Object.create(null), skipped: 0, sortedText: null };
 
   function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* blocked */ } }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -15,7 +15,12 @@
   var catSel = $('dec-cat'), platSel = $('dec-plat');
   catSel.innerHTML = '<option value="all">All categories</option>' + Object.keys(D.CATEGORIES).map(function (k) { return '<option value="' + k + '">' + D.CATEGORIES[k] + '</option>'; }).join('');
   platSel.innerHTML = '<option value="all">All platforms</option>' + Object.keys(D.PLATFORMS).map(function (k) { return '<option value="' + k + '">' + D.PLATFORMS[k] + '</option>'; }).join('');
-  try { var s = JSON.parse(localStorage.getItem('ppg-setup') || 'null'); var map = { pc: 'pc', handheld: 'handheld', ps5: 'ps5', ps5pro: 'ps5', xbox: 'xbox', switch2: 'switch2' }; if (s && map[s.platform]) platSel.value = map[s.platform]; } catch (e) { /* none */ }
+  // saved setup from site.js: only known platform keys (own properties) are used
+  try {
+    var s = JSON.parse(localStorage.getItem('ppg-setup') || 'null');
+    var map = { pc: 'pc', handheld: 'handheld', ps5: 'ps5', ps5pro: 'ps5', xbox: 'xbox', switch2: 'switch2' };
+    if (s && typeof s === 'object' && typeof s.platform === 'string' && Object.prototype.hasOwnProperty.call(map, s.platform)) platSel.value = map[s.platform];
+  } catch (e) { /* none */ }
 
   function title() {
     return state.mode === 'example' ? D.EXAMPLE.game + ' ' + D.EXAMPLE.version + ' (fictional example)' : 'My pasted patch notes';
@@ -41,6 +46,19 @@
     }).join('');
     state.checks = checks;
     state.visible = visible;
+    var lim = $('dec-limit'), notice = state.mode === 'paste' ? D.limitNotice(state.skipped) : '';
+    lim.textContent = notice; lim.hidden = !notice;
+    updateStale();
+  }
+
+  // the list is "stale" when the pasted text changed after the last sort
+  function isStale() { return state.mode === 'paste' && state.sortedText !== null && $('dec-input').value !== state.sortedText; }
+  function updateStale() { $('dec-stale').hidden = !isStale(); }
+  function sortNow() {
+    var v = $('dec-input').value;
+    var r = D.classifyInput(v);
+    state.items = r.items; state.skipped = r.skipped; state.sortedText = v;
+    render();
   }
 
   function setMode(m) {
@@ -48,9 +66,8 @@
     store(KEY_MODE, m);
     $('dec-paste').hidden = m !== 'paste';
     $('dec-example-note').hidden = m !== 'example';
-    if (m === 'example') state.items = D.EXAMPLE.items.slice();
-    else state.items = D.classifyAll($('dec-input').value);
-    render();
+    if (m === 'example') { state.items = D.EXAMPLE.items.slice(); state.skipped = 0; render(); }
+    else sortNow();
   }
 
   tool.querySelectorAll('input[name="dec-mode"]').forEach(function (r) {
@@ -60,30 +77,36 @@
   platSel.addEventListener('change', render);
   $('dec-sort').addEventListener('click', function () {
     store(KEY_TEXT, $('dec-input').value);
-    state.items = D.classifyAll($('dec-input').value);
-    render();
+    sortNow();
     $('dec-summary').focus();
   });
   $('dec-clear').addEventListener('click', function () {
     $('dec-input').value = '';
     store(KEY_TEXT, null);
-    state.items = [];
-    render();
+    sortNow();
   });
+  $('dec-input').addEventListener('input', updateStale);
   $('dec-checks').addEventListener('change', function (e) {
     var i = e.target.getAttribute('data-i');
     if (i === null) return;
     state.done[state.checks[i]] = e.target.checked;
     store(KEY_DONE, JSON.stringify(state.done));
   });
+  // export = exactly what is rendered; if the pasted text changed since the last sort, sort it first
   function text() {
+    if (isStale()) { store(KEY_TEXT, $('dec-input').value); sortNow(); }
     var done = state.checks.map(function (c) { return !!state.done[c]; });
-    return D.exportText(title(), state.visible, state.checks, done);
+    return D.exportText(title(), state.visible, state.checks, done, { skipped: state.mode === 'paste' ? state.skipped : 0 });
   }
   $('dec-copy').addEventListener('click', function () {
     var t = text(), out = $('dec-export'), msg = $('dec-copied');
     out.value = t; out.hidden = false;
-    function fallback() { out.select(); try { document.execCommand('copy'); msg.textContent = 'Copied.'; } catch (e) { msg.textContent = 'Select the text below and copy it.'; } }
+    function fallback() {
+      out.select();
+      var ok = false;
+      try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+      msg.textContent = ok ? 'Copied.' : 'Could not copy automatically – the text below is selected: press Ctrl+C (Cmd+C on a Mac).';
+    }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { msg.textContent = 'Copied to the clipboard.'; }, fallback);
     else fallback();
   });
@@ -96,7 +119,14 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   });
 
-  try { state.done = JSON.parse(load(KEY_DONE) || '{}') || {}; } catch (e) { state.done = {}; }
+  // saved checklist ticks: only a plain object with boolean values is accepted
+  state.done = Object.create(null);
+  try {
+    var d = JSON.parse(load(KEY_DONE) || '{}');
+    if (d && typeof d === 'object' && Object.prototype.toString.call(d) === '[object Object]') {
+      Object.keys(d).forEach(function (k) { if (d[k] === true || d[k] === false) state.done[k] = d[k]; });
+    }
+  } catch (e) { state.done = Object.create(null); }
   var saved = load(KEY_TEXT);
   if (saved) $('dec-input').value = saved;
   var mode = load(KEY_MODE) === 'paste' && saved ? 'paste' : 'example';

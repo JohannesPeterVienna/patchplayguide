@@ -52,7 +52,68 @@
     return out;
   }
 
-  var api = { region: region, decide: decide, allDenied: allDenied };
+  /**
+   * "Privacy settings" button. fc = window.googlefc. If the CMP reports that a U.S. state regulation
+   * applies (initial status not DOES_NOT_APPLY), open the U.S. opt-out dialog and call
+   * done(userDidOptOut) when it closes; otherwise show the GDPR revocation message.
+   * Returns 'us' | 'revocation' | 'none'. Never throws.
+   */
+  function openPrivacyChoices(fc, done) {
+    try {
+      var u = fc && fc.usstatesoptout;
+      if (u && typeof u.getInitialUsStatesOptOutStatus === 'function') {
+        var en = u.InitialUsStatesOptOutStatusEnum;
+        var dna = en && typeof en.DOES_NOT_APPLY === 'number' ? en.DOES_NOT_APPLY : 1;
+        if (u.getInitialUsStatesOptOutStatus() !== dna && typeof u.openConfirmationDialog === 'function') {
+          u.openConfirmationDialog(function (userDidOptOut) { try { if (done) done(!!userDidOptOut); } catch (e) { /* ignore */ } });
+          return 'us';
+        }
+      }
+    } catch (e) { /* fall back to the revocation message */ }
+    try {
+      if (fc && typeof fc.showRevocationMessage === 'function') { fc.showRevocationMessage(); return 'revocation'; }
+    } catch (e) { /* CMP unavailable */ }
+    return 'none';
+  }
+
+  /**
+   * Current U.S. opt-out state from the IAB GPP signal (pingData of __gpp 'addEventListener').
+   * 3 = opted out (sale, sharing or targeted advertising opt-out = 1, or GPC), 2 = not opted out,
+   * null = no usable U.S. section (stay denied).
+   */
+  function usFromGpp(pingData) {
+    if (!pingData || typeof pingData !== 'object' || pingData.signalStatus === 'not ready') return null;
+    var ps = pingData.parsedSections;
+    if (!ps || typeof ps !== 'object') return null;
+    var seen = false, opted = false;
+    Object.keys(ps).forEach(function (k) {
+      if (k.indexOf('us') !== 0) return;
+      var segs = Object.prototype.toString.call(ps[k]) === '[object Array]' ? ps[k] : [ps[k]];
+      segs.forEach(function (g) {
+        if (!g || typeof g !== 'object') return;
+        ['SaleOptOut', 'SharingOptOut', 'TargetedAdvertisingOptOut'].forEach(function (f) {
+          if (g[f] === 1) opted = true; else if (g[f] === 0 || g[f] === 2) seen = true;
+        });
+        if (g.Gpc === true) opted = true;
+      });
+    });
+    return opted ? 3 : (seen ? 2 : null);
+  }
+
+  /** U.S. status for decide(): 1 from the initial status, otherwise only the current GPP value. */
+  function usEffective(initial, gpp) {
+    if (initial === 1) return 1;
+    return gpp === 2 || gpp === 3 ? gpp : null;
+  }
+
+  /** No Google script on local previews/tests: localhost, 127.0.0.1, ::1, file: or ?stats_test=1. */
+  function noGoogle(hostname, protocol, search) {
+    if (protocol === 'file:' || /[?&]stats_test=1(&|$)/.test(String(search || ''))) return true;
+    var h = String(hostname || '').toLowerCase();
+    return h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '[::1]';
+  }
+
+  var api = { region: region, decide: decide, allDenied: allDenied, openPrivacyChoices: openPrivacyChoices, usFromGpp: usFromGpp, usEffective: usEffective, noGoogle: noGoogle, US_OPTED_OUT: 3 };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PPGConsent = api;
 })(this);

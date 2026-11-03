@@ -207,3 +207,131 @@ test('finder: results link to existing guides and walk() follows answers', async
   assert.equal(F.walk([]).kind, 'question');
   assert.equal(F.walk([99]), null);
 });
+
+/* ---------------- decoder: honest 300-line limit (P2/PP03) ---------------- */
+test('decoder: limit checked before processing, skipped lines counted and exported', () => {
+  const lines = Array.from({ length: 301 }, (_, i) => `Fixed crash number ${i + 1} on PC`);
+  const r = D.classifyInput(lines.join('\n'));
+  assert.equal(r.items.length, 300);
+  assert.equal(r.skipped, 1);
+  assert.equal(r.lines, 301);
+  assert.match(D.limitNotice(r.skipped), /^1 line beyond the limit was not sorted/);
+  const r2 = D.classifyInput(Array.from({ length: 345 }, (_, i) => `Removed option ${i}`).join('\n\n'));
+  assert.equal(r2.skipped, 45);
+  assert.match(D.limitNotice(45), /^45 lines beyond the limit were not sorted/);
+  const txt = D.exportText('T', r2.items, [], [], { skipped: r2.skipped });
+  assert.match(txt, /NOTE: 45 lines beyond the limit were not sorted/);
+  assert.equal(D.limitNotice(0), '');
+  assert.doesNotMatch(D.exportText('T', r.items.slice(0, 2), [], [], { skipped: 0 }), /beyond the limit/);
+  assert.equal(D.classifyInput('a\n\n\nFixed crash').skipped, 0);
+  assert.deepEqual(D.classifyAll('Fixed crash on PC'), D.classifyInput('Fixed crash on PC').items);
+});
+
+/* ---------------- decoder UI source: stale export, copy result (P1/PP02, PP08) ---------------- */
+test('decoder UI: export re-sorts changed text and copy checks execCommand', () => {
+  const src = require('node:fs').readFileSync(path.join(__dirname, '..', 'src', 'assets', 'js', 'decoder.js'), 'utf8');
+  assert.match(src, /function text\(\) \{\n\s+if \(isStale\(\)\) \{[^}]*sortNow\(\); \}/);
+  assert.match(src, /ok = document\.execCommand\('copy'\) === true/);
+  assert.match(src, /press Ctrl\+C/);
+});
+
+/* ---------------- privacy settings button (C3) + GPP ---------------- */
+function stubFc({ status, withEnum = true, optOut = false, throwOn } = {}) {
+  const calls = [];
+  const fc = { showRevocationMessage() { calls.push('revocation'); if (throwOn === 'revocation') throw new Error('x'); } };
+  if (status !== undefined) {
+    fc.usstatesoptout = {
+      getInitialUsStatesOptOutStatus() { if (throwOn === 'status') throw new Error('x'); return status; },
+      openConfirmationDialog(cb) { calls.push('us'); cb(optOut); }
+    };
+    if (withEnum) fc.usstatesoptout.InitialUsStatesOptOutStatusEnum = { UNKNOWN: 0, DOES_NOT_APPLY: 1, NOT_OPTED_OUT: 2, OPTED_OUT: 3 };
+  }
+  return { fc, calls };
+}
+test('privacy settings: U.S. regulation -> opt-out dialog with callback; otherwise revocation message', () => {
+  for (const st of [0, 2, 3]) {
+    const { fc, calls } = stubFc({ status: st, optOut: true });
+    let got = null;
+    assert.equal(C.openPrivacyChoices(fc, (o) => { got = o; }), 'us');
+    assert.deepEqual(calls, ['us']); assert.equal(got, true);
+  }
+  for (const opt of [{ status: 1 }, { status: 1, withEnum: false }, {}, { status: 2, throwOn: 'status' }]) {
+    const { fc, calls } = stubFc(opt);
+    assert.equal(C.openPrivacyChoices(fc, () => {}), 'revocation', JSON.stringify(opt));
+    assert.deepEqual(calls, ['revocation']);
+  }
+  const { fc } = stubFc({ status: 1 });
+  fc.usstatesoptout.InitialUsStatesOptOutStatusEnum = { DOES_NOT_APPLY: 9 };
+  assert.equal(C.openPrivacyChoices(fc, () => {}), 'us');
+  assert.equal(C.openPrivacyChoices(undefined), 'none');
+  assert.equal(C.openPrivacyChoices(stubFc({ throwOn: 'revocation' }).fc), 'none');
+  // opted out -> stays denied
+  assert.deepEqual(C.decide({ gdprApplies: false }, { adStoragePurposeConsentStatus: 1, adUserDataPurposeConsentStatus: 1, adPersonalizationPurposeConsentStatus: 1, analyticsStoragePurposeConsentStatus: 1 }, C.US_OPTED_OUT), C.allDenied());
+});
+test('GPP: current U.S. opt-out state; no signal -> denied', () => {
+  assert.equal(C.usFromGpp({ signalStatus: 'ready', parsedSections: { usnat: [{ SaleOptOut: 2, SharingOptOut: 2, TargetedAdvertisingOptOut: 2 }, { Gpc: false }] } }), 2);
+  assert.equal(C.usFromGpp({ parsedSections: { usnat: [{ SaleOptOut: 2, SharingOptOut: 2, TargetedAdvertisingOptOut: 1 }] } }), 3);
+  assert.equal(C.usFromGpp({ parsedSections: { usca: { SaleOptOut: 1 } } }), 3);
+  assert.equal(C.usFromGpp({ parsedSections: { usnat: [{ SaleOptOut: 2 }, { Gpc: true }] } }), 3);
+  assert.equal(C.usFromGpp({ parsedSections: { tcfeuv2: {} } }), null);
+  assert.equal(C.usFromGpp({ signalStatus: 'not ready', parsedSections: { usnat: { SaleOptOut: 2 } } }), null);
+  assert.equal(C.usFromGpp(null), null);
+  assert.equal(C.usEffective(1, null), 1);
+  assert.equal(C.usEffective(2, null), null);
+  assert.equal(C.usEffective(2, 2), 2);
+  assert.equal(C.usEffective(0, 3), 3);
+});
+
+/* ---------------- local/test guard (G, PP01) ---------------- */
+test('noGoogle: localhost, 127.0.0.1, ::1, file: and ?stats_test=1', () => {
+  for (const [h, p] of [['localhost', 'http:'], ['127.0.0.1', 'http:'], ['::1', 'http:'], ['[::1]', 'http:'], ['', 'file:']]) assert.equal(C.noGoogle(h, p, ''), true);
+  assert.equal(C.noGoogle('patchplayguide.com', 'https:', '?stats_test=1'), true);
+  assert.equal(C.noGoogle('patchplayguide.com', 'https:', '?stats_test=12'), false);
+  assert.equal(C.noGoogle('patchplayguide.com', 'https:', ''), false);
+});
+test('head guard + inline AdSense loader insert the tag only in production', () => {
+  const fs = require('node:fs'); const vm = require('node:vm');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'docs', 'index.html'), 'utf8');
+  const guard = html.match(/<script>(window\.PPG_NO_GOOGLE=[\s\S]*?)<\/script>/)[1];
+  const loader = html.match(/<script data-ads-loader>([\s\S]*?)<\/script>/)[1];
+  const run = (hostname, protocol, search = '', store = {}) => {
+    const added = [];
+    const ctx = { document: { createElement: () => ({}), head: { appendChild: (s) => added.push(s) } }, location: { hostname, protocol, search },
+      sessionStorage: { setItem: (k, v) => { store[k] = v; }, getItem: (k) => (k in store ? store[k] : null) } };
+    vm.createContext(ctx);
+    vm.runInContext('var window=this;' + guard + ';' + loader, ctx);
+    return added;
+  };
+  const prod = run('patchplayguide.com', 'https:');
+  assert.equal(prod.length, 1);
+  assert.equal(prod[0].src, 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905');
+  assert.equal(prod[0].async, true); assert.equal(prod[0].crossOrigin, 'anonymous');
+  for (const [h, p] of [['localhost', 'http:'], ['127.0.0.1', 'http:'], ['[::1]', 'http:'], ['', 'file:']]) assert.equal(run(h, p).length, 0);
+  const store = {};
+  assert.equal(run('patchplayguide.com', 'https:', '?stats_test=1', store).length, 0);
+  assert.equal(run('patchplayguide.com', 'https:', '', store).length, 0);
+});
+
+/* ---------------- saved setup validation (PP06) ---------------- */
+function loadSite(storage) {
+  const fs = require('node:fs'); const vm = require('node:vm');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'assets', 'js', 'site.js'), 'utf8');
+  const window = { PPG_NO_GOOGLE: true, matchMedia: () => ({ matches: false }) };
+  const document = { documentElement: { getAttribute: () => 'no' }, querySelectorAll: () => [], getElementById: () => null, querySelector: () => null, createElement: () => ({}), head: { appendChild() {} } };
+  const ctx = { window, document, location: { pathname: '/', hostname: 'localhost', protocol: 'http:', search: '' }, localStorage: { getItem: (k) => storage[k] ?? null, setItem: (k, v) => { storage[k] = v; }, removeItem: (k) => { delete storage[k]; } } };
+  vm.createContext(ctx);
+  vm.runInContext(src, ctx);
+  return window.PPGSetup;
+}
+test('saved setup: only own platform/GPU/VRAM values survive; bad data never throws', () => {
+  const bad = ['{"platform":"constructor"}', '{"platform":"__proto__"}', '42', '"pc"', '[1]', 'null', '{bad json', '{"platform":"toString"}'];
+  for (const v of bad) assert.equal(loadSite({ 'ppg-setup': v }).read(), null, v);
+  const S = loadSite({ 'ppg-setup': '{"platform":"pc","gpu":"constructor","vram":"<img src=x onerror=alert(1)>"}' });
+  assert.deepEqual(JSON.parse(JSON.stringify(S.read())), { platform: 'pc', gpu: '', vram: '' });
+  assert.equal(S.text(S.read()), 'Desktop or laptop PC');
+  const ok = loadSite({ 'ppg-setup': '{"platform":"pc","gpu":"high","vram":"12"}' });
+  assert.equal(ok.text(ok.read()), 'Desktop or laptop PC · high-end GPU · 10–12 GB VRAM');
+  const num = loadSite({ 'ppg-setup': '{"platform":"pc","gpu":"mid","vram":8}' });
+  assert.equal(num.read().vram, '8');
+  assert.equal(loadSite({ 'ppg-setup': '{"platform":"ps5pro"}' }).read().platform, 'ps5pro');
+});

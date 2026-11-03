@@ -64,6 +64,7 @@ ${fig('ps-fig', 'Frame time ladder: 30 fps is 33.3 ms, 40 fps is 25 ms, 60 fps i
 
 export const ps5Pro = {
   slug: 'ps5-pro-enhanced-games',
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-03', '“Enhance Image Quality for PS4 Games” and “Enhance PSSR Image Quality” described separately; no blanket upgrade for unpatched PS5 games.']],
   group: 'console',
   kicker: 'Guide · PS5 Pro',
   short: 'PS5 Pro enhanced games',
@@ -91,7 +92,12 @@ ${tbl('PS5 and PS5 Pro in comparison (as published by Sony; rounded)', ['', 'PS5
 </ul>
 <p>Because the choices differ, read the game’s own description or patch notes. The same game can offer quite different results on PS5 and PS5 Pro, and some modes may disappear or be renamed on the Pro.</p>`,
     `<h2 id="unpatched">Games without a Pro update</h2>
-<p>Games without a Pro update still run on the PS5 Pro. The console offers system-level options intended to help some of them – Sony has described a “Game Boost” that can improve performance in some PS5 and PS4 games, and an image-quality enhancement setting for some PS5 games that were not updated for the Pro. Whether and how much these help depends on the game. Because the details of these system features may change with firmware updates, check the current descriptions in the PS5 Pro settings and on PlayStation Support.</p>`,
+<p>Games without a Pro update still run on the PS5 Pro. Sony has described a “Game Boost” that can improve performance in some PS5 and PS4 games. Two image-quality settings in the PS5 Pro’s menu are easy to mix up, because they apply to different games:</p>
+<ul>
+<li><b>“Enhance Image Quality for PS4 Games”</b> applies to PS4 games played on the PS5 Pro. It is not a setting for PS5 games.</li>
+<li><b>“Enhance PSSR Image Quality”</b> applies only to PS5 games that already use PSSR. It lets those titles use the upgraded version of PSSR that Sony announced on February 27, 2026 – it does not add PSSR to games that never supported it.</li>
+</ul>
+<p>So a PS5 game without a Pro patch and without PSSR does not get a blanket image-quality upgrade from either setting; at most it benefits from Game Boost, and whether and how much that helps depends on the game. Because these system features can change with firmware updates, check the current descriptions in the PS5 Pro settings and on PlayStation Support.</p>`,
     `<h2 id="compare">How to compare modes on a PS5 Pro</h2>
 ${fig('pro-fig', 'Comparison sheet: same scene, three modes, notes on sharpness, smoothness and ray tracing',
 `<rect class="g-bg" width="640" height="220"/>
@@ -118,14 +124,15 @@ ${fig('pro-fig', 'Comparison sheet: same scene, three modes, notes on sharpness,
 <p>Pro-related lines are easy to overlook because they are often short: “Added PS5 Pro support”, “Improved image quality on PS5 Pro”, or “PSSR updated”. Set the <a href="/tools/patch-decoder/">Patch Decoder</a> platform filter to PS5 to catch them – the decoder recognizes “PS5 Pro” and “PSSR”. After such a line, compare your mode again: developers sometimes change which mode is recommended on the Pro, or the default mode after the update.</p>`
   ],
   faq: [
-    ['Do all PS5 games look better on PS5 Pro?', 'No. Games updated as “PS5 Pro Enhanced” use the extra power as their developers chose. Other games run as on PS5, with possible help from system-level features that apply only to some titles.'],
+    ['Do all PS5 games look better on PS5 Pro?', 'No. Games updated as “PS5 Pro Enhanced” use the extra power as their developers chose. Other games run as on PS5, with possible help from Game Boost in some titles; “Enhance PSSR Image Quality” only affects games that already use PSSR, and “Enhance Image Quality for PS4 Games” only PS4 games.'],
     ['What is PSSR?', 'PlayStation Spectral Super Resolution, a machine-learning upscaler on the PS5 Pro. Games that support it render at a lower resolution and reconstruct a sharper image.'],
     ['Does the PS5 Pro have a faster CPU?', 'Its CPU is essentially the same as in the PS5. Games limited by the CPU therefore gain less than GPU-limited games.'],
     ['Should I use performance mode on PS5 Pro?', 'In many enhanced games the Pro’s main benefit is a sharper or more stable performance mode, so it is a good starting point. Compare modes in the same scene to decide.']
   ],
   sources: [
     ['PlayStation', 'https://www.playstation.com/', 'PS5 Pro product information and the PlayStation Blog'],
-    ['PlayStation Support', 'https://www.playstation.com/en-us/support/', 'PS5 Pro settings'],
+    ['PlayStation Support', 'https://www.playstation.com/en-us/support/', 'PS5 Pro settings, including “Enhance Image Quality for PS4 Games” and “Enhance PSSR Image Quality”'],
+    ['PlayStation Blog', null, 'announcement of the upgraded PSSR for PSSR-compatible PS5 games (February 27, 2026)'],
     ['Patch notes of PS5 Pro Enhanced games', null, 'developers describe what their Pro update changes']
   ],
   related: ['ps5-performance-vs-fidelity-mode', 'vrr-120hz-console-setup', 'dlss-vs-fsr-vs-xess']

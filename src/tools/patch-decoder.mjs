@@ -11,6 +11,7 @@ const toolHtml = `<section class="tool" id="decoder" aria-labelledby="dec-h">
 <label for="dec-input">Paste patch-note lines – one change per line</label>
 <textarea id="dec-input" rows="8" spellcheck="false" placeholder="+ Added a frame rate cap option&#10;Fixed a crash when changing resolution on PC&#10;Shader cache is rebuilt after this update&#10;Removed the low texture preset on Xbox Series S&#10;Known issue: stutter on Steam Deck in the hub"></textarea>
 <div class="row" style="margin-top:10px"><button type="button" id="dec-sort">Sort my lines</button><button type="button" id="dec-clear" class="ghost">Clear</button></div>
+<p id="dec-stale" class="fict" role="status" hidden><b>NOT SORTED YET</b> – your text changed since the last sort. Press “Sort my lines” to update the list; Copy and Download sort the current text first.</p>
 <p class="tool-sub" style="margin-top:8px">Your text is kept only in this browser’s local storage so it is still here next time. “Clear” deletes it.</p>
 </div>
 <div class="filters">
@@ -18,6 +19,7 @@ const toolHtml = `<section class="tool" id="decoder" aria-labelledby="dec-h">
 <label for="dec-plat">Platform<select id="dec-plat"></select></label>
 </div>
 <p id="dec-summary" class="sum" tabindex="-1" aria-live="polite"></p>
+<p id="dec-limit" class="fict" role="status" hidden></p>
 <ol id="dec-list" class="difflist results"></ol>
 <div class="checklist">
 <h3>After-update checklist</h3>
@@ -59,6 +61,7 @@ const cats = tbl('Categories and what they usually mean for your settings', ['Ca
 
 export default {
   slug: 'patch-decoder',
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-03', 'Export always matches the current text; lines beyond the 300-line limit are named on screen and in the export; copy reports when it fails.']],
   short: 'Patch Decoder',
   title: 'Patch Decoder – sort patch notes into settings actions',
   description: 'Paste patch-note lines and sort them into improvements, changes and removals by category and platform, with a what-to-do note and an after-update checklist.',

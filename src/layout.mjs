@@ -7,8 +7,11 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261102a'
+  v: '20261103a'
 };
+const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026' };
+/** Last change of a guide/tool: the newest change-log date (first publication when there is none). */
+export const modifiedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : SITE.reviewedIso);
 
 export const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const strip = (s) => String(s).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&[a-z#0-9]+;/g, ' ');
@@ -27,7 +30,12 @@ const NAV = [
 const MARK = `<svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg>`;
 
 const CONSENT_DEFAULTS = `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-${SITE.ga}']=true;</script>`;
-const ADSENSE = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.client}" crossorigin="anonymous"></script>`;
+// First script in <head>: local preview/test (localhost, 127.0.0.1, ::1, file:) or ?stats_test=1 (kept for the
+// tab in sessionStorage) sets window.PPG_NO_GOOGLE – then no Google script (AdSense, its CMP, GA) is inserted.
+const GUARD = `<script>window.PPG_NO_GOOGLE=(function(l){var h=l.hostname,q=/[?&]stats_test=1(&|$)/.test(l.search),t=q;try{if(q)sessionStorage.setItem('ppg-stats-test','1');t=q||sessionStorage.getItem('ppg-stats-test')==='1';}catch(e){}return t||l.protocol==='file:'||h==='localhost'||h==='127.0.0.1'||h==='::1'||h==='[::1]';})(location);</script>`;
+// AdSense loader in the same place as the former static tag: async, crossorigin="anonymous", unless guarded.
+const ADS_SRC = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.client}`;
+const ADSENSE = `<script data-ads-loader>if(!window.PPG_NO_GOOGLE){(function(){var s=document.createElement('script');s.async=true;s.src='${ADS_SRC}';s.crossOrigin='anonymous';document.head.appendChild(s);})();}</script>`;
 
 export function adSlot(name) {
   return `<div class="ad" data-slot="${name}" hidden><span class="ad-label">Advertisement</span></div>`;
@@ -60,6 +68,7 @@ export function page(opts) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+${GUARD}
 <title>${esc(opts.title)}</title>
 <meta name="description" content="${esc(opts.description)}">
 ${canonical}
@@ -123,12 +132,12 @@ function relatedHtml(related, lookup) {
   if (!related || !related.length) return '';
   return `<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul>${related.map((r) => { const m = lookup(r); return `<li><a href="${m.path}"><span class="k">${esc(m.kicker)}</span>${esc(m.h1)}</a></li>`; }).join('')}</ul></nav>`;
 }
-const meta = (n) => `<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed ${SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
+const meta = (n, iso = SITE.reviewedIso) => `<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed ${DATE_TEXT[iso] || SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
 
 export function articleLd(g, path) {
   return {
     '@type': 'Article', headline: g.h1, description: g.description, inLanguage: 'en-US',
-    datePublished: SITE.reviewedIso, dateModified: SITE.reviewedIso,
+    datePublished: SITE.reviewedIso, dateModified: modifiedIso(g),
     mainEntityOfPage: SITE.origin + path,
     author: { '@type': 'Organization', name: 'Patch Play Guide editorial team (AdStern)', url: SITE.origin + '/about/' },
     publisher: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/imprint/' }
@@ -146,7 +155,7 @@ export function renderGuide(g, lookup) {
   const html = `<div class="layout"><article class="doc">
 <p class="kicker">${esc(g.kicker)}</p>
 <h1>${g.h1}</h1>
-${meta(n)}
+${meta(n, modifiedIso(g))}
 <p class="lede">${g.lede}</p>
 ${adSlot('lede')}
 ${body}
@@ -171,7 +180,7 @@ export function renderTool(t, lookup) {
   const html = `<article class="doc doc-tool">
 <p class="kicker">${esc(t.kicker)}</p>
 <h1>${t.h1}</h1>
-${meta(n)}
+${meta(n, modifiedIso(t))}
 <p class="lede">${t.lede}</p>
 ${t.toolHtml}
 <div class="explain">
@@ -191,7 +200,7 @@ ${relatedHtml(t.related, lookup)}
       '@type': 'WebApplication', name: t.short, description: t.description, url: SITE.origin + path,
       applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (runs in the web browser)', isAccessibleForFree: true,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, inLanguage: 'en-US',
-      datePublished: SITE.reviewedIso, dateModified: SITE.reviewedIso,
+      datePublished: SITE.reviewedIso, dateModified: modifiedIso(t),
       publisher: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/imprint/' }
     }, faqLd(t.faq)]
   });

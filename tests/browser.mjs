@@ -24,13 +24,18 @@ const srv = http.createServer((q, s) => {
 const base = `http://127.0.0.1:${srv.address().port}`;
 const urls = [...fs.readFileSync(path.join(DOCS, 'sitemap.xml'), 'utf8').matchAll(/<loc>https:\/\/patchplayguide\.com([^<]*)<\/loc>/g)].map((m) => m[1]);
 
-const browser = await chromium.launch();
+// stats.test maps to this local server but is not a local host name (for the ?stats_test=1 check)
+const browser = await chromium.launch({ args: ['--host-resolver-rules=MAP stats.test 127.0.0.1'] });
 let fails = 0, minAd = Infinity, minAdWhere = '';
 const bad = (msg) => { fails++; console.log('✗ ' + msg); };
 
+// every request to a Google domain is recorded – on localhost, 127.0.0.1 and with ?stats_test=1 there must be none
+const GOOGLE = /^https?:\/\/([^/]*\.)?(google|googlesyndication|googletagmanager|googleadservices|doubleclick|gstatic|google-analytics)\.[a-z.]+\//;
+const googleRequests = [];
 async function newCtx(width, scheme = 'light') {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: scheme });
-  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  ctx.on('request', (r) => { if (GOOGLE.test(r.url())) googleRequests.push(r.url()); });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost|stats\.test)/, (r) => r.abort());
   return ctx;
 }
 function watch(page, errs) {
@@ -113,6 +118,49 @@ console.log(`Checked ${urls.length} pages at 390 and 1366 px. Minimum ad-to-cont
   if ((await page.inputValue('#dec-input')).indexOf('frame rate cap') === -1) bad('decoder text not restored from localStorage');
   else console.log('✓ decoder restores pasted text after reload');
 
+  // stale export: sort a PC line, then type an Xbox line without sorting -> export must show the new text
+  await page.fill('#dec-input', 'Fixed crash PC');
+  await page.click('#dec-sort');
+  await page.fill('#dec-input', 'Removed textures Xbox');
+  const staleShown = await page.isVisible('#dec-stale');
+  await page.click('#dec-copy');
+  const ex2 = await page.inputValue('#dec-export');
+  const list2 = await page.textContent('#dec-list');
+  if (!staleShown || !/Removed textures Xbox/.test(ex2) || /Fixed crash PC/.test(ex2) || !/Removed textures Xbox/.test(list2) || await page.isVisible('#dec-stale')) bad(`decoder stale export: hint=${staleShown}, export=${ex2.split('\n').slice(0, 4).join(' / ')}`);
+  else console.log('✓ decoder: changed text shows a hint and is re-sorted before export');
+  await page.fill('#dec-input', 'Fixed crash PC');
+  await page.click('#dec-sort');
+  await page.fill('#dec-input', 'Removed textures Xbox');
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#dec-download')]);
+  const dlText = fs.readFileSync(await dl.path(), 'utf8');
+  if (!/Removed textures Xbox/.test(dlText) || /Fixed crash PC/.test(dlText)) bad('decoder download exported the old result');
+  else console.log('✓ decoder: download also uses the current text');
+
+  // 301 lines: 300 sorted, visible notice for 1 skipped line, same in the export
+  await page.fill('#dec-input', Array.from({ length: 301 }, (_, i) => `Fixed crash number ${i + 1} on PC`).join('\n'));
+  await page.click('#dec-sort');
+  const sum301 = await page.textContent('#dec-summary');
+  const lim = (await page.isVisible('#dec-limit')) ? await page.textContent('#dec-limit') : '';
+  await page.click('#dec-copy');
+  const ex301 = await page.inputValue('#dec-export');
+  if (!/^300 of 300/.test(sum301) || !/^1 line beyond the limit was not sorted/.test(lim) || !/NOTE: 1 line beyond the limit was not sorted/.test(ex301)) bad(`decoder limit: summary=${sum301} notice=${lim}`);
+  else console.log(`✓ decoder limit: ${sum301.split(' · ')[0]}; notice “${lim.slice(0, 45)}…” on screen and in export`);
+  await page.fill('#dec-input', ''); await page.click('#dec-clear');
+  if (await page.isVisible('#dec-limit')) bad('decoder limit notice stays after clearing');
+
+  // broken local data must not break the tools (PP06)
+  await page.evaluate(() => { localStorage.setItem('ppg-setup', '{"platform":"constructor","vram":"<img src=x onerror=window.__x=1>"}'); localStorage.setItem('ppg-decoder-done', '42'); localStorage.setItem('ppg-translator-bottleneck', '"]x'); });
+  for (const u of ['/tools/patch-decoder/', '/tools/settings-translator/', '/guides/graphics-settings-explained/', '/']) {
+    await page.goto(base + u); await page.waitForTimeout(100);
+    if (u === '/tools/patch-decoder/') await page.click('#dec-checks input >> nth=0');
+  }
+  await page.evaluate(() => { localStorage.setItem('ppg-setup', '{"platform":"pc","gpu":"high","vram":"<img src=x onerror=window.__x=1>"}'); });
+  await page.goto(base + '/guides/graphics-settings-explained/'); await page.waitForTimeout(100);
+  const injected = await page.evaluate(() => !!window.__x || !!document.querySelector('#setup-note img'));
+  if (injected) bad('setup note rendered stored HTML');
+  else console.log('✓ invalid stored setup/decoder/translator data is ignored without errors');
+  await page.evaluate(() => localStorage.clear());
+
   // Settings Translator
   await page.goto(base + '/tools/settings-translator/');
   await page.check('input[name="tr-b"][value="cpu"]');
@@ -167,6 +215,23 @@ if (SHOTS) {
   }
   console.log('Screenshots in ' + SHOTS);
 }
+
+// ---- localhost and ?stats_test=1: no Google script, no Google request ----
+{
+  const ctx = await newCtx(1366);
+  const page = await ctx.newPage();
+  const port = srv.address().port;
+  for (const u of [`http://localhost:${port}/`, `http://localhost:${port}/guides/dlss-vs-fsr-vs-xess/`, `http://localhost:${port}/privacy/`, `http://stats.test:${port}/?stats_test=1`, `http://stats.test:${port}/tools/patch-decoder/`]) {
+    await page.goto(u, { waitUntil: 'load' }); await page.waitForTimeout(250);
+    if (/privacy/.test(u)) { await page.click('main [data-privacy-settings]'); await page.waitForTimeout(150); }
+    const flag = await page.evaluate(() => window.PPG_NO_GOOGLE);
+    const tags = await page.$$eval('script[src]', (ss) => ss.map((x) => x.src).filter((x) => /google/.test(x)));
+    if (flag !== true || tags.length) bad(`${u}: guard ${flag}, Google script tags ${tags.join(', ')}`);
+  }
+  await ctx.close();
+}
+if (googleRequests.length) bad('requests to Google domains: ' + [...new Set(googleRequests)].slice(0, 5).join(', '));
+else console.log('✓ no request to any Google domain on localhost / 127.0.0.1 / ?stats_test=1');
 
 await browser.close();
 srv.close();
