@@ -32,9 +32,12 @@ const bad = (msg) => { fails++; console.log('✗ ' + msg); };
 // every request to a Google domain is recorded – on localhost, 127.0.0.1 and with ?stats_test=1 there must be none
 const GOOGLE = /^https?:\/\/([^/]*\.)?(google|googlesyndication|googletagmanager|googleadservices|doubleclick|gstatic|google-analytics)\.[a-z.]+\//;
 const googleRequests = [];
+const local404 = [];
 async function newCtx(width, scheme = 'light') {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: scheme });
   ctx.on('request', (r) => { if (GOOGLE.test(r.url())) googleRequests.push(r.url()); });
+  // every local resource must exist: a 404 from the local server is a broken link or asset
+  ctx.on('response', (r) => { if (r.status() === 404 && /^https?:\/\/(127\.0\.0\.1|localhost|stats\.test)[:/]/.test(r.url())) local404.push(r.url()); });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost|stats\.test)/, (r) => r.abort());
   return ctx;
 }
@@ -230,6 +233,8 @@ if (SHOTS) {
   }
   await ctx.close();
 }
+if (local404.length) bad('local 404 responses: ' + [...new Set(local404)].slice(0, 5).join(', '));
+else console.log('✓ no local 404 response');
 if (googleRequests.length) bad('requests to Google domains: ' + [...new Set(googleRequests)].slice(0, 5).join(', '));
 else console.log('✓ no request to any Google domain on localhost / 127.0.0.1 / ?stats_test=1');
 

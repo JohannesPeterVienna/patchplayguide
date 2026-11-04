@@ -7,11 +7,19 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261103b'
+  v: '20261104a'
 };
-const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026' };
+const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026', '2026-11-04': 'November 4, 2026' };
+// 2026-11-04: the byline named an "editorial team" that does not exist. The correction is logged on every
+// guide and tool page and sets dateModified; the "Reviewed" stamp keeps the date of the last content review.
+const BYLINE_FIX = ['2026-11-04', 'Author line corrected to the publisher, AdStern; there is no separate editorial team. How pages are checked is described on the <a href="/about/#checks">About page</a>.'];
+/** Full change log of a guide/tool, including the site-wide byline correction. */
+export const logOf = (x) => [...(x.changelog && x.changelog.length ? x.changelog : [[SITE.reviewedIso, 'First published.']]), BYLINE_FIX];
+/** Date of the last content review (newest own change-log entry). */
+export const reviewedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : SITE.reviewedIso);
 /** Last change of a guide/tool: the newest change-log date (first publication when there is none). */
-export const modifiedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : SITE.reviewedIso);
+/** Last change of a guide/tool page (dateModified, sitemap lastmod). */
+export const modifiedIso = (x) => logOf(x).at(-1)[0];
 
 export const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const strip = (s) => String(s).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&[a-z#0-9]+;/g, ' ');
@@ -132,14 +140,14 @@ function relatedHtml(related, lookup) {
   if (!related || !related.length) return '';
   return `<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul>${related.map((r) => { const m = lookup(r); return `<li><a href="${m.path}"><span class="k">${esc(m.kicker)}</span>${esc(m.h1)}</a></li>`; }).join('')}</ul></nav>`;
 }
-const meta = (n, iso = SITE.reviewedIso) => `<p class="byline">By <a href="/about/">the Patch Play Guide editorial team, AdStern</a></p><p class="meta"><span class="stamp">Reviewed ${DATE_TEXT[iso] || SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
+const meta = (n, iso = SITE.reviewedIso) => `<p class="byline">Published by <a href="/about/">AdStern, Vienna</a></p><p class="meta"><span class="stamp">Reviewed ${DATE_TEXT[iso] || SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
 
 export function articleLd(g, path) {
   return {
     '@type': 'Article', headline: g.h1, description: g.description, inLanguage: 'en-US',
     datePublished: SITE.reviewedIso, dateModified: modifiedIso(g),
     mainEntityOfPage: SITE.origin + path,
-    author: { '@type': 'Organization', name: 'Patch Play Guide editorial team (AdStern)', url: SITE.origin + '/about/' },
+    author: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/about/' },
     publisher: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/imprint/' }
   };
 }
@@ -155,13 +163,13 @@ export function renderGuide(g, lookup) {
   const html = `<div class="layout"><article class="doc">
 <p class="kicker">${esc(g.kicker)}</p>
 <h1>${g.h1}</h1>
-${meta(n, modifiedIso(g))}
+${meta(n, reviewedIso(g))}
 <p class="lede">${g.lede}</p>
 ${adSlot('lede')}
 ${body}
 ${faqHtml(g.faq)}
 ${sourcesHtml(g.sources)}
-${changelogHtml(g.changelog || [[SITE.reviewedIso, 'First published.']])}
+${changelogHtml(logOf(g))}
 <aside id="setup-note" class="setup-note" hidden></aside>
 ${relatedHtml(g.related, lookup)}
 </article>
@@ -180,7 +188,7 @@ export function renderTool(t, lookup) {
   const html = `<article class="doc doc-tool">
 <p class="kicker">${esc(t.kicker)}</p>
 <h1>${t.h1}</h1>
-${meta(n, modifiedIso(t))}
+${meta(n, reviewedIso(t))}
 <p class="lede">${t.lede}</p>
 ${t.toolHtml}
 <div class="explain">
@@ -189,7 +197,7 @@ ${adSlot('tool')}
 ${rest.map((s) => `<section>${s}</section>`).join('\n')}
 ${faqHtml(t.faq)}
 ${sourcesHtml(t.sources)}
-${changelogHtml(t.changelog || [[SITE.reviewedIso, 'First published.']])}
+${changelogHtml(logOf(t))}
 </div>
 ${relatedHtml(t.related, lookup)}
 </article>`;

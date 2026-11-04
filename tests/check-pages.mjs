@@ -96,7 +96,8 @@ for (const p of pages) {
 
   if (LEGAL.includes(url) && loaderAt !== -1) fail(url, 'AdSense loader must not be on legal/contact pages');
   if (!isGuide(url) && !isTool(url) && hasAds) fail(url, 'ad containers only on guides and tools');
-  if (url === '/' && loaderAt === -1) fail(url, 'home needs the AdSense loader for the CMP');
+  if (!LEGAL.includes(url) && loaderAt === -1) fail(url, 'every indexable non-legal page needs the AdSense loader');
+  if (/\b(by|from) (the|our) [\w ]*editorial team|second editor|our (writers|editors)/i.test(text(html))) fail(url, 'claims an editorial team that does not exist');
 
   if (isGuide(url) || isTool(url)) {
     const article = element(html, /<article class="doc[^"]*">/);
@@ -122,14 +123,19 @@ for (const p of pages) {
     if (!/<svg viewBox="[^"]+" role="img"/.test(article)) fail(url, 'needs an inline SVG diagram');
     if (!/id="faq"/.test(article)) fail(url, 'FAQ section missing');
     if (!/id="sources"/.test(article)) fail(url, 'sources section missing');
-    const rev = (article.match(/Reviewed November ([23]), 2026/) || [])[1];
+    const rev = (article.match(/Reviewed November ([234]), 2026/) || [])[1];
     if (!rev) fail(url, 'reviewed date missing');
     if (!/id="changelog"/.test(article)) fail(url, 'change log missing');
     const ld = JSON.parse(get(html, /<script type="application\/ld\+json">([\s\S]*?)<\/script>/));
     const types = ld['@graph'].map((n) => n['@type']);
     for (const t of ['BreadcrumbList', 'FAQPage', isGuide(url) ? 'Article' : 'WebApplication']) if (!types.includes(t)) fail(url, 'JSON-LD missing ' + t);
     const main = ld['@graph'].find((n) => n['@type'] === 'Article' || n['@type'] === 'WebApplication');
-    if (main && (main.datePublished !== '2026-11-02' || main.dateModified !== `2026-11-0${rev}`)) fail(url, 'datePublished/dateModified wrong or not matching the reviewed date');
+    // dateModified = newest change-log entry (also non-content corrections such as the 2026-11-04 author line);
+    // the "Reviewed" stamp is the last content review and can be older, never newer
+    const logDates = [...article.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/g)].map((m) => m[1]).sort();
+    const newest = logDates[logDates.length - 1];
+    if (main && (main.datePublished !== '2026-11-02' || main.dateModified !== newest || `2026-11-0${rev}` > newest)) fail(url, 'datePublished/dateModified wrong or not matching the change log');
+    if (get(fs.readFileSync(path.join(DOCS, 'sitemap.xml'), 'utf8'), new RegExp(`<loc>${ORIGIN}${url}</loc><lastmod>([^<]+)</lastmod>`)) !== newest) fail(url, 'sitemap lastmod does not match the change log');
     const faq = ld['@graph'].find((n) => n['@type'] === 'FAQPage');
     if (faq && faq.mainEntity.length < 3) fail(url, 'FAQ too short');
     if (loaderAt === -1) fail(url, 'content page needs the AdSense loader');
