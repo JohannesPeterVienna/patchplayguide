@@ -292,3 +292,65 @@ test('Allow and Decline are the same kind of button', () => {
   assert.match(css, /@media print\{\.statcheck\{display:none!important\}/);
   assert.match(css, /\.statcheck\{position:fixed/);
 });
+
+/* ---------- review 5 Nov 2026 (DeepSeek, confirmed): U.S. opt-out, erasing on every switch to "off", repeated Google "no" ---------- */
+function withGpp(s) {
+  let gpp = null;
+  s.win.__gpp = (cmd, cb) => { if (cmd === 'addEventListener') gpp = cb; };
+  s.win.googlefc.callbackQueue.forEach((c) => c && c.CONSENT_API_READY && c.CONSENT_API_READY());
+  return (out) => gpp({ pingData: { signalStatus: 'ready', parsedSections: { usnat: { SaleOptOut: out ? 1 : 2 } } } }, true);
+}
+test('U.S. opt-out known: no window by itself, no "yes" stored, Privacy settings only explains', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN });
+  const gpp = withGpp(s); gpp(true);
+  s.advance(5000);
+  assert.equal(s.open(), false);
+  s.footBtn.fire('click');
+  assert.equal(s.open(), true);
+  assert.match(s.box().textContent, /opted out under a U\.S\. state privacy law/);
+  assert.equal(s.box().all((n) => n.getAttribute('data-stat') === 'yes')[0].parentNode.hidden, true);
+  // even a forced "yes" is not stored and nothing is announced as allowed
+  s.win.PPGStats && s.click('yes');
+  assert.equal(s.store.has(KEY), false);
+  assert.equal(s.win[OFF], true);
+  assert.equal(s.gaScripts().length, 0);
+  s.advance(100);
+  assert.doesNotMatch(s.doc.body.all((n) => n.id === 'statcheck-live')[0].textContent, /allowed/);
+});
+test('stored "yes" + U.S. opt-out: GA off and _ga deleted', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN, stored: { v: 1, choice: 'yes', at: NOW - DAY }, cookies: ['_ga=GA1.1.5', '_ga_T00HRG2YVF=x'] });
+  const gpp = withGpp(s);
+  s.advance(3000);
+  assert.equal(s.win[OFF], false);
+  s.jar(); gpp(true);
+  assert.equal(s.win[OFF], true);
+  assert.deepEqual(s.jar(), []);
+});
+test('GPC: _ga deleted at start', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN, gpc: true, cookies: ['_ga=GA1.1.5'] });
+  assert.deepEqual(s.jar(), []);
+  s.advance(3000); assert.deepEqual(s.jar(), []);
+});
+test('every switch to "off" via the window deletes _ga again (allow, decline, allow, decline)', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN });
+  s.advance(3000);
+  const setGa = () => { s.doc.cookie = '_ga=GA1.1.9'; };
+  s.click('yes'); setGa();
+  s.footBtn.fire('click'); s.click('no'); assert.deepEqual(s.jar(), []);
+  s.footBtn.fire('click'); s.click('yes'); setGa();
+  s.footBtn.fire('click'); s.click('no'); assert.deepEqual(s.jar(), []);
+});
+test('second Google "no" after a later Google grant deletes _ga again', () => {
+  const values = { analyticsStoragePurposeConsentStatus: 1, adStoragePurposeConsentStatus: 2, adUserDataPurposeConsentStatus: 2, adPersonalizationPurposeConsentStatus: 2 };
+  const no = { gdprApplies: true, eventStatus: 'useractioncomplete', tcString: 'CQ1', purpose: { consents: {} }, vendor: { consents: {} } };
+  const yes = { gdprApplies: true, eventStatus: 'useractioncomplete', tcString: 'CQ2', purpose: { consents: { 1: true } }, vendor: { consents: { 755: true } } };
+  const s = site({ tcf: 'stub', tc: no, cookies: ['_ga=GA1.1.5'] });
+  s.win.googlefc.getGoogleConsentModeValues = () => values;
+  assert.deepEqual(s.jar(), []);
+  s.emit(yes);
+  assert.equal(s.win[OFF], false);
+  s.doc.cookie = '_ga=GA1.1.6';
+  s.emit(no);
+  assert.equal(s.win[OFF], true);
+  assert.deepEqual(s.jar(), []);
+});

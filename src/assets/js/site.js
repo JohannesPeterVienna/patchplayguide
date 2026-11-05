@@ -57,7 +57,7 @@
   /* ---------- consent → Consent Mode update + GA4 ---------- */
   var gtag = window.gtag || function () { (window.dataLayer = window.dataLayer || []).push(arguments); };
   function tag() { try { (typeof window.gtag === 'function' ? window.gtag : gtag).apply(null, arguments); } catch (e) { /* ignore */ } }
-  var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, tcfOn: false, sent: '', saidNo: false };
+  var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, tcfOn: false, sent: '', saidNo: false, statsOn: false, statsErased: false };
   var lastTc = null; // latest TCF data, kept across the click-time withdrawal
   var gaOn = false;
   var nav = window.navigator || (typeof navigator !== 'undefined' ? navigator : null);
@@ -108,6 +108,10 @@
     if (stats && stats.inCharge()) {
       // the window decides analytics only; ad_* are never sent from here and stay at their "denied" default
       var on = stats.granted() && !GPC && !usOptedOut();
+      // every switch to "off" deletes the GA cookies: after "on" (decline/withdrawal) and for GPC / U.S. opt-out
+      if (on) { cmp.statsErased = false; cmp.saidNo = false; }
+      else if (!cmp.statsErased && (cmp.statsOn || GPC || usOptedOut())) { cmp.statsErased = true; eraseGa(); }
+      cmp.statsOn = on;
       window['ga-disable-' + GA_ID] = !on;
       var k = 'stats:' + on;
       if (k !== cmp.sent) { cmp.sent = k; tag('consent', 'update', { analytics_storage: on ? 'granted' : 'denied' }); }
@@ -121,7 +125,7 @@
     window['ga-disable-' + GA_ID] = !analytics;
     var key = JSON.stringify(d);
     if (key !== cmp.sent) { cmp.sent = key; tag('consent', 'update', d); }
-    if (analytics) startGA();
+    if (analytics) { startGA(); cmp.saidNo = false; }   // a later Google "no" deletes the cookies again
     if (!cmp.saidNo && googleSaysNo()) { cmp.saidNo = true; eraseGa(); }
   }
   // later U.S. opt-out changes arrive through the GPP signal; without GPP a U.S. visitor stays denied
@@ -185,6 +189,7 @@
       now: function () { return Date.now(); },
       later: function (fn, ms) { setTimeout(fn, ms); },
       gpc: GPC,
+      usOptOut: usOptedOut,
       scope: root.getAttribute('data-stats') === 'auto' ? 'auto' : 'settings',   // pages without the AdSense loader: view/change only
       tc: function () { return cmp.tc; },
       changed: applyConsent,

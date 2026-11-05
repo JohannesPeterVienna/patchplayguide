@@ -13,7 +13,8 @@
  *    sent nothing at all (__tcfapi missing).
  *  - Google's CMP wins: a decision or gdprApplies === false (also later) retires the window for this page
  *    view and deletes the stored window choice; a visible CMP message retires it as well.
- *  - Global Privacy Control: the window is never shown by itself and never grants anything.
+ *  - Global Privacy Control or a U.S. opt-out: the window is never shown by itself, no "yes" is stored,
+ *    and opened via "Privacy settings" it only explains why statistics stay off.
  *  - Stored in localStorage "ppg-stats" as {v, choice: "yes"|"no", at}; asked again after 12 months,
  *    after a version change, or if the timestamp lies in the future. Blocked storage never throws.
  *  - "no" (now or stored at load) deletes the _ga / _ga_* cookies for every domain variant of the host.
@@ -80,7 +81,7 @@
   }
 
   /**
-   * env: store (safeStorage), now(), later(fn, ms), gpc (bool), scope ('auto' | 'settings'), tc() (latest TCF
+   * env: store (safeStorage), now(), later(fn, ms), gpc (bool), usOptOut() (U.S. opt-out known), scope ('auto' | 'settings'), tc() (latest TCF
    * data or null), changed() (re-apply consent), eraseGa(), view ({show(state, focus), hide(returnFocus), say(text)}).
    * phase: 'waiting' (first ~3 s) | 'active' (window decides analytics) | 'retired' (Google's CMP decides)
    *        | 'settings' (page without ads and analytics: the window only views/changes the stored choice).
@@ -91,7 +92,9 @@
 
     function call(fn) { try { fn(); } catch (e) { /* never break the page */ } }
     function changed() { call(env.changed); }
-    function state() { return { phase: phase, choice: choice, gpc: !!env.gpc }; }
+    function usOut() { try { return !!(env.usOptOut && env.usOptOut()); } catch (e) { return true; } }
+    function blocked() { return !!env.gpc || usOut(); }   // GPC or U.S. opt-out: nothing can be allowed
+    function state() { return { phase: phase, choice: choice, gpc: !!env.gpc, us: !env.gpc && usOut() }; }
 
     function retire(forget) {
       if (phase === 'settings') return;
@@ -109,13 +112,13 @@
       phase = 'active';
       choice = readChoice(env.store, env.now());
       changed();
-      if (!choice && !env.gpc) call(function () { env.view.show(state(), false); env.view.say('A question about visit statistics appeared at the bottom of the page.'); });
+      if (!choice && !blocked()) call(function () { env.view.show(state(), false); env.view.say('A question about visit statistics appeared at the bottom of the page.'); });
     }
 
     return {
       start: function () {
         var rec = readChoice(env.store, env.now());
-        if (rec && rec.choice === 'no') call(env.eraseGa);   // declined earlier: no GA cookie may linger
+        if ((rec && rec.choice === 'no') || env.gpc) call(env.eraseGa);   // declined earlier or GPC: no GA cookie may linger
         if (phase === 'settings') return;
         env.later(check, WAIT_MS);
       },
@@ -125,7 +128,7 @@
         if (s) retire(s !== 'shown');
       },
       inCharge: function () { return phase === 'active'; },
-      granted: function () { return phase === 'active' && !env.gpc && !!choice && choice.choice === 'yes'; },
+      granted: function () { return phase === 'active' && !blocked() && !!choice && choice.choice === 'yes'; },
       phase: function () { return phase; },
       /** "Privacy settings": true if the window opened, false if Google's CMP should be opened instead. */
       open: function () {
@@ -137,7 +140,7 @@
       },
       choose: function (c) {
         if (c !== 'yes' && c !== 'no') return;
-        if (phase === 'retired') { call(function () { env.view.hide(true); }); return; }
+        if (phase === 'retired' || (c === 'yes' && blocked())) { call(function () { env.view.hide(true); }); return; }   // never store a "yes" that cannot apply
         var rec = saveChoice(env.store, c, env.now());
         if (phase === 'active' || phase === 'settings') choice = rec;
         if (c === 'no') call(env.eraseGa);
@@ -215,9 +218,11 @@
     function fill(st) {
       var t = parts.txt;
       while (t.firstChild) t.removeChild(t.firstChild);
-      if (st.gpc) {
+      var off = st.gpc || st.us;
+      if (off) {
         parts.h.textContent = 'Statistics stay off';
-        t.appendChild(doc.createTextNode('Your browser sends a Global Privacy Control signal, so Google Analytics stays switched off on this site and we do not ask. '));
+        t.appendChild(doc.createTextNode(st.gpc ? 'Your browser sends a Global Privacy Control signal, so Google Analytics stays switched off on this site and we do not ask. '
+          : 'You have opted out under a U.S. state privacy law, so Google Analytics stays switched off on this site and we do not ask. '));
         parts.now.textContent = '';
       } else {
         parts.h.textContent = 'Count this visit?';
@@ -230,8 +235,8 @@
       var a = el('a', null, 'Privacy policy'); a.href = '/privacy/#stats-window';
       t.appendChild(a);
       t.appendChild(doc.createTextNode('.'));
-      parts.pick.hidden = !!st.gpc;
-      parts.one.hidden = !st.gpc;
+      parts.pick.hidden = !!off;
+      parts.one.hidden = !off;
     }
     return {
       show: function (st, focus) {
