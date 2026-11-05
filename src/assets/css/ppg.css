@@ -174,6 +174,13 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .ad[hidden] { display: none; }
 .ad-label { display: block; font: 400 .7rem/1.2 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; text-align: left; }
 .side .ad { margin-top: 0; }
+/* No ad delivered = no ad box: the label, the rule above it, margin and height only appear once Google sets
+   data-ad-status="filled" on the ins (the width stays so AdSense can size the unit). :has() handles it;
+   browsers without :has() get html.ad-nohas plus .ad-shown from site.js (MutationObserver on data-ad-status). */
+.ad:not(:has(ins.adsbygoogle[data-ad-status="filled"])),
+.ad-nohas .ad:not(.ad-shown) { height: 0 !important; min-height: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; padding: 0 !important; border: 0 !important; overflow: hidden !important; }
+.ad:not(:has(ins.adsbygoogle[data-ad-status="filled"])) .ad-label,
+.ad-nohas .ad:not(.ad-shown) .ad-label { display: none; }
 
 /* faq, sources, changelog, related */
 .faq .qa { border-top: 1px solid var(--line-soft); padding-top: 4px; }

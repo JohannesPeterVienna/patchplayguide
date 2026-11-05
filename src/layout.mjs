@@ -7,7 +7,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261105s'
+  v: '20261105t'
 };
 const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026', '2026-11-04': 'November 4, 2026' };
 // 2026-11-04: the byline named an "editorial team" that does not exist. The correction is logged on every

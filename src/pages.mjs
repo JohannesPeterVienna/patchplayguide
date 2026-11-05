@@ -222,5 +222,8 @@ export const OLD_URLS = [
   ['/imprint.html', '/imprint/'],
   ['/privacy.html', '/privacy/'],
   ['/advertise.html', '/contact/'],
-  ['/contact.html', '/contact/']
+  ['/contact.html', '/contact/'],
+  // old addresses still in Google's index (Nov 2026) → closest new page
+  ['/verify-steam-files.html', '/guides/shader-compilation-stutter-after-update/'],
+  ['/settings-test-sheet.html', '/guides/how-to-test-a-settings-change/']
 ];

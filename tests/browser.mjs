@@ -57,15 +57,21 @@ for (const width of [390, 1366]) {
     const info = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth - window.innerWidth,
       results: (document.querySelector('.results') || {}).innerText || null,
-      visibleAds: [...document.querySelectorAll('.ad')].filter((a) => !a.hidden).length
+      // slot IDs are set; on localhost nothing is filled, so no ad box (label, rule, margin) may take any room
+      visibleAds: [...document.querySelectorAll('.ad')].filter((a) => a.offsetHeight > 0 && !a.querySelector('ins.adsbygoogle[data-ad-status="filled"]')).length
     }));
     if (info.overflow > 1) errs.push('horizontal overflow ' + info.overflow + 'px');
-    if (info.visibleAds) errs.push('ad box visible without slot id');
+    if (info.visibleAds) errs.push('empty ad box visible (no ad delivered)');
     if (u.startsWith('/tools/') && !(info.results && info.results.length > 40)) errs.push('tool shows no result');
     // force ad boxes visible at a realistic size and measure distance to controls and footer
     const dist = await page.evaluate(() => {
       const ads = [...document.querySelectorAll('.ad')];
-      ads.forEach((a) => { a.hidden = false; a.style.minHeight = a.dataset.slot === 'side' ? '600px' : '250px'; });
+      ads.forEach((a) => {
+        a.hidden = false; a.style.minHeight = a.dataset.slot === 'side' ? '600px' : '250px';
+        let ins = a.querySelector('ins.adsbygoogle');
+        if (!ins) { ins = document.createElement('ins'); ins.className = 'adsbygoogle'; a.appendChild(ins); }
+        ins.setAttribute('data-ad-status', 'filled');   // measure as if Google had delivered an ad
+      });
       const vis = ads.filter((a) => { const r = a.getBoundingClientRect(); return r.width > 0 && r.height > 0; });
       const controls = [...document.querySelectorAll('button, input, select, textarea, summary, [role="button"], .tool, a.btn, .foot')]
         .filter((c) => { const r = c.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !c.closest('.ad'); });
@@ -92,6 +98,37 @@ for (const width of [390, 1366]) {
   await ctx.close();
 }
 console.log(`Checked ${urls.length} pages at 390 and 1366 px. Minimum ad-to-control distance: ${Math.round(minAd)}px at ${minAdWhere}`);
+
+// ---- ad boxes without a delivered ad: collapsed; "unfilled" stays collapsed, "filled" shows label and rule ----
+for (const width of [390, 1366]) {
+  const ctx = await newCtx(width);
+  for (const u of ['/guides/how-to-test-a-settings-change/', '/tools/settings-translator/']) {
+    const page = await ctx.newPage();
+    const errs = []; watch(page, errs);
+    await page.goto(base + u, { waitUntil: 'load' });
+    const r = await page.evaluate(async () => {
+      const tick = () => new Promise((ok) => setTimeout(ok, 0));   // MutationObserver reports asynchronously
+      const shown = () => [...document.querySelectorAll('.ad')].filter((a) => a.offsetHeight > 0 || parseFloat(getComputedStyle(a).marginTop) > 0).length;
+      const ins = [...document.querySelectorAll('.ad:not([hidden]) ins.adsbygoogle')];
+      const none = shown();
+      ins.forEach((i) => i.setAttribute('data-ad-status', 'unfilled')); await tick();
+      const unfilled = shown();
+      ins.forEach((i) => i.setAttribute('data-ad-status', 'filled')); await tick();
+      const boxes = ins.map((i) => i.parentElement);
+      return { ins: ins.length, none, unfilled, filled: shown(),
+        label: boxes.every((b) => b.querySelector('.ad-label').offsetHeight > 0),
+        rule: boxes.every((b) => getComputedStyle(b).borderTopWidth === '1px'),
+        cls: boxes.every((b) => b.classList.contains('ad-shown')) };
+    });
+    if (!r.ins) errs.push('no ad box filled in');
+    if (r.none || r.unfilled) errs.push(`empty ad box visible (${r.none} without status, ${r.unfilled} unfilled)`);
+    if (r.filled !== r.ins || !r.label || !r.rule || !r.cls) errs.push(`filled ad box not shown (${r.filled}/${r.ins}, label ${r.label}, rule ${r.rule}, class ${r.cls})`);
+    if (errs.length) bad(`ad boxes ${width}px ${u}\n   ${errs.join('\n   ')}`);
+    await page.close();
+  }
+  await ctx.close();
+}
+console.log('Ad boxes: nothing visible without a delivered ad; filled boxes show label and rule.');
 
 // ---- interactive checks ----
 {

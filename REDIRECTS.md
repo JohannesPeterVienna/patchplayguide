@@ -10,6 +10,8 @@ Each old file below exists in `docs/` as a small `noindex` page with `canonical`
 | /privacy.html | /privacy/ |
 | /advertise.html | /contact/ |
 | /contact.html | /contact/ |
+| /verify-steam-files.html | /guides/shader-compilation-stutter-after-update/ (Steam files and caches after an update) |
+| /settings-test-sheet.html | /guides/how-to-test-a-settings-change/ (repeatable settings test) |
 
 The old in-page tools are replaced by: Patch Desk → /tools/patch-decoder/, Frame Lab / Test Queue → /tools/settings-translator/, /tools/bottleneck-finder/ and /guides/how-to-test-a-settings-change/.
 
