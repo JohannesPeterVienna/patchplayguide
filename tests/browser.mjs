@@ -58,10 +58,10 @@ for (const width of [390, 1366]) {
       overflow: document.documentElement.scrollWidth - window.innerWidth,
       results: (document.querySelector('.results') || {}).innerText || null,
       // slot IDs are set; on localhost nothing is filled, so no ad box (label, rule, margin) may take any room
-      visibleAds: [...document.querySelectorAll('.ad')].filter((a) => a.offsetHeight > 0 && !a.querySelector('ins.adsbygoogle[data-ad-status="filled"]')).length
+      visibleAds: [...document.querySelectorAll('.ad:not([hidden])')].filter((a) => !a.querySelector('ins.adsbygoogle[data-ad-status]') && (((a.querySelector('.ad-label') || {}).offsetHeight > 0) || parseFloat(getComputedStyle(a).marginTop) > 0 || parseFloat(getComputedStyle(a).marginBottom) > 0 || parseFloat(getComputedStyle(a).borderTopWidth) > 0)).length
     }));
     if (info.overflow > 1) errs.push('horizontal overflow ' + info.overflow + 'px');
-    if (info.visibleAds) errs.push('empty ad box visible (no ad delivered)');
+    if (info.visibleAds) errs.push('ad label, rule or margin visible without a delivered ad');
     if (u.startsWith('/tools/') && !(info.results && info.results.length > 40)) errs.push('tool shows no result');
     // force ad boxes visible at a realistic size and measure distance to controls and footer
     const dist = await page.evaluate(() => {
@@ -99,36 +99,52 @@ for (const width of [390, 1366]) {
 }
 console.log(`Checked ${urls.length} pages at 390 and 1366 px. Minimum ad-to-control distance: ${Math.round(minAd)}px at ${minAdWhere}`);
 
-// ---- ad boxes without a delivered ad: collapsed; "unfilled" stays collapsed, "filled" shows label and rule ----
+// ---- ad boxes: no status → ins visible, no label/rule/margin; "unfilled" → ins display:none; "filled"/"unfill-optimized" → label and rule ----
 for (const width of [390, 1366]) {
   const ctx = await newCtx(width);
   for (const u of ['/guides/how-to-test-a-settings-change/', '/tools/settings-translator/']) {
     const page = await ctx.newPage();
     const errs = []; watch(page, errs);
     await page.goto(base + u, { waitUntil: 'load' });
-    const r = await page.evaluate(async () => {
+    // AdSense help 10762946: the ins is never hidden or clipped before Google answers; only label, rule and margin wait.
+    const r = await page.evaluate(async (fb) => {
       const tick = () => new Promise((ok) => setTimeout(ok, 0));   // MutationObserver reports asynchronously
-      const shown = () => [...document.querySelectorAll('.ad')].filter((a) => a.offsetHeight > 0 || parseFloat(getComputedStyle(a).marginTop) > 0).length;
       const ins = [...document.querySelectorAll('.ad:not([hidden]) ins.adsbygoogle')];
-      const none = shown();
-      ins.forEach((i) => i.setAttribute('data-ad-status', 'unfilled')); await tick();
-      const unfilled = shown();
-      ins.forEach((i) => i.setAttribute('data-ad-status', 'filled')); await tick();
-      const boxes = ins.map((i) => i.parentElement);
-      return { ins: ins.length, none, unfilled, filled: shown(),
-        label: boxes.every((b) => b.querySelector('.ad-label').offsetHeight > 0),
-        rule: boxes.every((b) => getComputedStyle(b).borderTopWidth === '1px'),
-        cls: boxes.every((b) => b.classList.contains('ad-shown')) };
-    });
-    if (!r.ins) errs.push('no ad box filled in');
-    if (r.none || r.unfilled) errs.push(`empty ad box visible (${r.none} without status, ${r.unfilled} unfilled)`);
-    if (r.filled !== r.ins || !r.label || !r.rule || !r.cls) errs.push(`filled ad box not shown (${r.filled}/${r.ins}, label ${r.label}, rule ${r.rule}, class ${r.cls})`);
+      const state = () => ins.map((i) => {
+        const b = i.closest('.ad'), cb = getComputedStyle(b), ci = getComputedStyle(i), ri = i.getBoundingClientRect(), lab = b.querySelector('.ad-label');
+        return { slot: b.dataset.slot, display: ci.display, vis: ci.visibility, w: ri.width, insH: ri.height, boxH: b.getBoundingClientRect().height,
+          overflow: cb.overflowX + '/' + cb.overflowY, boxVis: cb.visibility, label: !!lab && lab.offsetHeight > 0,
+          mt: parseFloat(cb.marginTop), mb: parseFloat(cb.marginBottom), bt: parseFloat(cb.borderTopWidth), cls: b.classList.contains(fb.box) };
+      });
+      const set = async (v) => { ins.forEach((i) => (v ? i.setAttribute('data-ad-status', v) : i.removeAttribute('data-ad-status'))); await tick(); };
+      const out = { n: ins.length, none: state() };
+      await set('unfilled'); out.unfilled = state();
+      await set('filled'); out.filled = state();
+      await set('unfill-optimized'); out.optimized = state();
+      // browser without :has(): drop the :has() rules and force the fallback class on <html>
+      for (const sh of document.styleSheets) { try { for (let k = sh.cssRules.length - 1; k >= 0; k--) if (sh.cssRules[k].cssText.includes(':has(')) sh.deleteRule(k); } catch (e) {} }
+      document.documentElement.classList.add(fb.root);
+      await set(null); out.fbNone = state();
+      await set('unfilled'); out.fbUnfilled = state();
+      await set('unfill-optimized'); out.fbOptimized = state();
+      return out;
+    }, { root: 'ad-nohas', box: 'ad-shown' });
+    const kept = (l) => l.every((x) => x.display !== 'none' && x.vis === 'visible' && x.boxVis === 'visible' && x.w > 0 && x.overflow === 'visible/visible' && x.boxH >= x.insH - 0.5);
+    const bare = (l) => l.every((x) => !x.label && !x.mt && !x.mb && !x.bt && !x.cls);
+    const shown = (l) => l.every((x) => x.label && x.boxH > 0 && x.cls && (x.bt === 1));
+    const gone = (l) => l.every((x) => x.display === 'none' && !x.label && x.boxH === 0);
+    if (!r.n) errs.push('no ad box filled in');
+    if (!kept(r.none) || !bare(r.none)) errs.push('without status the ins must stay visible and unclipped, label/rule/margin hidden: ' + JSON.stringify(r.none));
+    if (!gone(r.unfilled)) errs.push('unfilled: ins must be display:none, no label: ' + JSON.stringify(r.unfilled));
+    if (!shown(r.filled)) errs.push('filled: box with label, rule and margin expected: ' + JSON.stringify(r.filled));
+    if (!shown(r.optimized)) errs.push('unfill-optimized: box with label, rule and margin expected: ' + JSON.stringify(r.optimized));
+    if (!kept(r.fbNone) || !bare(r.fbNone) || !gone(r.fbUnfilled) || !shown(r.fbOptimized)) errs.push('fallback without :has() differs: ' + JSON.stringify([r.fbNone, r.fbUnfilled, r.fbOptimized]));
     if (errs.length) bad(`ad boxes ${width}px ${u}\n   ${errs.join('\n   ')}`);
     await page.close();
   }
   await ctx.close();
 }
-console.log('Ad boxes: nothing visible without a delivered ad; filled boxes show label and rule.');
+console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-optimized; unfilled → display:none.');
 
 // ---- interactive checks ----
 {

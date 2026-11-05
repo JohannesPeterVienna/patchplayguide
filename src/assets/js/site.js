@@ -55,12 +55,12 @@
     }
   }
 
-  // ppg.css keeps the box collapsed until the ad is really there (:has()). Fallback without :has():
-  // .ad-shown follows data-ad-status on the ins – only "filled" opens the box.
+  // ppg.css shows label, rule and margin only once Google answers (:has()); the ins itself is never hidden.
+  // Fallback without :has(): .ad-shown follows data-ad-status – "filled" or "unfill-optimized".
   function revealOnFill(box, ins) {
     if (!(window.CSS && CSS.supports && CSS.supports('selector(:has(a))'))) document.documentElement.classList.add('ad-nohas');
     var apply = function () {
-      if (ins.getAttribute('data-ad-status') === 'filled') box.classList.add('ad-shown'); else box.classList.remove('ad-shown');
+      if (['filled', 'unfill-optimized'].indexOf(ins.getAttribute('data-ad-status')) !== -1) box.classList.add('ad-shown'); else box.classList.remove('ad-shown');
     };
     apply();
     if (window.MutationObserver) new MutationObserver(apply).observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
