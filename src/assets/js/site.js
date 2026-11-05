@@ -7,10 +7,11 @@
   'use strict';
   var CLIENT = 'ca-pub-7811071715414905';
   var AD_SLOTS = {
-    lede: '',   // guides: after the lede (responsive; 728×90 / 300×250)
-    mid: '',    // guides: mid-article (300×250 / responsive)
-    side: '',   // guides: sidebar from 1200 px (300×600), not sticky, never on tool pages
-    tool: ''    // tool pages: after the first explanatory section below the tool
+    // Shared responsive AdSense units “Themen-Websites – …” (account pub-7811071715414905)
+    lede: '7497607759',   // guides: after the lede (responsive; 728×90 / 300×250)
+    mid: '1292301217',    // guides: mid-article (300×250 / responsive)
+    side: '1292301217',   // guides: sidebar from 1200 px (300×600), not sticky, never on tool pages
+    tool: '1292301217'    // tool pages: after the first explanatory section below the tool
   };
   var GA_ID = 'G-T00HRG2YVF';
   var root = document.documentElement;
