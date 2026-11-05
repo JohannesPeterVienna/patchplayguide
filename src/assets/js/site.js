@@ -63,6 +63,8 @@
   var nav = window.navigator || (typeof navigator !== 'undefined' ? navigator : null);
   var GPC = !!(nav && nav.globalPrivacyControl === true);   // Global Privacy Control: no analytics, no stats window
   var stats = null;  // interim "Stats check" window (stats-window.js); null if the file is missing
+  var statsAuto = root.getAttribute('data-stats') === 'auto';   // false: page without ads (imprint, privacy, contact, 404)
+  var FC_SRC = 'https://fundingchoicesmessages.google.com/i/pub-7811071715414905?ers=1';
 
   function startGA() {
     if (gaOn || NO_GOOGLE) return;
@@ -116,17 +118,19 @@
       var k = 'stats:' + on;
       if (k !== cmp.sent) { cmp.sent = k; tag('consent', 'update', { analytics_storage: on ? 'granted' : 'denied' }); }
       if (on) startGA();
+      stats.refresh();
       return;
     }
     var values = cmp.cmReady && C.region(cmp.tc) !== 'none' ? cmValues() : null;
     var d = C.decide(cmp.tc, values, C.usEffective(cmp.us, cmp.gpp));
-    if (GPC) d.analytics_storage = 'denied';
+    if (GPC || !statsAuto) d.analytics_storage = 'denied';   // pages without ads never load GA, even if Google's CMP grants it
     var analytics = d.analytics_storage === 'granted';
     window['ga-disable-' + GA_ID] = !analytics;
     var key = JSON.stringify(d);
     if (key !== cmp.sent) { cmp.sent = key; tag('consent', 'update', d); }
     if (analytics) { startGA(); cmp.saidNo = false; }   // a later Google "no" deletes the cookies again
     if (!cmp.saidNo && googleSaysNo()) { cmp.saidNo = true; eraseGa(); }
+    if (stats) stats.refresh();
   }
   // later U.S. opt-out changes arrive through the GPP signal; without GPP a U.S. visitor stays denied
   function listenToGpp() {
@@ -183,14 +187,18 @@
     var S = window.PPGStats;
     if (!S || typeof setTimeout !== 'function') return;
     var ctrl = null;
-    var view = S.createView(document, { choose: function (c) { ctrl.choose(c); }, dismiss: function () { ctrl.dismiss(); } });
+    var view = S.createView(document, {
+      choose: function (c) { ctrl.choose(c); },
+      dismiss: function () { ctrl.dismiss(); },
+      google: function () { ctrl.dismiss(); loadGoogleChoicesHere(); }
+    });
     ctrl = S.createController({
       store: S.safeStorage(function () { return window.localStorage; }),
       now: function () { return Date.now(); },
       later: function (fn, ms) { setTimeout(fn, ms); },
       gpc: GPC,
       usOptOut: usOptedOut,
-      scope: root.getAttribute('data-stats') === 'auto' ? 'auto' : 'settings',   // pages without the AdSense loader: view/change only
+      scope: statsAuto ? 'auto' : 'settings',   // pages without the AdSense loader: view/change only
       tc: function () { return cmp.tc; },
       changed: applyConsent,
       eraseGa: eraseGa,
@@ -218,7 +226,19 @@
         }, lastTc || prev.tc);   // latest TCF data: GDPR applies -> revocation message
       } catch (e) { /* CMP unavailable */ }
     });
-    loadAdScript();
+    if (statsAuto) loadAdScript();
+  }
+  // pages without ads: on request, load only Google's consent message (Funding Choices) – never adsbygoogle.js
+  function loadGoogleChoicesHere() {
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    if (!NO_GOOGLE && !document.querySelector('script[src^="https://fundingchoicesmessages.google.com/"]')) {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = FC_SRC;
+      document.head.appendChild(s);
+    }
+    openGoogleChoices();
   }
   function privacyButtons() {
     var btns = document.querySelectorAll('[data-privacy-settings]');
@@ -226,7 +246,7 @@
       btns[i].addEventListener('click', function () {
         // Google's CMP when it is in charge; otherwise (no decision, page without ads) the stats window
         if (stats && stats.open()) return;
-        if (root.getAttribute('data-stats') !== 'auto') return;   // no ad or CMP code on pages without ads
+        if (!statsAuto) return;   // pages without ads: Google's choices only via the button inside the window
         openGoogleChoices();
       });
     }

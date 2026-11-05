@@ -97,7 +97,10 @@
     function state() { return { phase: phase, choice: choice, gpc: !!env.gpc, us: !env.gpc && usOut() }; }
 
     function retire(forget) {
-      if (phase === 'settings') return;
+      if (phase === 'settings') {   // Google's CMP loaded on request on a page without ads: its decision wins, GA stays off here
+        if (forget) { env.store.remove(KEY); choice = null; call(function () { env.view.update(state()); }); }
+        return;
+      }
       if (forget) { env.store.remove(KEY); choice = null; }
       if (phase === 'retired') return;
       phase = 'retired';
@@ -147,6 +150,8 @@
         changed();
         call(function () { env.view.hide(true); env.view.say(c === 'yes' ? 'Statistics allowed. You can change this under Privacy settings.' : 'Statistics declined. Google Analytics stays off.'); });
       },
+      /** Re-render an open window (e.g. a U.S. opt-out arrived while it is on screen). */
+      refresh: function () { call(function () { env.view.update(state()); }); },
       /** × / Escape / Close: nothing is stored, statistics stay off. */
       dismiss: function () { call(function () { env.view.hide(true); }); },
       state: state
@@ -192,16 +197,23 @@
         var n = el('button', 'statcheck-btn', b[1]); n.type = 'button'; n.setAttribute('data-stat', b[0]); parts.pick.appendChild(n);
       });
       inner.appendChild(parts.pick);
+      // pages without ads: Google's own choices (ad consent withdrawal, U.S. opt-out) are loaded only on request
+      parts.g = el('p', 'statcheck-google');
+      var gb = el('button', 'linklike statcheck-gbtn', 'Open Google’s ad & U.S. privacy choices');
+      gb.type = 'button'; gb.setAttribute('data-stat-google', '');
+      parts.g.appendChild(gb);
       parts.one = el('div', 'statcheck-pick statcheck-pick-one');
       var c = el('button', 'statcheck-btn', 'Close'); c.type = 'button'; c.setAttribute('data-stat-close', '');
       parts.one.appendChild(c);
       inner.appendChild(parts.one);
+      inner.appendChild(parts.g);
       box.appendChild(inner);
       box.addEventListener('click', function (e) {
         var t = e.target && e.target.closest ? e.target : null;
         if (!t) return;
         var pick = t.closest('[data-stat]');
         if (pick) { handlers.choose(pick.getAttribute('data-stat')); return; }
+        if (t.closest('[data-stat-google]')) { handlers.google(); return; }
         if (t.closest('[data-stat-close]')) handlers.dismiss();
       });
       box.addEventListener('keydown', function (e) { if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); handlers.dismiss(); } });
@@ -229,7 +241,7 @@
         t.appendChild(doc.createTextNode('If you allow it, Google Analytics (Google Ireland Ltd.) counts which guides and tools are used and sets cookies (_ga) on your device; data may be processed in the USA. This is only about statistics – it is not consent to advertising. Your choice is kept for 12 months and can be changed under “Privacy settings”. '));
         var rec = st.choice;
         var now = rec ? 'Current choice: ' + (rec.choice === 'yes' ? 'allowed' : 'declined') + ' on ' + longDate(rec.at) + '.' : (st.phase === 'settings' ? 'No choice saved in this browser.' : '');
-        if (st.phase === 'settings') now += ' This page loads no statistics and no ads; the choice applies on guide and tool pages. If you decided in Google’s consent message, change it with “Privacy settings” on one of those pages.';
+        if (st.phase === 'settings') now += ' This page loads no statistics and no ads; the choice applies on guide and tool pages. To withdraw consent to ads or to opt out under a U.S. state privacy law, use the button below – it loads Google’s consent message on this page.';
         parts.now.textContent = now;
       }
       var a = el('a', null, 'Privacy policy'); a.href = '/privacy/#stats-window';
@@ -237,6 +249,7 @@
       t.appendChild(doc.createTextNode('.'));
       parts.pick.hidden = !!off;
       parts.one.hidden = !off;
+      parts.g.hidden = st.phase !== 'settings';
     }
     return {
       show: function (st, focus) {
@@ -255,6 +268,15 @@
         doc.body.classList.remove('statcheck-open');
         if (returnFocus && hadFocus && opener && opener.focus) opener.focus();
         opener = null;
+      },
+      update: function (st) {
+        if (!box || box.hidden) return;
+        var hadFocus = box.contains(doc.activeElement);
+        fill(st);
+        doc.body.style.setProperty('--statcheck-h', box.offsetHeight + 'px');
+        var a = doc.activeElement, n = a, gone = false;
+        while (n && n !== box) { if (n.hidden) gone = true; n = n.parentNode; }
+        if (hadFocus && gone) parts.h.focus();   // the focused Allow/Decline button was hidden
       },
       say: function (text) {
         if (!live) build();

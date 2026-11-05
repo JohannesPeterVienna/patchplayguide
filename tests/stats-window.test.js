@@ -354,3 +354,49 @@ test('second Google "no" after a later Google grant deletes _ga again', () => {
   assert.equal(s.win[OFF], true);
   assert.deepEqual(s.jar(), []);
 });
+
+/* ---------- pages without ads: Google's choices on request; U.S. opt-out while the window is open ---------- */
+test('page without ads: button loads only the Funding Choices script, opens Google choices; decision wins, GA stays off', () => {
+  const s = site({ scope: 'settings', stored: { v: 1, choice: 'yes', at: NOW - DAY } });
+  s.win.PPG_NO_GOOGLE = false;
+  s.advance(5000);
+  assert.equal(s.scripts.length, 0, 'nothing from Google before the click');
+  s.footBtn.fire('click');
+  const g = s.box().all((n) => n.getAttribute('data-stat-google') !== null)[0];
+  assert.ok(g && !g.parentNode.hidden);
+  assert.match(g.textContent, /Google’s ad & U\.S\. privacy choices/);
+  g.fire('click');
+  assert.equal(s.open(), false);
+  assert.deepEqual(s.scripts.map((x) => x.src), ['https://fundingchoicesmessages.google.com/i/pub-7811071715414905?ers=1']);
+  assert.ok(!s.scripts.some((x) => /adsbygoogle/.test(x.src)));
+  // the CMP arrives: revocation message, then a decision with analytics granted
+  let revoked = 0, tcCb = null;
+  s.win.__tcfapi = (cmd, v, cb) => { if (cmd === 'addEventListener') tcCb = cb; };
+  s.win.googlefc.showRevocationMessage = () => { revoked++; };
+  s.win.googlefc.getGoogleConsentModeValues = () => ({ analyticsStoragePurposeConsentStatus: 1, adStoragePurposeConsentStatus: 1, adUserDataPurposeConsentStatus: 1, adPersonalizationPurposeConsentStatus: 1 });
+  s.win.googlefc.callbackQueue.forEach((c) => { if (typeof c === 'function') c(); else if (c && c.CONSENT_API_READY) c.CONSENT_API_READY(); });
+  assert.equal(revoked, 1);
+  tcCb({ gdprApplies: true, eventStatus: 'useractioncomplete', tcString: 'CQ', purpose: { consents: { 1: true } }, vendor: { consents: { 755: true } } }, true);
+  assert.equal(s.store.has(KEY), false, 'window choice deleted: Google wins');
+  assert.equal(s.win[OFF], true);
+  assert.equal(s.gaScripts().length, 0);
+  assert.ok(!s.scripts.some((x) => /adsbygoogle/.test(x.src)));
+});
+test('guide pages: the Google-choices button is not shown in the window', () => {
+  const s = site(); s.advance(3000);
+  const g = s.box().all((n) => n.getAttribute('data-stat-google') !== null)[0];
+  assert.equal(g.parentNode.hidden, true);
+});
+test('U.S. opt-out arriving while the window is open switches it to the notice (no Allow/Decline)', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN });
+  const gpp = withGpp(s);
+  s.advance(3000);
+  assert.equal(s.open(), true);
+  const yes = s.box().all((n) => n.getAttribute('data-stat') === 'yes')[0];
+  yes.focus();
+  gpp(true);
+  assert.equal(s.open(), true);
+  assert.equal(yes.parentNode.hidden, true);
+  assert.match(s.box().textContent, /opted out under a U\.S\. state privacy law/);
+  assert.equal(s.doc.activeElement.id, 'statcheck-h', 'focus moved off the hidden button');
+});
