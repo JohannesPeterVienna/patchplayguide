@@ -87,9 +87,13 @@ ${opts.refresh ? `<meta http-equiv="refresh" content="0; url=${esc(opts.refresh)
 <meta property="og:title" content="${esc(opts.title)}">
 <meta property="og:description" content="${esc(opts.description)}">
 <meta property="og:url" content="${esc(url)}">
+<meta property="og:image" content="https://patchplayguide.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:site_name" content="${SITE.name}">
 <meta property="og:locale" content="en_US">
-<meta name="theme-color" content="#0E1A24">
+<meta name="theme-color" content="#EEEDE9">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
