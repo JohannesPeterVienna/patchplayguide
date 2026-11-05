@@ -289,7 +289,7 @@ test('Allow and Decline are the same kind of button', () => {
   assert.equal(a.parentNode, d.parentNode);
   const css = fs.readFileSync(path.join(__dirname, '..', 'src', 'assets', 'css', 'ppg.css'), 'utf8');
   assert.match(css, /\.statcheck \.statcheck-btn\{min-height:44px/);
-  assert.match(css, /@media print\{\.statcheck\{display:none!important\}/);
+  assert.match(css, /@media print\{\.statcheck\{display:none!important\}body\.statcheck-open\{padding-bottom:0\}\}/);
   assert.match(css, /\.statcheck\{position:fixed/);
 });
 
@@ -399,4 +399,24 @@ test('U.S. opt-out arriving while the window is open switches it to the notice (
   assert.equal(yes.parentNode.hidden, true);
   assert.match(s.box().textContent, /opted out under a U\.S\. state privacy law/);
   assert.equal(s.doc.activeElement.id, 'statcheck-h', 'focus moved off the hidden button');
+});
+
+/* ---------- review round 2 ---------- */
+test('Privacy settings within the first 3 s (silent CMP): own window at once, with focus, and no second automatic opening', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN });
+  s.advance(1000);
+  s.footBtn.focus(); s.footBtn.fire('click');
+  assert.equal(s.open(), true);
+  assert.equal(s.doc.activeElement.id, 'statcheck-h');
+  assert.equal(s.win.googlefc.callbackQueue.filter((c) => typeof c === 'function').length, 0, 'silent Google path not used');
+  s.click('close');
+  assert.equal(s.doc.activeElement, s.footBtn);
+  s.advance(10000);
+  assert.equal(s.open(), false, 'not reopened by the timer');
+});
+test('closing with × keeps an earlier saved choice', () => {
+  const s = site({ stored: { v: 1, choice: 'yes', at: NOW - DAY } });
+  s.advance(3000); s.footBtn.fire('click'); s.click('close');
+  assert.equal(JSON.parse(s.store.get(KEY)).choice, 'yes');
+  assert.equal(s.win[OFF], false);
 });

@@ -108,14 +108,14 @@
       call(function () { env.view.hide(false); });
       changed();
     }
-    function check() {
+    function check(manual) {
       if (phase !== 'waiting') return;
       var s = cmpState(env.tc());
       if (s) { retire(s !== 'shown'); return; }
       phase = 'active';
       choice = readChoice(env.store, env.now());
       changed();
-      if (!choice && !blocked()) call(function () { env.view.show(state(), false); env.view.say('A question about visit statistics appeared at the bottom of the page.'); });
+      if (!manual && !choice && !blocked()) call(function () { env.view.show(state(), false); env.view.say('A question about visit statistics appeared at the bottom of the page.'); });
     }
 
     return {
@@ -135,7 +135,7 @@
       phase: function () { return phase; },
       /** "Privacy settings": true if the window opened, false if Google's CMP should be opened instead. */
       open: function () {
-        if (phase === 'waiting') check();
+        if (phase === 'waiting') check(true);   // clicked within the first ~3 s: decide now, open once (no second automatic opening)
         if (phase === 'retired') return false;
         if (phase === 'settings') choice = readChoice(env.store, env.now());
         call(function () { env.view.show(state(), true); });
