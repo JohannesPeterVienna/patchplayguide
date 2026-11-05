@@ -1,5 +1,5 @@
 /*
- * Patch Play Guide – page runtime: ad slots, consent-gated Google Analytics, "Privacy settings",
+ * Patch Play Guide – page runtime: ad slots, consent-gated Google Analytics, the interim stats window, "Privacy settings",
  * and the saved "My setup" (platform + GPU class, localStorage only) shown on guide pages and home.
  * Ad slot IDs stay empty until AdSense units exist: an empty ID renders nothing and reserves no space.
  */
@@ -56,19 +56,30 @@
 
   /* ---------- consent → Consent Mode update + GA4 ---------- */
   var gtag = window.gtag || function () { (window.dataLayer = window.dataLayer || []).push(arguments); };
-  var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, sent: '' };
+  function tag() { try { (typeof window.gtag === 'function' ? window.gtag : gtag).apply(null, arguments); } catch (e) { /* ignore */ } }
+  var cmp = { tc: null, cmReady: false, us: null, gpp: null, gppOn: false, tcfOn: false, sent: '', saidNo: false };
   var lastTc = null; // latest TCF data, kept across the click-time withdrawal
   var gaOn = false;
+  var nav = window.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+  var GPC = !!(nav && nav.globalPrivacyControl === true);   // Global Privacy Control: no analytics, no stats window
+  var stats = null;  // interim "Stats check" window (stats-window.js); null if the file is missing
 
   function startGA() {
     if (gaOn || NO_GOOGLE) return;
     gaOn = true;
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-    document.head.appendChild(s);
-    gtag('js', new Date());
-    gtag('config', GA_ID);
+    if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    }
+    tag('js', new Date());
+    tag('config', GA_ID, { allow_google_signals: false, allow_ad_personalization_signals: false });
+  }
+  function eraseGa() {
+    var C = window.PPGStats;
+    if (!C) return;
+    try { C.gaCookieDeletes(document.cookie, location.hostname).forEach(function (c) { document.cookie = c; }); } catch (e) { /* cookies blocked */ }
   }
   function cmValues() {
     try {
@@ -77,16 +88,41 @@
     } catch (e) { /* CMP not ready */ }
     return null;
   }
+  function usOptedOut() { return cmp.gpp === 3 || cmp.us === 3; }
+  // a clear "no" to statistics from Google's CMP (not a value that is still on its way) -> GA cookies go
+  function googleSaysNo() {
+    var tc = cmp.tc, S = window.PPGStats;
+    if (!tc || !S) return false;
+    var st = S.cmpState(tc);
+    var v = cmp.cmReady ? cmValues() : null;
+    var cmNo = !!v && v.analyticsStoragePurposeConsentStatus === 2;
+    if (st === 'non-gdpr') return cmNo || usOptedOut();
+    if (st !== 'decided') return false;
+    var p1 = tc.purpose && tc.purpose.consents && tc.purpose.consents[1] === true;
+    var g = tc.vendor && tc.vendor.consents && tc.vendor.consents[755] === true;
+    return !p1 || !g || cmNo;
+  }
   function applyConsent() {
     var C = window.PPGConsent;
     if (!C) return;
+    if (stats && stats.inCharge()) {
+      // the window decides analytics only; ad_* are never sent from here and stay at their "denied" default
+      var on = stats.granted() && !GPC && !usOptedOut();
+      window['ga-disable-' + GA_ID] = !on;
+      var k = 'stats:' + on;
+      if (k !== cmp.sent) { cmp.sent = k; tag('consent', 'update', { analytics_storage: on ? 'granted' : 'denied' }); }
+      if (on) startGA();
+      return;
+    }
     var values = cmp.cmReady && C.region(cmp.tc) !== 'none' ? cmValues() : null;
     var d = C.decide(cmp.tc, values, C.usEffective(cmp.us, cmp.gpp));
+    if (GPC) d.analytics_storage = 'denied';
     var analytics = d.analytics_storage === 'granted';
     window['ga-disable-' + GA_ID] = !analytics;
     var key = JSON.stringify(d);
-    if (key !== cmp.sent) { cmp.sent = key; gtag('consent', 'update', d); }
+    if (key !== cmp.sent) { cmp.sent = key; tag('consent', 'update', d); }
     if (analytics) startGA();
+    if (!cmp.saidNo && googleSaysNo()) { cmp.saidNo = true; eraseGa(); }
   }
   // later U.S. opt-out changes arrive through the GPP signal; without GPP a U.S. visitor stays denied
   function listenToGpp() {
@@ -100,19 +136,26 @@
       });
     } catch (e) { cmp.gppOn = false; cmp.gpp = null; }
   }
+  function listenToTcf() {
+    if (cmp.tcfOn || typeof window.__tcfapi !== 'function') return;
+    cmp.tcfOn = true;
+    try {
+      window.__tcfapi('addEventListener', 2, function (tc, ok) {
+        cmp.tc = ok ? tc : null;
+        if (ok && tc) lastTc = tc;
+        if (ok && tc && tc.eventStatus === 'useractioncomplete' && typeof window.googlefc.getGoogleConsentModeValues === 'function') cmp.cmReady = true;
+        if (ok && tc && stats) stats.cmpUpdate(tc);   // Google's decision (also a late one) ends the stats window
+        applyConsent();
+      });
+    } catch (e) { cmp.tcfOn = false; }
+  }
   function listenToCmp() {
     window.googlefc = window.googlefc || {};
     window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
     window.googlefc.callbackQueue.push({
       CONSENT_API_READY: function () {
         listenToGpp();
-        if (typeof window.__tcfapi !== 'function') return;
-        window.__tcfapi('addEventListener', 2, function (tc, ok) {
-          cmp.tc = ok ? tc : null;
-          if (ok && tc) lastTc = tc;
-          if (ok && tc && tc.eventStatus === 'useractioncomplete' && typeof window.googlefc.getGoogleConsentModeValues === 'function') cmp.cmReady = true;
-          applyConsent();
-        });
+        listenToTcf();
       },
       CONSENT_MODE_DATA_READY: function () { cmp.cmReady = true; applyConsent(); },
       INITIAL_US_STATES_OPT_OUT_DATA_READY: function () {
@@ -124,31 +167,62 @@
         applyConsent();
       }
     });
+    // __tcfapi can exist before CONSENT_API_READY fires: attach as soon as it appears (first ~3 s)
+    var tries = 0;
+    (function poll() {
+      listenToTcf();
+      if (!cmp.tcfOn && ++tries < 12 && typeof setTimeout === 'function') setTimeout(poll, 250);
+    })();
     applyConsent();
+  }
+  function setupStats() {
+    var S = window.PPGStats;
+    if (!S || typeof setTimeout !== 'function') return;
+    var ctrl = null;
+    var view = S.createView(document, { choose: function (c) { ctrl.choose(c); }, dismiss: function () { ctrl.dismiss(); } });
+    ctrl = S.createController({
+      store: S.safeStorage(function () { return window.localStorage; }),
+      now: function () { return Date.now(); },
+      later: function (fn, ms) { setTimeout(fn, ms); },
+      gpc: GPC,
+      scope: root.getAttribute('data-stats') === 'auto' ? 'auto' : 'settings',   // pages without the AdSense loader: view/change only
+      tc: function () { return cmp.tc; },
+      changed: applyConsent,
+      eraseGa: eraseGa,
+      view: view
+    });
+    stats = ctrl;
+    ctrl.start();
+  }
+  function openGoogleChoices() {
+    // treat as withdrawn until the CMP reports the new choice
+    var prev = { tc: cmp.tc, cmReady: cmp.cmReady };
+    cmp.tc = null; cmp.cmReady = false; applyConsent();
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    window.googlefc.callbackQueue.push(function () {
+      try {
+        // U.S. state regulation applies -> U.S. opt-out dialog; otherwise the GDPR revocation message
+        window.PPGConsent.openPrivacyChoices(window.googlefc, function (userDidOptOut) {
+          try {
+            if (userDidOptOut) cmp.gpp = window.PPGConsent.US_OPTED_OUT; // personalisation + analytics stay denied
+            else { cmp.tc = prev.tc; cmp.cmReady = prev.cmReady; }
+            listenToGpp();
+          } catch (e) { cmp.gpp = null; }
+          applyConsent();
+        }, lastTc || prev.tc);   // latest TCF data: GDPR applies -> revocation message
+      } catch (e) { /* CMP unavailable */ }
+    });
+    loadAdScript();
   }
   function privacyButtons() {
     var btns = document.querySelectorAll('[data-privacy-settings]');
     for (var i = 0; i < btns.length; i++) {
       btns[i].addEventListener('click', function () {
-        // treat as withdrawn until the CMP reports the new choice
-        var prev = { tc: cmp.tc, cmReady: cmp.cmReady };
-        cmp.tc = null; cmp.cmReady = false; applyConsent();
-        window.googlefc = window.googlefc || {};
-        window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
-        window.googlefc.callbackQueue.push(function () {
-          try {
-            // U.S. state regulation applies -> U.S. opt-out dialog; otherwise the GDPR revocation message
-            window.PPGConsent.openPrivacyChoices(window.googlefc, function (userDidOptOut) {
-              try {
-                if (userDidOptOut) cmp.gpp = window.PPGConsent.US_OPTED_OUT; // personalisation + analytics stay denied
-                else { cmp.tc = prev.tc; cmp.cmReady = prev.cmReady; }
-                listenToGpp();
-              } catch (e) { cmp.gpp = null; }
-              applyConsent();
-            }, lastTc || prev.tc);   // latest TCF data: GDPR applies -> revocation message
-          } catch (e) { /* CMP unavailable */ }
-        });
-        loadAdScript();
+        // Google's CMP when it is in charge; otherwise (no decision, page without ads) the stats window
+        if (stats && stats.open()) return;
+        if (root.getAttribute('data-stats') !== 'auto') return;   // no ad or CMP code on pages without ads
+        openGoogleChoices();
       });
     }
   }
@@ -262,6 +336,7 @@
   }
   window.PPGSetup = { read: readSetup, text: setupText, clean: cleanSetup };
 
+  setupStats();
   privacyButtons();
   if (adsAllowed) { loadAdScript(); renderSlots(); }
   listenToCmp();

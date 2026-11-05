@@ -7,7 +7,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261104a'
+  v: '20261105s'
 };
 const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026', '2026-11-04': 'November 4, 2026' };
 // 2026-11-04: the byline named an "editorial team" that does not exist. The correction is logged on every
@@ -69,10 +69,10 @@ export function page(opts) {
   if (opts.crumbs) ld.push(breadcrumbLd(opts.crumbs));
   if (opts.ld) ld.push(...opts.ld);
   const ldTag = ld.length ? `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': ld }).replace(/</g, '\\u003c')}</script>` : '';
-  const scripts = ['consent.js', 'site.js', ...(opts.scripts || [])].map((s) => `<script src="/assets/js/${s}?v=${SITE.v}" defer></script>`).join('\n');
+  const scripts = ['consent.js', 'stats-window.js', 'site.js', ...(opts.scripts || [])].map((s) => `<script src="/assets/js/${s}?v=${SITE.v}" defer></script>`).join('\n');
   const nav = NAV.map(([u, n]) => `<li><a href="${u}"${opts.path === u ? ' aria-current="page"' : ''}>${n}</a></li>`).join('');
   return `<!doctype html>
-<html lang="en" data-ads="${opts.ads === 'yes' ? 'yes' : 'no'}">
+<html lang="en" data-ads="${opts.ads === 'yes' ? 'yes' : 'no'}" data-stats="${opts.loader ? 'auto' : 'settings'}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

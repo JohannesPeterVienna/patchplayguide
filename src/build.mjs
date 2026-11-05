@@ -31,7 +31,7 @@ TOOLS.forEach((t) => { META[t.slug] = { path: `/tools/${t.slug}/`, kicker: 'Tool
 const lookup = (slug) => { if (!META[slug]) throw new Error('unknown related slug ' + slug); return META[slug]; };
 
 const sitemap = [];
-const lastmod = { '/privacy/': '2026-11-04', '/about/': '2026-11-04', '/contact/': '2026-11-04' }; // path -> date of last change
+const lastmod = { '/privacy/': '2026-11-05', '/about/': '2026-11-04', '/contact/': '2026-11-04' }; // path -> date of last change
 const report = [];
 
 // home (AdSense loader so the CMP appears, but no ad slots)

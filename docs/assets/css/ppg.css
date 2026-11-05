@@ -353,3 +353,26 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .vorteile li{display:flex;flex-direction:column;gap:2px;padding:.8rem 0;border-bottom:1px solid var(--vt-line)}
 .vorteile b::before{content:"✓";color:var(--vt-acc);margin-right:.45rem}
 .vorteile span{opacity:.85;font-size:.93rem}
+
+/* Stats check (interim statistics window, 5 Nov 2026): fixed, so it never shifts the page; Allow and Decline share one style. */
+.statcheck{position:fixed;z-index:20;right:16px;bottom:16px;width:min(390px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:var(--paper);color:var(--text);border:1px solid var(--line);border-top:3px solid var(--signal);box-shadow:0 10px 32px rgba(0,0,0,.22);font-size:.93rem;line-height:1.5}
+.statcheck-bar{display:flex;align-items:center;gap:8px;background:var(--ink);color:var(--ink-text);padding:0 0 0 14px;font:600 .72rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.statcheck-tag{color:var(--signal)}
+.statcheck-opt{color:var(--ink-muted);flex:1;min-width:0}
+.statcheck .statcheck-x{flex:none;width:44px;height:44px;background:transparent;color:var(--ink-text);border:0;border-radius:0;font:400 1.5rem/1 var(--body);padding:0}
+.statcheck .statcheck-x:hover{background:var(--ink-3)}
+.statcheck-bar :focus-visible{outline-color:var(--signal);outline-offset:-3px}
+.statcheck-in{padding:12px 16px 16px}
+.statcheck-h{font:700 1.15rem/1.25 var(--head);margin:0 0 6px}
+.statcheck-h:focus{outline:none}
+.statcheck-h:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.statcheck-txt{margin:0 0 6px}
+.statcheck-now{margin:0 0 10px;font:400 .8rem/1.45 var(--mono);color:var(--muted)}
+.statcheck-now:empty{display:none}
+.statcheck-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.statcheck-pick-one{grid-template-columns:1fr}
+.statcheck .statcheck-btn{min-height:44px;padding:10px 12px;background:var(--paper);color:var(--text);border:2px solid var(--text);border-radius:4px;font:600 .82rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.statcheck .statcheck-btn:hover{background:var(--signal);border-color:var(--signal);color:#141414}
+body.statcheck-open{padding-bottom:calc(var(--statcheck-h,0px) + 24px)}
+@media (max-width:559px){.statcheck{left:0;right:0;bottom:0;width:auto;max-height:70vh;border-left:0;border-right:0;border-bottom:0}}
+@media print{.statcheck{display:none!important}body.statcheck-open{padding-bottom:0}}
