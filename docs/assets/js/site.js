@@ -207,7 +207,7 @@
     stats = ctrl;
     ctrl.start();
   }
-  function openGoogleChoices() {
+  function openGoogleChoices(noAdScript) {
     // treat as withdrawn until the CMP reports the new choice
     var prev = { tc: cmp.tc, cmReady: cmp.cmReady };
     cmp.tc = null; cmp.cmReady = false; applyConsent();
@@ -226,19 +226,28 @@
         }, lastTc || prev.tc);   // latest TCF data: GDPR applies -> revocation message
       } catch (e) { /* CMP unavailable */ }
     });
-    if (statsAuto) loadAdScript();
+    if (statsAuto && !noAdScript) loadAdScript();
   }
-  // pages without ads: on request, load only Google's consent message (Funding Choices) – never adsbygoogle.js
+  function cmpLoaded() {
+    return typeof window.__tcfapi === 'function' || !!document.querySelector('script[src*="adsbygoogle.js"], script[src^="https://fundingchoicesmessages.google.com/"]');
+  }
+  // button "Open Google's ad & U.S. privacy choices" in a window opened via Privacy settings (never sets ad consent):
+  // CMP already there (ad pages) -> its revocation / U.S. dialog; otherwise Google's standard snippet, in its order:
+  // queue + callback, hidden iframe "googlefcPresent", then only the Funding Choices script – never adsbygoogle.js
   function loadGoogleChoicesHere() {
-    window.googlefc = window.googlefc || {};
-    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
-    if (!NO_GOOGLE && !document.querySelector('script[src^="https://fundingchoicesmessages.google.com/"]')) {
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = FC_SRC;
-      document.head.appendChild(s);
+    var loaded = cmpLoaded();
+    openGoogleChoices(true);   // prepares googlefc.callbackQueue and queues the callback first
+    if (loaded || NO_GOOGLE) return;
+    if (!document.querySelector('iframe[name="googlefcPresent"]') && document.body) {
+      var f = document.createElement('iframe');
+      f.style.width = '0'; f.style.height = '0'; f.style.border = 'none'; f.style.zIndex = '-1000'; f.style.left = '-1000px'; f.style.top = '-1000px'; f.style.display = 'none';
+      f.name = 'googlefcPresent';
+      document.body.appendChild(f);
     }
-    openGoogleChoices();
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = FC_SRC;
+    document.head.appendChild(s);
   }
   function privacyButtons() {
     var btns = document.querySelectorAll('[data-privacy-settings]');

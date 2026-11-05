@@ -9,7 +9,7 @@
  * Rules (tests/stats-window.test.js):
  *  - About 3 s after start the latest TCF data is checked (cmpState). The window takes charge only if there is
  *    no decision (no "useractioncomplete", no "tcloaded" with a non-empty tcString), no message on screen
- *    (displayStatus "visible"; "hidden"/"disabled" do not count) and gdprApplies is not false – or if the CMP
+ *    (displayStatus "visible", or cmpuishown not "hidden"/"disabled") and gdprApplies is not false – or if the CMP
  *    sent nothing at all (__tcfapi missing).
  *  - Google's CMP wins: a decision or gdprApplies === false (also later) retires the window for this page
  *    view and deletes the stored window choice; a visible CMP message retires it as well.
@@ -30,7 +30,9 @@
     if (tc.gdprApplies === false) return 'non-gdpr';
     if (tc.eventStatus === 'useractioncomplete') return 'decided';
     if (tc.eventStatus === 'tcloaded' && typeof tc.tcString === 'string' && tc.tcString !== '') return 'decided';
-    if (tc.displayStatus === 'visible') return 'shown';   // cmpuishown with "hidden"/"disabled" is not a message
+    // message on screen: displayStatus "visible", or cmpuishown whose displayStatus is neither "hidden" nor "disabled"
+    if (tc.displayStatus === 'visible') return 'shown';
+    if (tc.eventStatus === 'cmpuishown' && tc.displayStatus !== 'hidden' && tc.displayStatus !== 'disabled') return 'shown';
     return null;
   }
 
@@ -163,7 +165,15 @@
     try { return new Date(ms).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); } catch (e) { return new Date(ms).toDateString(); }
   }
   function createView(doc, handlers) {
-    var box = null, live = null, opener = null, parts = {};
+    var box = null, live = null, opener = null, parts = {}, manual = false;
+    // Escape closes the open window from anywhere – unless another open dialog/menu or the page already handled it
+    function onKey(e) {
+      if ((e.key !== 'Escape' && e.key !== 'Esc') || e.defaultPrevented || !box || box.hidden) return;
+      var a = doc.activeElement;
+      if (a && !box.contains(a) && a.closest && a.closest('dialog[open], [role="dialog"], [role="menu"], [role="listbox"], [aria-expanded="true"]')) return;
+      e.preventDefault();
+      handlers.dismiss();
+    }
     function el(tag, cls, text) { var n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
     function build() {
       box = el('section', 'statcheck');
@@ -216,7 +226,6 @@
         if (t.closest('[data-stat-google]')) { handlers.google(); return; }
         if (t.closest('[data-stat-close]')) handlers.dismiss();
       });
-      box.addEventListener('keydown', function (e) { if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); handlers.dismiss(); } });
       live = el('p', 'sr');
       live.id = 'statcheck-live';
       live.setAttribute('role', 'status');
@@ -241,7 +250,7 @@
         t.appendChild(doc.createTextNode('If you allow it, Google Analytics (Google Ireland Ltd.) counts which guides and tools are used and sets cookies (_ga) on your device; data may be processed in the USA. This is only about statistics – it is not consent to advertising. Your choice is kept for 12 months and can be changed under “Privacy settings”. '));
         var rec = st.choice;
         var now = rec ? 'Current choice: ' + (rec.choice === 'yes' ? 'allowed' : 'declined') + ' on ' + longDate(rec.at) + '.' : (st.phase === 'settings' ? 'No choice saved in this browser.' : '');
-        if (st.phase === 'settings') now += ' This page loads no statistics and no ads; the choice applies on guide and tool pages. To withdraw consent to ads or to opt out under a U.S. state privacy law, use the button below – it loads Google’s consent message on this page.';
+        if (st.phase === 'settings') now += ' This page loads no statistics and no ads; the choice applies on guide and tool pages. To withdraw consent to ads or to opt out under a U.S. state privacy law, use the button below – Google’s consent script loads only when you click it.';
         parts.now.textContent = now;
       }
       var a = el('a', null, 'Privacy policy'); a.href = '/privacy/#stats-window';
@@ -249,24 +258,33 @@
       t.appendChild(doc.createTextNode('.'));
       parts.pick.hidden = !!off;
       parts.one.hidden = !off;
-      parts.g.hidden = st.phase !== 'settings';
+      parts.g.hidden = !manual;   // only in a window opened via "Privacy settings", never in the automatic one
     }
     return {
       show: function (st, focus) {
         if (!box) build();
+        if (box.hidden) manual = !!focus; else if (focus) manual = true;
         fill(st);
         if (!box.contains(doc.activeElement)) opener = focus ? doc.activeElement : null;
         box.hidden = false;
         doc.body.classList.add('statcheck-open');
         doc.body.style.setProperty('--statcheck-h', box.offsetHeight + 'px');   // footer stays reachable
         if (focus) parts.h.focus();
+        doc.addEventListener('keydown', onKey);
       },
       hide: function (returnFocus) {
         if (!box || box.hidden) return;
         var hadFocus = box.contains(doc.activeElement);
         box.hidden = true;
         doc.body.classList.remove('statcheck-open');
-        if (returnFocus && hadFocus && opener && opener.focus) opener.focus();
+        doc.removeEventListener('keydown', onKey);
+        if (hadFocus) {
+          if (returnFocus && opener && opener.focus) opener.focus();
+          else {   // no opener (automatic window): focus goes to the main content, never lost on <body>
+            var m = doc.getElementById('main') || doc.querySelector('main');
+            if (m) { if (!m.hasAttribute('tabindex')) m.setAttribute('tabindex', '-1'); m.focus(); }
+          }
+        }
         opener = null;
       },
       update: function (st) {

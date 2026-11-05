@@ -29,16 +29,21 @@ class El {
   getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
   hasAttribute(k) { return k in this.attrs; }
   addEventListener(ev, fn) { (this.handlers[ev] = this.handlers[ev] || []).push(fn); }
-  fire(ev, extra = {}) { const e = { target: this, key: extra.key, preventDefault() {} }; let n = this; while (n) { (n.handlers[ev] || []).forEach((f) => f(e)); n = n.parentNode; } }
+  fire(ev, extra = {}) { const e = { target: this, key: extra.key, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } }; let n = this; while (n) { (n.handlers[ev] || []).forEach((f) => f(e)); n = n.parentNode; } (this.doc.listeners[ev] || []).slice().forEach((f) => f(e)); }
   focus() { this.doc.activeElement = this; }
   contains(x) { while (x) { if (x === this) return true; x = x.parentNode; } return false; }
   closest(sel) { let n = this; while (n && n.getAttribute) { if (match(n, sel)) return n; n = n.parentNode; } return null; }
   all(pred, out = []) { this.children.forEach((c) => { if (pred(c)) out.push(c); c.all(pred, out); }); return out; }
 }
 function match(n, sel) {
-  const m = sel.match(/^\[([\w-]+)\]$/); if (m) return n.hasAttribute(m[1]);
-  if (sel.startsWith('.')) return (' ' + n.className + ' ').includes(' ' + sel.slice(1) + ' ');
-  return false;
+  return sel.split(',').some((one) => {
+    const m = one.trim().match(/^(\w*)(?:\.([\w-]+))?(?:\[([\w-]+)(?:="([^"]*)")?\])?$/);
+    if (!m || !(m[1] || m[2] || m[3])) return false;
+    if (m[1] && n.tagName !== m[1].toUpperCase()) return false;
+    if (m[2] && !(' ' + n.className + ' ').includes(' ' + m[2] + ' ')) return false;
+    if (m[3]) { const v = m[3] === 'name' ? n.name : n.getAttribute(m[3]); if (v == null || (m[4] !== undefined && v !== m[4])) return false; }
+    return true;
+  });
 }
 const find = (doc, sel) => doc.body.all((n) => match(n, sel));
 
@@ -47,16 +52,23 @@ function site({ tcf = 'none', tc = null, stored, scope = 'auto', gpc = false, co
   const updates = [], configs = [], scripts = [], cookieWrites = [];
   const store = new Map(stored === undefined ? [] : [[KEY, typeof stored === 'string' ? stored : JSON.stringify(stored)]]);
   let jar = cookies.slice();
-  const doc = { activeElement: null };
+  const doc = { activeElement: null, listeners: {} };
+  doc.addEventListener = (ev, fn) => { const l = (doc.listeners[ev] = doc.listeners[ev] || []); if (!l.includes(fn)) l.push(fn); };
+  doc.removeEventListener = (ev, fn) => { doc.listeners[ev] = (doc.listeners[ev] || []).filter((f) => f !== fn); };
   const html = new El('html', doc); html.setAttribute('data-ads', 'no'); html.setAttribute('data-stats', scope);
   const body = new El('body', doc); const mast = new El('header', doc); mast.className = 'mast'; body.appendChild(mast);
+  const main = new El('main', doc); main.setAttribute('id', 'main'); body.appendChild(main);
   const footBtn = new El('button', doc); footBtn.setAttribute('data-privacy-settings', ''); body.appendChild(footBtn);
   Object.assign(doc, {
     documentElement: html, body,
-    head: { appendChild: (s) => scripts.push(s) },
+    head: { appendChild: (s) => { s.queued = win.googlefc && win.googlefc.callbackQueue ? win.googlefc.callbackQueue.filter((c) => typeof c === 'function').length : 0; s.iframeFirst = body.all((n) => n.name === 'googlefcPresent').length > 0; scripts.push(s); } },
     createElement: (t) => new El(t, doc), createTextNode: (t) => { const n = new El('#text', doc); n._text = String(t); return n; },
-    getElementById: () => null,
-    querySelector: (sel) => (sel === '.mast' ? mast : find(doc, sel)[0] || null),
+    getElementById: (id) => (id === 'main' ? main : null),
+    querySelector: (sel) => {
+      if (sel === '.mast') return mast;
+      if (/^script\[/.test(sel)) return scripts.find((x) => (/fundingchoices/.test(sel) && /fundingchoicesmessages/.test(x.src || '')) || (/adsbygoogle/.test(sel) && /adsbygoogle/.test(x.src || '')) || (/googletagmanager/.test(sel) && /googletagmanager/.test(x.src || ''))) || null;
+      return find(doc, sel)[0] || null;
+    },
     querySelectorAll: (sel) => find(doc, sel)
   });
   Object.defineProperty(doc, 'cookie', {
@@ -86,7 +98,7 @@ function site({ tcf = 'none', tc = null, stored, scope = 'auto', gpc = false, co
   const open = () => !!box() && !box().hidden;
   const btn = (v) => box().all((n) => n.getAttribute(v === 'close' ? 'data-stat-close' : 'data-stat') !== null && (v === 'close' || n.getAttribute('data-stat') === v))[0];
   return {
-    win, doc, store, updates, configs, scripts, cookieWrites, footBtn, box, open, advance,
+    win, doc, main, store, updates, configs, scripts, cookieWrites, footBtn, box, open, advance,
     jar: () => jar.slice(),
     gaScripts: () => scripts.filter((s) => /googletagmanager\.com\/gtag\/js/.test(s.src || '')),
     click: (v) => btn(v).fire('click'),
@@ -419,4 +431,71 @@ test('closing with × keeps an earlier saved choice', () => {
   s.advance(3000); s.footBtn.fire('click'); s.click('close');
   assert.equal(JSON.parse(s.store.get(KEY)).choice, 'yes');
   assert.equal(s.win[OFF], false);
+});
+
+/* ---------- uniform final round (E1–E8) ---------- */
+test('E8: cmpuishown without displayStatus counts as a visible message; hidden/disabled do not', () => {
+  assert.equal(S.cmpState({ gdprApplies: true, eventStatus: 'cmpuishown' }), 'shown');
+  assert.equal(S.cmpState({ gdprApplies: true, eventStatus: 'cmpuishown', displayStatus: 'hidden' }), null);
+  assert.equal(S.cmpState({ gdprApplies: true, eventStatus: 'cmpuishown', displayStatus: 'disabled' }), null);
+  const s = site({ tcf: 'stub', tc: { gdprApplies: true, eventStatus: 'cmpuishown' } });
+  s.advance(5000); assert.equal(s.open(), false);
+});
+test('E1: page without ads – queue + callback first, then iframe googlefcPresent, then only the Funding Choices script (once)', () => {
+  const s = site({ scope: 'settings' });
+  s.footBtn.fire('click');
+  const g = () => s.box().all((n) => n.getAttribute('data-stat-google') !== null)[0];
+  g().fire('click');
+  assert.equal(s.scripts.length, 1);
+  assert.equal(s.scripts[0].src, 'https://fundingchoicesmessages.google.com/i/pub-7811071715414905?ers=1');
+  assert.equal(s.scripts[0].queued, 1, 'callback queued before the script');
+  const frames = s.doc.body.all((n) => n.name === 'googlefcPresent');
+  assert.equal(frames.length, 1); assert.equal(frames[0].style.display, 'none'); assert.equal(frames[0].style.width, '0');
+  assert.ok(s.scripts[0].iframeFirst, 'iframe before the script');
+  s.footBtn.fire('click'); g().fire('click');
+  assert.equal(s.scripts.length, 1, 'loaded once');
+  assert.equal(s.doc.body.all((n) => n.name === 'googlefcPresent').length, 1);
+});
+test('E2: ad page with a silent CMP – button only in the manually opened window; it loads nothing and opens Google’s revocation', () => {
+  const s = site({ tcf: 'stub', tc: HIDDEN });
+  let revoked = 0;
+  s.win.googlefc.showRevocationMessage = () => { revoked++; };
+  s.advance(3000);
+  const g = () => s.box().all((n) => n.getAttribute('data-stat-google') !== null)[0];
+  assert.equal(g().parentNode.hidden, true, 'not in the automatic window');
+  s.footBtn.fire('click');
+  assert.equal(g().parentNode.hidden, false, 'shown when opened via Privacy settings');
+  const before = s.scripts.length;
+  g().fire('click');
+  s.win.googlefc.callbackQueue.forEach((c) => { if (typeof c === 'function') c(); });
+  assert.equal(revoked, 1);
+  assert.equal(s.scripts.length, before, 'CMP already loaded: nothing loaded');
+  assert.ok(!s.updates.some((u) => ['ad_storage', 'ad_user_data', 'ad_personalization'].some((k) => u[k] === 'granted')));
+  assert.equal(s.open(), false);
+});
+test('E3: Escape closes the window with focus outside it, but not while another menu/dialog handles it', () => {
+  const s = site(); s.advance(3000);
+  const other = new (s.main.constructor)('button', s.doc); s.main.appendChild(other); other.focus();
+  other.fire('keydown', { key: 'Escape' });
+  assert.equal(s.open(), false);
+  const t = site(); t.advance(3000);
+  const menu = new (t.main.constructor)('div', t.doc); menu.setAttribute('aria-expanded', 'true'); t.main.appendChild(menu);
+  const item = new (t.main.constructor)('button', t.doc); menu.appendChild(item); item.focus();
+  item.fire('keydown', { key: 'Escape' });
+  assert.equal(t.open(), true);
+  const n = site(); n.advance(3000); n.click('close');
+  assert.equal((n.doc.listeners.keydown || []).length, 0, 'document listener only while open');
+});
+test('E4: closing the automatic window with focus inside moves focus to main', () => {
+  const s = site(); s.advance(3000);
+  s.box().all((n) => n.getAttribute('data-stat') === 'no')[0].focus();
+  s.click('close');
+  assert.equal(s.doc.activeElement, s.main);
+  assert.equal(s.main.getAttribute('tabindex'), '-1');
+});
+test('E5/E7: closed without a choice it never reopens in the same page view; GPC deletes _ga at load', () => {
+  const s = site(); s.advance(3000); s.click('close'); s.advance(60000);
+  assert.equal(s.open(), false);
+  const g = site({ gpc: true, stored: { v: 1, choice: 'yes', at: NOW - DAY }, cookies: ['_ga=1', '_ga_T00HRG2YVF=2'] });
+  assert.deepEqual(g.jar(), []);
 });
