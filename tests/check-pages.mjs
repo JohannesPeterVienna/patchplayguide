@@ -181,7 +181,7 @@ if (guides + tools < 15) fail('site', 'fewer than 15 guide/tool pages');
 const priv = byUrl.get('/privacy/').html;
 for (const s of ["Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites.", 'adssettings.google.com', 'aboutads.info', 'youronlinechoices.eu', 'policies.google.com/technologies/partner-sites', 'dsb@dsb.gv.at', 'www.dsb.gv.at', 'GitHub Pages', 'G-T00HRG2YVF', 'limited ads']) if (!priv.includes(s)) fail('/privacy/', 'missing: ' + s);
 const imp = byUrl.get('/imprint/').html;
-for (const s of ['§ 5', '§ 25', 'Seilerstätte 8/8', '1010 Vienna', 'office@adstern.com', 'ATU54682507', 'Magistratisches Bezirksamt für den 1./8. Bezirk', 'Fachgruppe Werbung und Marktkommunikation', 'Gewerbeordnung 1994', 'ris.bka.gv.at']) if (!imp.includes(s)) fail('/imprint/', 'missing: ' + s);
+for (const s of ['§ 5', '§ 25', 'Seilerstätte 8/8', '1010 Wien', 'office@adstern.com', 'ATU54682507', 'Magistratisches Bezirksamt für den 1./8. Bezirk', 'Fachgruppe Werbung und Marktkommunikation', 'Gewerbeordnung 1994', 'ris.bka.gv.at']) if (!imp.includes(s)) fail('/imprint/', 'missing: ' + s);
 if (/UGB/.test(imp)) fail('/imprint/', 'must not cite UGB');
 
 for (const [u, n] of report) console.log(String(n).padStart(5), u);
