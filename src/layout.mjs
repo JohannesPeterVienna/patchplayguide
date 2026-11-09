@@ -151,8 +151,8 @@ export function articleLd(g, path) {
     '@type': 'Article', headline: g.h1, description: g.description, inLanguage: 'en-US',
     datePublished: SITE.reviewedIso, dateModified: modifiedIso(g),
     mainEntityOfPage: SITE.origin + path,
-    author: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/about/' },
-    publisher: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/imprint/' }
+    author: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/about/' },
+    publisher: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/imprint/' }
   };
 }
 
@@ -213,7 +213,7 @@ ${relatedHtml(t.related, lookup)}
       applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (runs in the web browser)', isAccessibleForFree: true,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, inLanguage: 'en-US',
       datePublished: SITE.reviewedIso, dateModified: modifiedIso(t),
-      publisher: { '@type': 'Organization', name: 'AdStern', url: SITE.origin + '/imprint/' }
+      publisher: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/imprint/' }
     }, faqLd(t.faq)]
   });
 }

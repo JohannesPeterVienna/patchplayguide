@@ -36,7 +36,7 @@ const report = [];
 
 // home (AdSense loader so the CMP appears, but no ad slots)
 const h = home({ GUIDES });
-write('/', page({ ...h, ads: 'no', loader: true, ld: [{ '@type': 'WebSite', name: SITE.name, url: SITE.origin + '/', inLanguage: 'en-US', publisher: { '@type': 'Organization', name: 'AdStern' } }], crumbs: [['Home', '/']] }));
+write('/', page({ ...h, ads: 'no', loader: true, ld: [{ '@type': 'WebSite', name: SITE.name, url: SITE.origin + '/', inLanguage: 'en-US', publisher: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing' } }], crumbs: [['Home', '/']] }));
 sitemap.push('/');
 
 const gi = guidesIndex({ GUIDES });
