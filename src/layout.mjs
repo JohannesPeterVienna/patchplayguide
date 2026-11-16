@@ -12,9 +12,8 @@ export const SITE = {
 const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026', '2026-11-04': 'November 4, 2026' };
 // 2026-11-04: the byline named an "editorial team" that does not exist. The correction is logged on every
 // guide and tool page and sets dateModified; the "Reviewed" stamp keeps the date of the last content review.
-const BYLINE_FIX = ['2026-11-04', 'Author line corrected to the publisher, AdStern; there is no separate editorial team. How pages are checked is described on the <a href="/about/#checks">About page</a>.'];
-/** Full change log of a guide/tool, including the site-wide byline correction. */
-export const logOf = (x) => [...(x.changelog && x.changelog.length ? x.changelog : [[SITE.reviewedIso, 'First published.']]), BYLINE_FIX];
+/** Change log of a guide/tool: its own dated entries only. */
+export const logOf = (x) => (x.changelog && x.changelog.length ? x.changelog : [[SITE.reviewedIso, 'First published.']]);
 /** Date of the last content review (newest own change-log entry). */
 export const reviewedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : SITE.reviewedIso);
 /** Last change of a guide/tool: the newest change-log date (first publication when there is none). */
