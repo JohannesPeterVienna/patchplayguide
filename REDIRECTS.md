@@ -11,7 +11,8 @@ Each old file below exists in `docs/` as a small `noindex` page with `canonical`
 | /advertise.html | /contact/ |
 | /contact.html | /contact/ |
 | /verify-steam-files.html | /guides/shader-compilation-stutter-after-update/ (Steam files and caches after an update) |
-| /settings-test-sheet.html | /guides/how-to-test-a-settings-change/ (repeatable settings test) |
+| /settings-test-sheet.html | /tools/settings-test-log/ (test log with printable worksheet; since 2026-11-18) |
+| /guides/after-update-retest-routine/ | /guides/how-to-test-a-settings-change/ (guide merged on 2026-11-18; the routine is the section `#after-update`) |
 
 The old in-page tools are replaced by: Patch Desk → /tools/patch-decoder/, Frame Lab / Test Queue → /tools/settings-translator/, /tools/bottleneck-finder/ and /guides/how-to-test-a-settings-change/.
 

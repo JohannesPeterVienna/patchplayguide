@@ -46,7 +46,7 @@ ${fig('sw-fig', 'Switch 2 in two states: docked with mains power driving a TV, h
     `<h2 id="switch1">Switch 1 games on Switch 2</h2>
 <p>The Switch 2 runs most original Switch games. Some of them received free updates or paid “Nintendo Switch 2 Edition” versions with improvements such as higher resolution or frame rate; others run as they did on Switch, sometimes benefiting from steadier performance. Nintendo maintains information on compatibility and on which games have updates. As with any update, check the game’s own notes to see what changes in which mode.</p>`,
     `<h2 id="patches">After an update</h2>
-<p>Patches for Switch 2 games sometimes adjust handheld and docked modes separately – for example a higher handheld resolution, as in the fictional example in our <a href="/tools/patch-decoder/">Patch Decoder</a>. Set the platform filter to Switch 2 to see only those lines, then compare in your usual section. The general approach is the same as on other consoles: see <a href="/guides/after-update-retest-routine/">the re-test routine</a> and <a href="/guides/vrr-120hz-console-setup/">VRR and 120 Hz on consoles</a> for the TV side.</p>`,
+<p>Patches for Switch 2 games sometimes adjust handheld and docked modes separately – for example a higher handheld resolution, as in the fictional example in our <a href="/tools/patch-decoder/">Patch Decoder</a>. Set the platform filter to Switch 2 to see only those lines, then compare in your usual section. The general approach is the same as on other consoles: see <a href="/guides/how-to-test-a-settings-change/#after-update">the re-test routine</a> and <a href="/guides/vrr-120hz-console-setup/">VRR and 120 Hz on consoles</a> for the TV side.</p>`,
     `<h2 id="choose">Choosing per game</h2>
 <p>Many players settle into a pattern: fast action games docked on the TV, slower games or short sessions in handheld mode, where the lower resolution is less visible. If a game offers options such as a performance setting, try them in both modes separately – the right choice docked is not always the right one handheld. And if a game feels different after an update, check whether the patch notes mention only one of the two modes; it is common for an update to improve one and leave the other unchanged.</p>`
   ],
@@ -60,7 +60,7 @@ ${fig('sw-fig', 'Switch 2 in two states: docked with mains power driving a TV, h
     ['Nintendo', 'https://www.nintendo.com/', 'Nintendo Switch 2 specifications, FAQ and feature pages (including TV VRR since the September 10, 2026 system update)'],
     ['Patch notes of individual Switch 2 games', null, 'Nintendo publishes update histories for its own games on its support site']
   ],
-  related: ['vrr-120hz-console-setup', 'steam-deck-frame-cap-tdp-battery', 'after-update-retest-routine']
+  related: ['vrr-120hz-console-setup', 'steam-deck-frame-cap-tdp-battery', 'how-to-test-a-settings-change']
 };
 
 export const steamDeck = {
@@ -202,3 +202,63 @@ ${tbl('Checklist for 120 Hz and VRR', ['Link', 'What it needs', 'Common pitfall'
   ],
   related: ['ps5-performance-vs-fidelity-mode', 'xbox-series-s-vs-x-modes', 'frame-cap-vsync-latency-pc']
 };
+
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026: worked examples and platform documentation (sources in each guide).
+// ---------------------------------------------------------------------------------------------------
+import { createRequire } from 'node:module';
+import { tryBox, SRC, addAfter, revise } from '../h.mjs';
+const require = createRequire(import.meta.url);
+const FT = require('../assets/js/frametime-core.js');
+const R = require('../assets/js/resolution-core.js');
+const N = require('../data/names-core.js');
+const r2 = (x) => FT.round(x, 2).toFixed(2).replace(/\.?0+$/, '');
+const mpx = (w, h) => (w * h / 1e6).toFixed(2);
+
+// --- Switch 2 ---
+const thr = (label, w, h, fps) => [label, `${w}×${h}`, `${fps} fps`, `${mpx(w, h)} MP`, `${Math.round(w * h * fps / 1e6)} million`];
+addAfter(switch2, 'why', `<h2 id="throughput">Worked example: pixels per second in each mode</h2>
+<p>Nintendo’s tech specs set the limits: the built-in screen is 1080p with up to 120 fps; on a TV, 4K output is limited to 60 fps, and 120 fps is possible at 1080p and 1440p. Multiply resolution by frame rate and you see what each combination demands at most.</p>
+${tbl('Maximum pixel throughput of the Switch 2 output modes (limits from Nintendo’s tech specs; arithmetic ours)', ['Mode', 'Resolution', 'Maximum frame rate', 'Pixels per frame', 'Pixels per second'], [
+  thr('TV, 4K', 3840, 2160, 60), thr('TV, 1440p', 2560, 1440, 120), thr('TV, 1080p', 1920, 1080, 120), thr('Handheld', 1920, 1080, 120), thr('Handheld at 60 fps', 1920, 1080, 60)
+], 'These are output limits, not what a game renders: most games render at a lower internal resolution and upscale.')}
+<p>The table explains two things. A 4K TV shows four times the pixels of the built-in screen, so even with more power in the dock a game has to upscale or drop detail to fill it. And 1440p at 120 fps is almost as demanding as 4K at 60 fps (442 against 498 million pixels per second), which is why 120 fps modes are rare and usually come with a clearly lower internal resolution.</p>
+<p>The matching controls are in System Settings: Nintendo’s settings overview lists <b>TV resolution</b> with the choices Automatic, 720p, 1080p, 1440p and 2160p (4K), and an on/off switch for <b>120Hz output</b>. For 120 fps on a TV the display has to support 120 Hz.</p>
+${tbl('What to set for which TV', ['Your TV', 'TV resolution', '120Hz output', 'What you get'], [
+  ['4K, 60 Hz', 'Automatic or 2160p', 'Off', '4K at up to 60 fps'],
+  ['4K, 120 Hz', 'Automatic – or 1440p/1080p for a game with a 120 fps mode', 'On', '4K at 60 fps; 120 fps only at 1440p or 1080p'],
+  ['1440p monitor, 120 Hz or more', '1440p', 'On', 'Up to 120 fps in games that offer it'],
+  ['1080p TV or monitor', '1080p', 'On if the display supports 120 Hz', 'Same pixel count as the built-in screen']
+], 'Derived from the limits in Nintendo’s tech specs. Whether a game offers a 120 fps mode is the developer’s decision.')}
+${tryBox('Check how a frame rate lands on your TV’s refresh rate – for example 40 fps at 120 Hz.', '/tools/frame-time-calculator/?fps=40&hz=120', 'Open the Frame Time Calculator')}`);
+revise(switch2, '2026-11-18', 'Worked example added: maximum pixel throughput per output mode and a table of TV settings, based on Nintendo’s tech specs and System Settings overview.', [SRC.ninspecs, SRC.ninset, SRC.ninfeat]);
+
+// --- Steam Deck ---
+const hours = (wh, w) => (wh / w).toFixed(1) + ' h';
+const fsrQ = R.internal(1280, 800, 1.5), fsrP = R.internal(1280, 800, 2);
+addAfter(steamDeck, 'tdp', `<h2 id="battery">Worked example: battery arithmetic</h2>
+<p>Battery life is a division: capacity in watt-hours divided by the power the whole device draws in watts. Valve’s tech specs give the capacities – 40 Whr for the LCD model and 50 Whr for the OLED model – and the performance overlay shows the current draw while you play.</p>
+${tbl('Runtime = battery capacity ÷ total power draw (calculated)', ['Total draw shown in the overlay', 'LCD model, 40 Whr', 'OLED model, 50 Whr'],
+  [25, 20, 15, 10, 7].map((w) => [`${w} W`, hours(40, w), hours(50, w)]),
+  'Pure arithmetic from Valve’s capacity figures. A real session ends a little earlier, because a battery is not drained to zero and the draw changes from scene to scene.')}
+<p>Valve states 2 to 8 hours of gameplay for the LCD model and 3 to 12 hours for the OLED model. Run through the same division, those ranges correspond to an average draw between 20 W and 5 W on the LCD model and between about 17 W and 4 W on the OLED model. In other words: the entire spread between a short and a long session is the power draw, and that is what a frame cap, a lower TDP limit and a dimmer screen change. Read the draw in the overlay before and after a change and you can calculate what it bought you: going from 20 W to 12 W on the LCD model turns 2.0 hours into 3.3.</p>
+<p>The same kind of arithmetic applies to resolution. The 1280×800 screen has ${mpx(1280, 800)} megapixels. FSR at Quality (1.5× per axis) renders ${fsrQ.w}×${fsrQ.h}, which is 44% of the pixels; Performance (2.0×) renders ${fsrP.w}×${fsrP.h}, a quarter. At such low pixel counts the upscaler has little to work with, so on the Deck a higher mode with a lower frame cap often looks better than a low mode at a high frame rate.</p>
+${tryBox('See what every FSR and XeSS mode renders on the Deck’s 1280×800 screen.', '/tools/upscaler-resolution-calculator/?out=1280x800&up=fsr', 'Open the Upscaler Resolution Calculator')}`);
+revise(steamDeck, '2026-11-18', 'Worked example added: runtime from battery capacity and power draw for both models, and the internal resolutions of upscaler modes on the 1280×800 screen.', [SRC.deck, SRC.fsr]);
+
+// --- VRR and 120 Hz ---
+const win = (fps, lo, hi) => { const v = FT.vrr(fps, lo, hi); return v.kind === 'inside' ? `inside: display refreshes at ${r2(fps)} Hz` : v.kind === 'multiple' ? `each frame ${v.times}× → ${r2(v.hz)} Hz` : v.kind === 'below' ? 'no whole multiple fits' : 'above the window'; };
+const vrrRows = N.ROWS.filter((r) => r.c === 'vrr');
+addAfter(vrrConsole, 'range', `<h2 id="window">Worked example: a frame rate against a VRR window</h2>
+<p>Whether VRR can follow a frame rate is arithmetic. Inside the window the display simply refreshes when a frame arrives. Below the window there is one way out: if a whole multiple of the frame rate lies inside the window, each frame can be shown two or three times. That is what low framerate compensation does; AMD, for example, lists it as mandatory for FreeSync Premium displays. The table runs the numbers for two example windows – look up the real window of your display in its manual.</p>
+${tbl('Frame rates against two example VRR windows (calculated)', ['Frame rate', 'Frame time', 'Window 48–120 Hz', 'Window 40–60 Hz'],
+  [24, 30, 40, 45, 55, 60, 90, 120].map((f) => [`${f} fps`, `${r2(FT.ms(f))} ms`, win(f, 48, 120), win(f, 40, 60)]),
+  'The windows are examples, not the specification of any console or TV. “Each frame 2×” only happens if the display or the console performs low framerate compensation.')}
+<p>The pattern is worth remembering. A wide window whose top is at least twice its bottom (48–120 Hz) has no gaps: every frame rate below the window has a multiple inside it. A narrow window (40–60 Hz) has gaps – 24 fps fits only doubled to 48 Hz, and anything between 30 and 40 fps has no multiple that fits, so a game that dips to 35 fps falls out of VRR there. This is the reason a 120 Hz panel matters for VRR even if a game never reaches 120 fps.</p>
+<p>AMD’s developer documentation describes the same window in time instead of rate: for a 64–120 Hz window, the time between two refreshes has to stay between 8.33 ms and 15.625 ms, and outside it tearing is likely.</p>
+${tryBox('Enter your display’s real window and any frame rate.', '/tools/frame-time-calculator/?fps=45&hz=120&min=48&max=120', 'Open the Frame Time Calculator with this example')}`);
+addAfter(vrrConsole, 'window', `<h2 id="names">VRR by name on each platform</h2>
+<p>The feature is the same everywhere; the switch is called something different on each system.</p>
+${tbl('Where VRR is switched on, and what it is called (from platform and vendor documentation)', ['Name on screen', 'Platform', 'What the source says'], vrrRows.map((r) => [r.n, N.VENDORS[r.v], r.d]))}
+<p>On Windows, note the two similar names in the table: “Variable refresh rate” is the setting for games, “Dynamic refresh rate” only lets Windows change the desktop refresh rate. The complete list with sources is in the <a href="/reference/setting-names/?cat=vrr">setting-name map</a>.</p>`);
+revise(vrrConsole, '2026-11-18', 'Worked example added: frame rates against VRR windows including low framerate compensation; table of VRR setting names per platform with sources.', [SRC.fsrsc, SRC.freesync, SRC.psvrr, SRC.psres, SRC.xbwire, SRC.msrefresh, SRC.ninspecs]);

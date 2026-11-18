@@ -197,3 +197,63 @@ ${fig('ft-fig', 'Two frame-time graphs with the same average: one flat line, one
   ],
   related: ['how-to-test-a-settings-change', 'frame-cap-vsync-latency-pc', 'cpu-or-gpu-bottleneck']
 };
+
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026: worked examples and vendor-documented numbers (sources in each guide).
+// ---------------------------------------------------------------------------------------------------
+import { createRequire } from 'node:module';
+import { tryBox, SRC, addAfter, revise } from '../h.mjs';
+const require = createRequire(import.meta.url);
+const R = require('../assets/js/resolution-core.js');
+const FT = require('../assets/js/frametime-core.js');
+const N = require('../data/names-core.js');
+const r2 = (x) => FT.round(x, 2).toFixed(2).replace(/\.?0+$/, '');
+
+// --- ray tracing ---
+const rays = (w, h, f) => { const r = R.internal(w, h, f); return [`${r.w}×${r.h}`, (r.pixels / 1e6).toFixed(2) + ' million', Math.round(r.pixels * 60 / 1e6) + ' million']; };
+addAfter(rayTracing, 'cost', `<h2 id="rays">Worked example: counting rays</h2>
+<p>The cost of ray tracing starts with a count. Take the simplest case: one ray per pixel for one effect. The number of rays per frame is then the number of rendered pixels, and the internal resolution decides everything.</p>
+${tbl('Rays at one ray per pixel, for one effect', ['Setup', 'Rendered resolution', 'Rays per frame', 'Rays per second at 60 fps'], [
+  ['4K, native', ...rays(3840, 2160, 1)], ['4K, Quality upscaling (1.5×)', ...rays(3840, 2160, 1.5)], ['4K, Performance upscaling (2.0×)', ...rays(3840, 2160, 2)],
+  ['1440p, Quality upscaling (1.5×)', ...rays(2560, 1440, 1.5)], ['1080p, Quality upscaling (1.5×)', ...rays(1920, 1080, 1.5)]
+], 'Arithmetic only: pixels of the internal resolution × 60. Games trace more or fewer rays per pixel depending on the effect and quality step; the proportions between the rows stay the same.')}
+<p>Native 4K needs about 498 million rays per second for a single one-ray effect; Performance upscaling cuts that to 124 million. Each additional ray-traced effect adds its own rays, and a higher quality step usually means more rays per pixel or longer rays. This is the arithmetic behind the advice to pair ray tracing with an upscaler, and behind the order in which to switch effects off: every effect you drop removes a whole row of this table.</p>
+<p>With so few rays per pixel the raw result is noisy, so a denoiser rebuilds a clean image. The vendors now offer machine-learning denoisers under their own names: <b>DLSS Ray Reconstruction</b> from NVIDIA, which NVIDIA notes does not support dynamic resolution scaling, and <b>FSR Ray Regeneration</b> from AMD, which the FSR SDK lists for DirectX 12 and not yet for Vulkan. If a game menu offers one of them, compare it with the game’s standard denoiser in a scene with reflections in motion.</p>
+${tryBox('See the internal resolution – and with it the ray count – for your display and upscaler mode.', '/tools/upscaler-resolution-calculator/?out=3840x2160&up=dlss', 'Open the Upscaler Resolution Calculator')}`);
+revise(rayTracing, '2026-11-18', 'Worked example added: rays per frame and per second by internal resolution; vendor names of the machine-learning denoisers with their documented limits.', [SRC.dlssrr, SRC.fsrsdk, SRC.dlss]);
+
+// --- frame caps, V-Sync, latency ---
+const evenRow = (hz) => [`${hz} Hz`, FT.evenRates(hz, 4).map((r) => `${r2(r.fps)} fps`).join(' · '), FT.evenRates(hz, 4).map((r) => `${r2(r.ms)} ms`).join(' · ')];
+const lat = N.ROWS.filter((r) => r.c === 'latency');
+addAfter(frameCap, 'novrr', `<h2 id="even">Worked example: which caps are even on your display</h2>
+<p>Without VRR, a display can only show a new image at its refresh ticks. A cap gives even motion when the refresh rate divided by the cap is a whole number – then every frame stays on screen for the same number of refreshes.</p>
+${tbl('Even frame caps for common refresh rates (refresh rate ÷ 1, 2, 3, 4)', ['Display', 'Even caps', 'Each frame is shown for'], [60, 120, 144, 165].map(evenRow))}
+<p>Anything in between alternates. At 50 fps on a 60 Hz display, 60 ÷ 50 = 1.2: four of five frames are shown for one refresh (16.67 ms) and the fifth for two (33.33 ms). The counter says 50, your eyes see a hitch five times a second. A cap of 60 or 30 on that display looks steadier than 50, although 50 is “more” than 30.</p>
+<p>With VRR the rule changes from “whole numbers” to “inside the window”. AMD’s frame-generation documentation spells out the arithmetic with an example: on a display with a 64–120 Hz window, the time between two refreshes must stay between 8.33 ms and 15.625 ms; outside it, tearing is likely. In frame-rate terms, VRR follows anything from 64 to 120 fps there, and a cap at or just under the top of your window keeps the game inside it.</p>
+${tryBox('Enter a frame rate, your refresh rate and your display’s VRR window; the calculator tells you whether the pacing is even and whether VRR can follow.', '/tools/frame-time-calculator/?fps=50&hz=60', 'Open the Frame Time Calculator with this example')}`);
+addAfter(frameCap, 'fg', `<h2 id="names">Latency features by name</h2>
+<p>Each graphics vendor has its own latency feature, and two of them come in a driver version and an in-game version that are easy to confuse.</p>
+${tbl('Latency reduction: what the vendors document', ['Name', 'From', 'Kind', 'Documented details'], lat.map((r) => [r.n, N.VENDORS[r.v], r.g, r.d]))}
+<p>Two details from the vendor documents are worth knowing when frame generation is on. AMD notes that with V-Sync enabled, FSR Frame Generation implicitly limits the rendered frame rate to half the monitor’s maximum refresh rate. And Intel states that latency-reduction solutions other than XeLL are not supported together with XeSS Frame Generation. In practice: use the latency option that belongs to the frame generation you have switched on, and do not stack a second one from the driver on top.</p>`);
+revise(frameCap, '2026-11-18', 'Worked example added: even frame caps per refresh rate and AMD’s VRR-window arithmetic; table of latency features by vendor name with their documented requirements.', [SRC.fsrsc, SRC.reflex, SRC.al2, SRC.xell, SRC.xessfg]);
+
+// --- FPS, frame time, 1% lows ---
+const run = (hitches) => Array.from({ length: 600 }, (_, i) => (i < hitches ? 56 : 16));
+const A = run(10), B = run(5);
+const la = FT.lows(A, 0.01), lb = FT.lows(B, 0.01);
+const f1 = (x) => (Math.round(x * 10) / 10).toFixed(1);
+addAfter(fpsFrameTime, 'lows', `<h2 id="example">Worked example: one run, two different “1% lows”</h2>
+<p>The two calculation methods can disagree wildly on the same data. Here are two constructed runs of 600 frames each – invented numbers, chosen so the arithmetic is easy to follow. Normal frames take 16 ms; a hitch takes 56 ms.</p>
+${tbl('Two constructed runs of 600 frames (not measurements)', ['', 'Run 1: ten hitches', 'Run 2: five hitches'], [
+  ['Total time', `${(A.reduce((a, b) => a + b, 0) / 1000).toFixed(2)} s`, `${(B.reduce((a, b) => a + b, 0) / 1000).toFixed(2)} s`],
+  ['Average FPS (frames ÷ time)', f1(FT.averageFps(A)), f1(FT.averageFps(B))],
+  ['Slowest 1% = 6 frames', '6 × 56 ms', '5 × 56 ms + 1 × 16 ms'],
+  ['1% low, average-of-the-worst method', `${f1(la.lowFps)} fps`, `${f1(lb.lowFps)} fps`],
+  ['99th-percentile frame time', `${la.percentileMs} ms`, `${lb.percentileMs} ms`],
+  ['1% low, percentile method', `${f1(1000 / la.percentileMs)} fps`, `${f1(1000 / lb.percentileMs)} fps`]
+])}
+<p>In run 1 the hitches make up more than 1% of the frames (10 of 600), so both methods land on the hitch: 17.9 fps. In run 2 they make up less than 1% (5 of 600). The average-of-the-worst method still catches them and reports 20.3 fps. The percentile method looks at the sixth-slowest frame, which is a normal 16 ms frame, and reports 62.5 fps – as if the run had no stutter at all. Same data, a threefold difference in the “1% low”.</p>
+<p>Three practical rules follow. Compare 1% lows only between runs evaluated by the same tool with the same method. For rare hitches, look at the 0.1% low or the frame-time graph as well. And note that the average barely distinguishes the two runs (60.0 against 61.2 fps) although run 1 stutters twice as often.</p>
+<p>One more trap hides in “average FPS”. It is frames divided by time – 600 frames in 10 seconds are 60 fps. Averaging the per-frame FPS values instead (62.5 fps for a 16 ms frame, 17.9 fps for a 56 ms frame) gives 61.8 fps for run 1, because that method counts every frame equally regardless of how long it stayed on screen. Capture tools avoid this by working with frame times; PresentMon, for example, records the time between two frames as <code>MsBetweenPresents</code> and can mark whether a frame was rendered by the game or generated (<code>FrameType</code>).</p>
+${tryBox('Convert any frame rate to frame time, and compare your own runs with a rule that accounts for run-to-run spread.', '/tools/frame-time-calculator/?fps=60&vs=62.5', 'Open the Frame Time Calculator')}`);
+revise(fpsFrameTime, '2026-11-18', 'Worked example added: two constructed runs evaluated with both 1% low methods, and why average FPS must be calculated from frame times.', [SRC.pm]);

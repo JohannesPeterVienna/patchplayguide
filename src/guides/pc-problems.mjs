@@ -43,7 +43,7 @@ ${fig('sh-fig', 'Frame-time graph: spikes when new effects first appear in the f
     `<h2 id="fix">What helps</h2>
 <ul class="do">
 <li><b>Let precompilation finish.</b> If the game shows a “compiling shaders” step or progress bar in the menu, wait for it. Skipping it moves the work into gameplay.</li>
-<li><b>Give it time.</b> Play calmly through the first areas after an update before judging performance. Re-test afterwards with the <a href="/guides/after-update-retest-routine/">10-minute routine</a>.</li>
+<li><b>Give it time.</b> Play calmly through the first areas after an update before judging performance. Re-test afterwards with the <a href="/guides/how-to-test-a-settings-change/#after-update">10-minute routine</a>.</li>
 <li><b>Keep the game on an SSD.</b> Cache reads and asset loading are slower on hard drives, which makes hitches worse.</li>
 <li><b>On Steam and Steam Deck,</b> leave Shader Pre-Caching enabled in the Steam settings; for supported games, Steam can download precompiled shader data for your configuration.</li>
 <li><b>Avoid driver updates right before an important session</b> – install them when you have time for the cache to rebuild.</li>
@@ -67,7 +67,7 @@ ${fig('sh-fig', 'Frame-time graph: spikes when new effects first appear in the f
     ['Steam Support', 'https://help.steampowered.com/', 'Shader Pre-Caching setting in the Steam client'],
     ['GPU driver documentation', null, 'NVIDIA Control Panel “Shader Cache Size”; AMD Software: Adrenalin Edition shader cache options']
   ],
-  related: ['after-update-retest-routine', 'fps-frame-time-1-percent-lows', 'how-to-read-patch-notes']
+  related: ['how-to-test-a-settings-change', 'fps-frame-time-1-percent-lows', 'how-to-read-patch-notes']
 };
 
 export const bottleneck = {
@@ -192,7 +192,7 @@ ${fig('vr-fig', 'Stacked bar illustrating how textures, render targets, ray trac
 <p>Requirements rose quickly with recent games, especially at high texture settings with ray tracing. Cards with 8 GB of VRAM are more often the limit in new releases at high texture settings than cards with 12 GB or more – but the answer depends entirely on the game, the resolution and the settings. The reliable sources are the game’s official system requirements and its own VRAM indicator, not general rules.</p>
 <p>If you save your graphics card’s memory size under <a href="/#my-setup">My setup</a>, the <a href="/tools/settings-translator/">Settings Translator</a> reminds you to watch the VRAM column.</p>`,
     `<h2 id="patches">VRAM and game updates</h2>
-<p>Patches often touch memory: new high-resolution texture packs, optimized streaming, or – as in our fictional example in the <a href="/tools/patch-decoder/">Patch Decoder</a> – a removed low texture option. After such an update, check your texture setting first, because a removed option can silently move you to a higher one. Then re-test with the <a href="/guides/after-update-retest-routine/">10-minute routine</a>.</p>`,
+<p>Patches often touch memory: new high-resolution texture packs, optimized streaming, or – as in our fictional example in the <a href="/tools/patch-decoder/">Patch Decoder</a> – a removed low texture option. After such an update, check your texture setting first, because a removed option can silently move you to a higher one. Then re-test with the <a href="/guides/how-to-test-a-settings-change/#after-update">10-minute routine</a>.</p>`,
     `<h2 id="more">Other things that free memory</h2>
 <p>Close programs that use the GPU in the background, such as browsers with hardware-accelerated video or several monitors running video. Lowering the display resolution of a second monitor also saves a little memory. On laptops with both integrated and dedicated graphics, make sure the game runs on the dedicated GPU.</p>`,
     `<h2 id="test">A quick VRAM check routine</h2>
@@ -218,3 +218,67 @@ ${fig('vr-fig', 'Stacked bar illustrating how textures, render targets, ray trac
   ],
   related: ['graphics-settings-explained', 'ray-tracing-settings-explained', 'frame-generation-explained']
 };
+
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026: worked examples and vendor-documented numbers (sources in each guide).
+// ---------------------------------------------------------------------------------------------------
+import { tryBox, SRC, addAfter, swap, revise } from '../h.mjs';
+const mb = (bytes) => (bytes / 1e6).toFixed(bytes < 1e8 ? 1 : 0);
+
+// --- shader compilation stutter ---
+addAfter(shaderStutter, 'recognize', `<h2 id="two-runs">The two-pass test: tell shader stutter from the other kinds</h2>
+<p>Shader stutter has one property no other stutter shares: it happens once per effect and then stops, because the compiled result is cached. That makes it testable. Walk the same short route twice in a row after an update, without restarting the game in between, and compare where the hitches fall.</p>
+${tbl('Reading the two passes', ['What you see', 'Most likely cause', 'What to do'], [
+  ['Hitches in pass 1, clearly fewer or none in pass 2', 'Shader compilation: the first pass filled the cache', 'Nothing – keep playing; judge performance from pass 2 on'],
+  ['Hitches at the same spots in both passes', 'Asset streaming or loading at fixed points in the level', 'Check the storage drive and background downloads; lower view distance one step'],
+  ['Hitches grow during a session and textures turn blurry', 'Video memory is full', 'Lower texture quality one step and restart the game'],
+  ['Hitches at random places in both passes', 'Background tasks or uneven frame pacing', 'Close overlays and recorders one at a time; try a frame cap'],
+  ['Hitches return after every restart of the game', 'The cache is not kept, or it is rebuilt every time', 'Check free space on the drive and whether the driver’s shader cache is enabled']
+])}
+<p>If you record the passes with a capture tool, the 1% low is the number that shows the pattern: it is dragged down by the long frames of pass 1 and recovers in pass 2, while the average barely moves. PresentMon, the open-source tool most overlays build on, writes the time between two frames as <code>MsBetweenPresents</code> – a compilation hitch is a single very large value in that column. Note the 1% low of two or three first passes and of the repeat passes and compare them.</p>
+${tryBox('Enter the first passes as setup A and the repeat passes as setup B; the log shows whether the 1% lows really separate.', '/tools/settings-test-log/', 'Open the Settings Test Log')}`);
+revise(shaderStutter, '2026-11-18', 'Two-pass test with a decision table added; link to the Settings Test Log.', [SRC.pm]);
+
+// --- CPU or GPU bottleneck ---
+addAfter(bottleneck, 'check', `<h2 id="numbers">Worked example: reading the check in numbers</h2>
+<p>The check works because of how many pixels disappear. Performance mode has a documented factor of 2.0 per axis with DLSS and FSR, so it renders a quarter of the output pixels. If the graphics card is the limit, removing three quarters of its pixel work must show up clearly. If it does not, something else sets the pace.</p>
+${tbl('Interpreting the frame rate before and after the switch to Performance mode (rule of thumb)', ['Change in frame rate', 'Reading', 'Next step'], [
+  ['Rises by a quarter or more', 'The GPU was the limit', 'Step the upscaler down one mode, then lower GPU-heavy effects'],
+  ['Rises a little, clearly less than a quarter', 'Mixed: the GPU was the limit at first, then the CPU took over', 'One upscaler step is enough; after that, look at CPU options'],
+  ['Stays within a few percent – the normal spread between two identical runs', 'Not the GPU: CPU or a limiter', 'Check caps and V-Sync, then view distance and crowd density']
+], 'The thresholds are a rule of thumb, not a standard. To know your own run-to-run spread, measure the same setting twice.')}
+<p>A simple model shows why gains stop. Suppose the CPU needs 12 ms to prepare a frame and the GPU 14 ms to draw it. The slower side sets the pace: 1000 ÷ 14 = 71 fps. Halve the GPU’s work to 7 ms and you might expect 143 fps – but the CPU still needs 12 ms, so the result is 1000 ÷ 12 = 83 fps. The first settings change gave 12 fps; any further GPU setting gives nothing, because the bottleneck has moved. Real games are less tidy than two numbers, yet the pattern holds: <b>a setting only pays until the other side becomes the limit.</b></p>
+<p>Capture tools can show the two sides directly. PresentMon reports per frame how long the GPU was actively working (<code>MsGPUBusy</code>) and how long it sat idle (<code>MsGPUWait</code>), next to the frame time (<code>MsBetweenPresents</code>). A GPU that is busy for nearly the whole frame time is the limit; a GPU that waits for a large part of each frame is being held back by the CPU or a cap.</p>
+${tryBox('The Bottleneck Finder asks for exactly this test and continues from your answer – including the cases where neither side is the limit.', '/tools/bottleneck-finder/?path=0-0', 'Start the finder at the resolution test')}`);
+revise(bottleneck, '2026-11-18', 'Worked example added: interpretation table for the resolution test, a two-number model of a moving bottleneck, and the PresentMon columns that show GPU busy and wait time.', [SRC.pm, SRC.dlss, SRC.fsr]);
+
+// --- VRAM full ---
+const PX = { '1080p': 1920 * 1080, '1440p': 2560 * 1440, '4K': 3840 * 2160 };
+const T4 = 4096 * 4096, mips = 4 / 3;
+addAfter(vram, 'budget', `<h2 id="arithmetic">VRAM arithmetic you can check yourself</h2>
+<p>Memory use is not a mystery; most of it is multiplication. Two kinds of data fill video memory – images the size of the screen, and textures – and both follow simple formulas.</p>
+<p><b>Screen-sized buffers.</b> A game keeps many full-screen images per frame: color, depth, motion vectors, lighting, history for the upscaler. Each one needs width × height × bytes per pixel.</p>
+${tbl('One full-screen buffer at different resolutions (1 MB = 1 million bytes)', ['Resolution', 'Pixels', '4 bytes per pixel (8 bits × 4 channels)', '8 bytes per pixel (16-bit float × 4 channels)'],
+  Object.entries(PX).map(([n, p]) => [n, (p / 1e6).toFixed(2) + ' million', mb(p * 4) + ' MB', mb(p * 8) + ' MB']))}
+<p>A single buffer is small, but they add up: ten buffers of the 16-bit kind at 4K would be ${mb(PX['4K'] * 8 * 10)} MB, and this part scales with the number of pixels. Rendering internally at 1440p instead of 4K shrinks every such buffer to 44% of its size, which is why a lower upscaler mode relieves memory a little as well as GPU time.</p>
+<p><b>Textures.</b> Games usually store textures block-compressed. Microsoft’s Direct3D documentation gives the sizes: the BC1 format uses 8 bytes per block of 4×4 pixels, BC3 and BC7 use 16 bytes. That is half a byte or one byte per pixel instead of four. A full chain of smaller copies (mip levels) adds one third on top.</p>
+${tbl('One 4096×4096 texture in memory', ['Format', 'Bytes per pixel', 'Top level only', 'With all mip levels (+⅓)'], [
+  ['Uncompressed, 8 bits × 4 channels', '4', mb(T4 * 4) + ' MB', mb(T4 * 4 * mips) + ' MB'],
+  ['BC3 or BC7', '1', mb(T4) + ' MB', mb(T4 * mips) + ' MB'],
+  ['BC1', '0.5', mb(T4 * 0.5) + ' MB', mb(T4 * 0.5 * mips) + ' MB']
+], 'A 2048×2048 texture needs a quarter of these values – the arithmetic behind “one texture step down frees a lot”.')}
+<p>Halving the texture resolution quarters the memory. A texture setting that drops the largest mip level of every texture therefore frees up to three quarters of the texture memory in one step, while the picture only loses its sharpest level. No other option has that ratio, which is why textures come first in the list above.</p>
+<p><b>What upscaling and frame generation allocate.</b> The vendors publish these figures for developers:</p>
+${tbl('Video memory allocated by the feature itself, by output resolution (vendor figures)', ['Feature', '1080p', '1440p', '4K', 'Source and conditions'], [
+  ['DLSS Super Resolution, preset K (default for Quality, Balanced, DLAA)', '86 MB', '144 MB', '307 MB', 'NVIDIA DLSS Programming Guide'],
+  ['DLSS Super Resolution, preset M (default for Performance)', '116 MB', '204 MB', '456 MB', 'NVIDIA, RTX 40/50 series'],
+  ['FSR 3.1.6 upscaler, Quality', '61 MB', '106 MB', '218 MB', 'AMD, Radeon RX 6700 XT, DirectX 12'],
+  ['FSR 3.1.6 upscaler, Performance', '40 MB', '61 MB', '133 MB', 'AMD, same conditions'],
+  ['FSR Upscaling 4.1.2', '81 MB', 'not listed', '318 MB', 'AMD, Radeon RX 9070 XT'],
+  ['DLSS Frame Generation', '272 MB', '489 MB', '725 MB', 'NVIDIA Streamline guide (estimate)'],
+  ['FSR Frame Generation 3.1.6', '124 MB', '214 MB', '457 MB', 'AMD, DirectX 12'],
+  ['FSR Frame Generation 4.0.2', '111 MB', '313 MB', '410 MB', 'AMD, Radeon RX 9070 XT, DirectX 12']
+], 'Rounded from the vendors’ developer documentation; the vendors call them approximations. They are not measurements of ours and exclude everything the game itself allocates.')}
+<p>Added up for a 4K output: DLSS Quality with the default preset (307 MB) plus DLSS Frame Generation (725 MB) comes to roughly 1 GB by NVIDIA’s own estimates – about an eighth of an 8 GB card before the game has loaded a single texture. At 1440p the same pair needs about 630 MB. If memory is the problem, switching frame generation off frees more than most single quality options.</p>
+${tryBox('The Settings Translator sorts all options by their typical load on video memory and shows what to lower first.', '/tools/settings-translator/?b=vram', 'Open the Settings Translator for a VRAM limit')}`);
+revise(vram, '2026-11-18', 'VRAM arithmetic added: size of screen buffers and block-compressed textures, and the memory NVIDIA and AMD document for upscaling and frame generation.', [SRC.dlss, SRC.dlssg, SRC.fsr, SRC.fsr4, SRC.fsrfg, SRC.fsrfg4, SRC.bc]);

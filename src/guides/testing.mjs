@@ -1,4 +1,4 @@
-import { tbl, fig } from '../h.mjs';
+import { tbl, fig, tryBox, SRC, addAfter, replaceSection, swap, revise } from '../h.mjs';
 
 export const testChange = {
   slug: 'how-to-test-a-settings-change',
@@ -26,7 +26,7 @@ ${tbl('Test scene options', ['Type', 'Repeatability', 'Represents gameplay?', 'B
   ['Standing still at one spot', 'Very high', 'Partly', 'Pure GPU settings such as shadows or fog'],
   ['Normal play session', 'Low', 'Yes', 'Final check of how it feels, not numbers']
 ])}
-<p>Write the scene down: location, time of day in the game if it changes, weather, route. Then you can repeat the test after the next update, when the <a href="/guides/after-update-retest-routine/">re-test routine</a> asks for your old numbers.</p>`,
+<p>Write the scene down: location, time of day in the game if it changes, weather, route. Then you can repeat the test after the next update, when the <a href="/guides/how-to-test-a-settings-change/#after-update">re-test routine</a> asks for your old numbers.</p>`,
     `<h2 id="measure">What to measure</h2>
 <p>Record at least <b>average FPS</b> and <b>1% lows</b> – the frame rate during the slowest one percent of frames, which captures stutter that the average hides. Tools such as PresentMon, CapFrameX or the overlays of GPU driver software can record a run and report both. If you only have a counter, write down the typical value and the lowest value you see during the route – less precise, but still useful.</p>
 <p>Also note the <b>conditions</b>: game version, driver version, resolution, upscaler mode and the full preset. A number without its conditions cannot be compared later. Our guide to <a href="/guides/fps-frame-time-1-percent-lows/">FPS, frame time and 1% lows</a> explains how these figures are calculated and why different tools give slightly different 1% values.</p>`,
@@ -73,7 +73,7 @@ ${fig('tc-fig', 'Alternating test runs A1, B1, A2, B2 after a warm-up run, then 
     ['CapFrameX', 'https://www.capframex.com/', 'free frame-time capture and analysis tool for Windows'],
     ['GPU vendor overlays', null, 'NVIDIA App and AMD Software: Adrenalin Edition performance metrics']
   ],
-  related: ['fps-frame-time-1-percent-lows', 'after-update-retest-routine', 'cpu-or-gpu-bottleneck']
+  related: ['fps-frame-time-1-percent-lows', 'how-to-test-a-settings-change', 'cpu-or-gpu-bottleneck']
 };
 
 export const readPatchNotes = {
@@ -126,7 +126,7 @@ ${fig('pn-fig', 'Three columns of an example diff: plus for improvements, tilde 
     `<h2 id="platform">Sorting by platform</h2>
 <p>Read only what applies to your platform, but read all of it. PC notes often mention specific graphics vendors or APIs (DirectX 12, Vulkan). Console notes mention modes: performance, quality or fidelity, 120 Hz, VRR, or – on PS5 Pro – enhanced modes. Switch 2 notes may treat docked and handheld play separately. Steam Deck and other handheld PCs are often listed under PC, sometimes with their own lines. A line without a platform usually applies to all.</p>`,
     `<h2 id="after">After reading: a short plan</h2>
-<p>Write down the two or three lines that matter for you, decide what to test, and then test calmly – after shader compilation is done. The <a href="/guides/after-update-retest-routine/">10-minute re-test routine</a> turns this into a checklist, and the Patch Decoder can export your notes and checklist as text so you can keep them with your settings.</p>`,
+<p>Write down the two or three lines that matter for you, decide what to test, and then test calmly – after shader compilation is done. The <a href="/guides/how-to-test-a-settings-change/#after-update">10-minute re-test routine</a> turns this into a checklist, and the Patch Decoder can export your notes and checklist as text so you can keep them with your settings.</p>`,
     `<h2 id="hotfix">Hotfixes, staged rollouts and platform delays</h2>
 <p>Big updates are rarely the end of the story. A hotfix often follows within days, and its notes are usually shorter and sometimes published only on social media or the developer’s forum. Updates can also arrive on different platforms on different days, because each platform has its own certification process. When something changes for you a few days after a big patch, check for a hotfix before assuming the main update caused it.</p>
 <p>Some developers also change things on the server side without a client update – for example balancing values or event settings. Such changes rarely affect graphics, but they can affect performance in busy multiplayer modes when more players gather in one place. If performance changes without any download, that is a likely reason.</p>`
@@ -142,37 +142,60 @@ ${fig('pn-fig', 'Three columns of an example diff: plus for improvements, tilde 
     ['Steam news pages of individual games', null, 'official announcements in the Steam client'],
     ['Platform news channels', null, 'PlayStation Blog, Xbox Wire, Nintendo news and support pages']
   ],
-  related: ['after-update-retest-routine', 'shader-compilation-stutter-after-update', 'how-to-test-a-settings-change']
+  related: ['how-to-test-a-settings-change', 'setting-names', 'shader-compilation-stutter-after-update']
 };
 
-export const retest = {
-  slug: 'after-update-retest-routine',
-  group: 'testing',
-  kicker: 'Guide · after an update',
-  short: 'After a big update: re-test routine',
-  title: 'After a big update: a 10-minute re-test routine',
-  description: 'A ten-minute checklist for the first session after a big game or driver update: check settings, let shaders compile, re-run your scene and compare.',
-  h1: 'After a big update: a 10-minute re-test routine',
-  lede: 'A large game update or a new graphics driver changes more than the patch notes say: settings can be reset, presets can move, and the shader cache is usually rebuilt. Judging the update in its first minutes leads to wrong conclusions. This routine takes about ten minutes and tells you whether something really changed for you – and what to do about it.',
-  sections: [
-    `<h2 id="before">Before the update: two minutes of notes</h2>
-<p>The routine works best if you have a reference. Before you install a big update – or right now, for the next one – write down or photograph:</p>
-<ul class="do">
-<li>Your graphics or mode settings (a photo of each menu page is fastest).</li>
-<li>Your test scene or route and its average FPS and 1% lows, or on console how the mode looked and felt.</li>
-<li>The game version and, on PC, the graphics driver version.</li>
-</ul>
-<p>If you have no notes, the routine still works: you compare against your memory of how the game ran, and you create the notes for next time.</p>`,
-    `<h2 id="routine">The routine</h2>
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026.
+// The separate guide "After a big update: a 10-minute re-test routine" was merged into the testing guide
+// (same method, same scene, same notes); its address redirects to #after-update here.
+// ---------------------------------------------------------------------------------------------------
+testChange.title = 'How to test a settings change – and re-test after an update';
+testChange.h1 = 'How to test a settings change – and re-test after an update';
+testChange.short = 'Testing a settings change';
+testChange.description = 'A repeatable test for graphics settings and for the first session after an update: fixed scene, warm-up, three runs each, and a rule for real differences.';
+testChange.lede = 'Most “this setting gives +20 FPS” claims come from a single glance at a counter. Frame rates jump around by several percent from one second to the next, so a single reading can easily show a gain that is not there. A proper comparison takes about ten minutes, needs no paid tools, and gives you numbers you can compare again after the next patch – which is exactly when you need them. The second half of this guide is the short version for the first session after a game or driver update.';
+swap(testChange, '<li><b>Several runs.</b> Measure each setting at least twice, better three times, and compare averages.</li>', '<li><b>Several runs.</b> Measure each setting at least three times and compare the middle values. With fewer runs, one odd run decides the result.</li>');
+swap(testChange, 'Then you can repeat the test after the next update, when the <a href="/guides/how-to-test-a-settings-change/#after-update">re-test routine</a> asks for your old numbers.', 'Then you can repeat the test after the next update, when the <a href="#after-update">re-test routine</a> below asks for your old numbers.');
+replaceSection(testChange, 'routine', `<h2 id="routine">The routine, step by step</h2>
+<ol>
+<li>Start the game, load your save and walk the route once without measuring (warm-up).</li>
+<li>Measure the route with your current settings: run A1.</li>
+<li>Change one setting. Apply it; restart the game if the menu asks for it.</li>
+<li>Walk the route once without measuring, then measure: run B1.</li>
+<li>Switch back and measure A2, switch again and measure B2, and once more for A3 and B3. Alternating spreads slow drifts – heat, background tasks – evenly over both settings.</li>
+<li>Compare the middle value (median) of the three A runs with that of the three B runs, for both average FPS and 1% lows.</li>
+</ol>
+${fig('tc-fig', 'Alternating test runs A1, B1, A2, B2, A3, B3 after a warm-up run, then comparing the middle value of A with the middle value of B',
+`<rect class="g-bg" width="640" height="200"/>
+<rect class="g-panel" x="16" y="60" width="78" height="60" rx="6"/><text class="g-tm" x="24" y="96">warm-up</text>
+${['A1', 'B1', 'A2', 'B2', 'A3', 'B3'].map((n, i) => `<rect class="${i % 2 ? 'g-acc' : 'g-panel'}" x="${104 + i * 88}" y="60" width="78" height="60" rx="6"/><text class="${i % 2 ? 'g-tk' : 'g-tb'}" x="${132 + i * 88}" y="96">${n}</text>`).join('')}
+<text class="g-tm" x="16" y="40">ALTERNATE SETTINGS · SAME ROUTE · NOTE AVERAGE FPS AND 1% LOWS</text>
+<text class="g-t" x="104" y="160">compare median(A1, A2, A3) with median(B1, B2, B3)</text>`,
+'If a setting needs a restart of the game, alternating is slow. Then measure A three times, restart, and measure B three times – but warm up again after every restart.', '0 0 640 200')}`);
+replaceSection(testChange, 'real', `<h2 id="real">When is a difference real?</h2>
+<p>Look first at how much the runs of the <i>same</i> setting differ from each other – that spread is your noise. A difference between two settings means something only when it stands clear of it. The simplest strict rule: <b>call a difference real only when every run of one setting is faster than every run of the other</b>, so that the two ranges do not overlap.</p>
+<p>A worked example with invented numbers shows how it reads. Shadows on High give 71, 73 and 72 fps in three runs; shadows on Medium give 75, 74 and 77 fps.</p>
+${tbl('Invented example: three runs per setting (not measurements)', ['', 'A · Shadows High', 'B · Shadows Medium'], [
+  ['Runs (average FPS)', '71 · 73 · 72', '75 · 74 · 77'],
+  ['Median', '72 fps', '75 fps'],
+  ['Lowest–highest', '71–73 (spread 2 fps)', '74–77 (spread 3 fps)'],
+  ['Frame time at the median', '13.89 ms', '13.33 ms']
+])}
+<p>The slowest B run (74) beats the fastest A run (73), so the ranges do not overlap: the gain of 3 fps, about 4%, is real in this scene. Had one A run reached 75, the ranges would overlap and the honest answer would be “not clear – more runs or a longer route”.</p>
+<p>The rule has a known error rate, which is why three runs are the minimum. If a setting changed nothing, the six runs would be six draws from the same pot; of the 20 ways to split them into two groups of three, only 2 put all runs of one group on top. So pure chance produces a “clear” result in 1 of 10 such tests. With five runs per setting it is 1 of 126. When a decision matters – a setting you would otherwise leave on – do five.</p>
+<p>Then check whether the difference matters. In the example the frame time drops by 0.56 ms; that is real but small. The same 3 fps from 57 to 60 on a 60 Hz display without VRR can be the difference between even and uneven motion. Improvements in 1% lows are often more noticeable than in the average.</p>
+<p>Finally, look at the image. Take a screenshot at the same spot with each setting and compare them side by side, then decide whether the visual difference is worth the performance difference. The <a href="/tools/settings-translator/">Settings Translator</a> suggests which options are worth testing first for your bottleneck.</p>
+${tryBox('The Settings Test Log applies exactly this rule to your own runs, shows the spread and prints a blank worksheet. The link opens it with the invented example above.', '/tools/settings-test-log/?na=Shadows%3A%20High&nb=Shadows%3A%20Medium&a=71%2073%2072&b=75%2074%2077', 'Open the example in the Settings Test Log')}`);
+addAfter(testChange, 'mistakes', `<h2 id="after-update">After a big update: the 10-minute version</h2>
+<p>A large game update or a new graphics driver changes more than the patch notes say: settings can be reset, presets can move, and the shader cache is usually rebuilt. Judging the update in its first minutes leads to wrong conclusions. The same method, shortened, tells you whether something really changed for you.</p>
 ${tbl('10-minute re-test routine', ['Minute', 'Step', 'Why'], [
   ['0–1', 'Read the patch notes for your platform; paste them into the Patch Decoder', 'Know what to look for: presets, modes, shaders, known issues'],
   ['1–2', 'Check every settings page against your notes or photos', 'Updates can reset or move settings silently'],
   ['2–5', 'Let shader compilation finish; play calmly through your test area once', 'The first run measures compilation, not the game'],
-  ['5–8', 'Measure your test route twice (or watch it closely on console)', 'Two runs show whether the result is stable'],
+  ['5–8', 'Measure your test route three times (or watch it closely on console)', 'Three runs show the spread'],
   ['8–10', 'Compare with your notes; decide on one change if needed', 'Change one thing at a time']
 ])}
-<p>The <a href="/tools/patch-decoder/">Patch Decoder</a> builds a checklist with these base steps plus the actions from the patch lines that concern you, and exports it as text – handy to keep with your test notes.</p>`,
-    `<h2 id="read">Reading the result</h2>
 ${fig('rt-fig', 'Decision flow after the re-test: same results means done; worse results lead to checking shaders, settings and patch notes; better results allow raising a setting',
 `<rect class="g-bg" width="640" height="240"/>
 <rect class="g-panel" x="230" y="16" width="180" height="40" rx="6"/><text class="g-t" x="250" y="41">compare with notes</text>
@@ -184,37 +207,42 @@ ${fig('rt-fig', 'Decision flow after the re-test: same results means done; worse
 <text class="g-tm" x="240" y="166">done – keep notes</text><text class="g-tm" x="240" y="184">for next time</text>
 <text class="g-tm" x="460" y="166">1 shaders done?</text><text class="g-tm" x="460" y="184">2 settings reset?</text><text class="g-tm" x="460" y="202">3 known issue?</text><text class="g-tm" x="460" y="220">4 find bottleneck</text>`,
 'Three possible outcomes. Only a confirmed drop, after shaders are compiled and settings are checked, calls for changing settings.', '0 0 640 240')}
-<p><b>Same as before.</b> Done. Keep the notes; they are your reference for the next update.</p>
-<p><b>Better.</b> If the update optimized something you had lowered – for example a CPU improvement in crowded areas – try that option one step higher and test again.</p>
-<p><b>Worse.</b> Go through the causes in order: Was the shader cache still being built (does a second run look better)? Did a setting change? Is there a known issue for your platform? Only if all three are ruled out is it likely that the update made the game heavier. Then find your current bottleneck with the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> and lower one option for it, using the <a href="/tools/settings-translator/">Settings Translator</a>.</p>`,
-    `<h2 id="consoles">On consoles</h2>
-<p>Consoles have no frame counter in most games, but the routine still works. Check that the mode you chose (performance, quality or fidelity, 120 Hz, VRR) is still selected, both in the game and in the console’s system settings. Then play your usual area and pay attention to smoothness and sharpness. If a patch note says a mode’s target changed, compare both modes again – the best choice may have changed. The guides on <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 modes</a>, <a href="/guides/xbox-series-s-vs-x-modes/">Xbox Series S vs X</a> and <a href="/guides/switch-2-docked-vs-handheld/">Switch 2</a> explain the trade-offs.</p>`,
-    `<h2 id="report">When to report a problem</h2>
-<p>If you have confirmed a clear drop under the same conditions, report it to the developer through their official support or bug-report channel. Include your platform, hardware, game and driver version, the scene, your before-and-after numbers and the settings. Reports with numbers and steps to reproduce are far more useful than “performance is worse”.</p>
-<p>And keep the result in perspective: after an update it is normal for the first session to feel slightly different. Patience for one session, plus a short structured test, avoids most unnecessary changes – and most of the frustration.</p>`,
-    `<h2 id="drivers">Driver updates follow the same rules</h2>
-<p>Graphics driver updates behave like game updates for this routine: the shader cache is rebuilt, defaults in the driver control panel can change, and performance in individual games can shift in either direction. Install drivers when you have time for a calm first session, read the driver’s release notes for your games, and use the same re-test.</p>`,
-    `<h2 id="sheet">A personal reference sheet</h2>
-<p>The routine gets faster each time if you keep one small note per game. It does not need to be elaborate – a text file or a phone note is enough:</p>
+<p><b>Same as before</b> – that is, your new runs overlap with the old ones: done. <b>Better:</b> if the update optimized something you had lowered, try that option one step higher and test again. <b>Worse:</b> go through the causes in order. Was the shader cache still being built (does a second pass look better – see the <a href="/guides/shader-compilation-stutter-after-update/#two-runs">two-pass test</a>)? Did a setting change? Is there a known issue for your platform? Only if all three are ruled out is it likely that the update made the game heavier. Then find your current bottleneck with the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> and lower one option for it.</p>
+<p>Graphics driver updates follow the same rules: the shader cache is rebuilt, defaults in the driver’s control panel can change, and performance in individual games can shift in either direction.</p>
+<p><b>On consoles</b> there is usually no frame counter, but the routine still works. Check that the mode you chose (performance, quality, 120 Hz, VRR) is still selected, both in the game and in the console’s system settings, then play your usual area and pay attention to smoothness and sharpness. If a patch note says a mode’s target changed, compare both modes again.</p>`,
+);
+addAfter(testChange, 'after-update', `<h2 id="notes">Notes that make the next test fast</h2>
+<p>The routine only works with a reference. Before you install a big update – or right now, for the next one – keep one small note per game:</p>
 <ul class="do">
-<li>Game, platform, game version and (PC) driver version.</li>
-<li>Settings or mode, with a photo of each menu page.</li>
-<li>Test route: where it starts, where it ends, what you do.</li>
-<li>Results: average FPS and 1% lows (PC), or a one-line impression (console).</li>
+<li>Game, platform, game version and (on PC) the graphics driver version.</li>
+<li>Your settings or mode; a photo of each menu page is fastest.</li>
+<li>The test route: where it starts, where it ends, what you do.</li>
+<li>Results: the three runs with average FPS and 1% lows (PC), or a one-line impression (console).</li>
 <li>Date, and what changed since the last entry.</li>
 </ul>
-<p>The Patch Decoder’s text export fits right below it. After a few updates you have a history that shows whether a game is getting better or worse on your system – far more useful than any general claim.</p>`
-  ],
-  faq: [
-    ['Why does a game run worse right after an update?', 'Most often because the shader cache is rebuilt, so the first session stutters. Settings may also have been reset. Re-test after a calm first play-through.'],
-    ['How long should I wait before judging performance?', 'At least until any shader compilation step has finished and you have played once through your test area. Then measure.'],
-    ['Do I need special software for the routine?', 'No. A frame counter is enough on PC; on console you compare by eye. Frame-time tools give more precise numbers if you want them.'],
-    ['Should I reinstall the game if it runs worse?', 'Rarely. Check shaders, settings and known issues first. A reinstall is a last resort for corrupted files and makes the next session stutter again.']
-  ],
-  sources: [
-    ['Official patch notes of your game', null, 'publisher website, store news page or in-game news'],
-    ['Graphics driver release notes', null, 'published by NVIDIA, AMD and Intel with each driver'],
-    ['PresentMon', 'https://github.com/GameTechDev/PresentMon', 'frame-time capture for before/after comparisons']
-  ],
-  related: ['how-to-read-patch-notes', 'how-to-test-a-settings-change', 'shader-compilation-stutter-after-update']
-};
+<p>The <a href="/tools/settings-test-log/#sheet">printable worksheet</a> of the Settings Test Log has exactly these fields, and the log’s summary or CSV export can be pasted into a text file. After a few updates you have a history that shows whether a game is getting better or worse on your own system.</p>
+<p><b>When to report a problem.</b> If you have confirmed a clear drop under the same conditions, report it to the developer through their official support or bug-report channel. Include platform, hardware, game and driver version, the scene, your before-and-after runs and the settings. A report with numbers and steps to reproduce is far more useful than “performance is worse”.</p>`);
+testChange.faq = [
+  ['How many test runs do I need?', 'At least three per setting, after a warm-up run. With three runs each, a clean split between the two settings still appears by chance in 1 of 10 tests; with five runs each, in 1 of 126.'],
+  ['Are built-in benchmarks reliable?', 'They are very repeatable, which is good for comparisons. They do not always represent the heaviest gameplay, especially CPU-heavy scenes with many characters.'],
+  ['Should I disable the frame cap for testing?', 'Yes, for performance comparisons. With a cap, both settings may hit the limit and look identical even when one is much faster.'],
+  ['Why does a game run worse right after an update?', 'Most often because the shader cache is rebuilt, so the first session stutters. Settings may also have been reset. Re-test after a calm first play-through.'],
+  ['Should I reinstall the game if it runs worse after an update?', 'Rarely. Check shaders, settings and known issues first. A reinstall is a last resort for corrupted files and makes the next session stutter again.']
+];
+testChange.related = ['fps-frame-time-1-percent-lows', 'settings-test-log', 'how-to-read-patch-notes'];
+revise(testChange, '2026-11-18', 'Merged with the former guide “After a big update: a 10-minute re-test routine”; three runs per setting instead of two; rule for a real difference (ranges must not overlap) with its error rate and a worked example; links to the Settings Test Log.', [SRC.pm]);
+
+// --- how to read patch notes ---
+addAfter(readPatchNotes, 'wording', `<h2 id="brands">Brand names in patch notes: which job, what to check</h2>
+<p>Many patch lines consist of little more than a product name: “updated XeSS”, “added Anti-Lag 2”, “PSSR support”. The line becomes useful once you know which job the name does. The table translates the most common ones; the facts in the third column come from the vendors’ own documents, which are linked in the <a href="/reference/setting-names/">setting-name map</a>.</p>
+${tbl('Product names in patch notes and what follows from them', ['If the note says…', 'It concerns', 'Worth knowing (vendor documentation)', 'Then'], [
+  ['“Updated DLSS / FSR / XeSS to version …”', 'Upscaling', 'A preset name can render a different number of pixels after a version change: since XeSS 1.3, Intel’s Quality preset uses 1.7× per axis instead of 1.5×', 'Compare your preset in a fixed scene; check the internal resolution with the <a href="/tools/upscaler-resolution-calculator/">calculator</a>'],
+  ['“Added DLSS Frame Generation / FSR Frame Generation / XeSS-FG”', 'Frame generation', 'Intel names 40 fps as the minimum and 60 fps as the recommended input frame rate; AMD advises a rendered rate slightly below half the output rate', 'Check your rendered frame rate first, then try it – <a href="/tools/frame-time-calculator/?fps=60&amp;hz=120&amp;fg=2">shown versus rendered</a>'],
+  ['“Added Multi Frame Generation” or “3×/4× mode”', 'Frame generation', 'More generated frames per rendered frame; the maximum depends on the graphics card', 'Only worth it if the shown frame rate still fits your display’s refresh rate'],
+  ['“Added Reflex / Anti-Lag 2 / XeLL”', 'Latency reduction', 'These are built into the game – unlike the driver-only Radeon Anti-Lag', 'Switch it on and compare quick camera turns'],
+  ['“Added a 40 fps mode” (console)', 'Display mode', '40 fps fits a 120 Hz signal evenly (three refreshes per frame), not a 60 Hz one', 'Enable 120 Hz output on console and TV first'],
+  ['“PSSR updated” or “added PSSR” (PS5 Pro)', 'Upscaling on PS5 Pro', 'Sony announced an upgraded PSSR on February 27, 2026; the system setting “Enhance PSSR Image Quality” applies it to games that already support PSSR', 'Compare the modes again in a scene with fine detail'],
+  ['“Added ray reconstruction / ray regeneration”', 'Ray-tracing denoiser', 'A machine-learning denoiser from NVIDIA or AMD that takes over the denoising step', 'Compare reflections in motion with it on and off']
+])}
+${tryBox('Paste the notes of your update and let the decoder sort them; a sample is one click away.', '/tools/patch-decoder/', 'Open the Patch Decoder')}`);
+revise(readPatchNotes, '2026-11-18', 'Table added that translates product names in patch notes (upscalers, frame generation, latency features, PSSR) into what to check, based on vendor documentation.', [SRC.xess, SRC.xessfg, SRC.fsrsc, SRC.al2, SRC.pssr]);

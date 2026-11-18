@@ -5,8 +5,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, page, renderGuide, renderTool, words, modifiedIso } from './layout.mjs';
 import { GUIDES } from './guides/index.mjs';
-import { TOOLS } from './tools/index.mjs';
-import { home, guidesIndex, STATIC_PAGES, NOT_FOUND, OLD_URLS } from './pages.mjs';
+import { TOOLS, REFERENCES } from './tools/index.mjs';
+import { home, guidesIndex, toolsIndex, STATIC_PAGES, NOT_FOUND, OLD_URLS } from './pages.mjs';
 
 const SRC = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(SRC, '..', 'docs');
@@ -28,10 +28,12 @@ function copyDir(from, to, filter = () => true) {
 const META = {};
 GUIDES.forEach((g) => { META[g.slug] = { path: `/guides/${g.slug}/`, kicker: g.kicker.replace(/^Guide · /, ''), h1: g.h1.replace(/<[^>]+>/g, '') }; });
 TOOLS.forEach((t) => { META[t.slug] = { path: `/tools/${t.slug}/`, kicker: 'Tool', h1: t.short }; });
+REFERENCES.forEach((t) => { META[t.slug] = { path: `/reference/${t.slug}/`, kicker: 'Reference', h1: t.short }; });
 const lookup = (slug) => { if (!META[slug]) throw new Error('unknown related slug ' + slug); return META[slug]; };
 
 const sitemap = [];
-const lastmod = { '/privacy/': '2026-11-05', '/about/': '2026-11-04', '/contact/': '2026-11-04' }; // path -> date of last change
+const REVISED = '2026-11-18';
+const lastmod = { '/': REVISED, '/guides/': REVISED, '/tools/': REVISED, '/privacy/': REVISED, '/about/': REVISED, '/contact/': REVISED }; // path -> date of last change
 const report = [];
 
 // home (AdSense loader so the CMP appears, but no ad slots)
@@ -48,10 +50,14 @@ for (const g of GUIDES) {
   sitemap.push(`/guides/${g.slug}/`); lastmod[`/guides/${g.slug}/`] = modifiedIso(g);
   report.push({ path: `/guides/${g.slug}/`, words: words(g.lede + g.sections.join(' ') + g.faq.flat().join(' ')) });
 }
-for (const t of TOOLS) {
-  write(`/tools/${t.slug}/`, renderTool(t, lookup));
-  sitemap.push(`/tools/${t.slug}/`); lastmod[`/tools/${t.slug}/`] = modifiedIso(t);
-  report.push({ path: `/tools/${t.slug}/`, words: words(t.lede + t.sections.join(' ') + t.faq.flat().join(' ')) });
+const ti = toolsIndex();
+write(ti.path, page({ ...ti, ads: 'no', loader: true }));
+sitemap.push(ti.path);
+for (const t of [...TOOLS, ...REFERENCES]) {
+  const p = `/${t.dir || 'tools'}/${t.slug}/`;
+  write(p, renderTool(t, lookup));
+  sitemap.push(p); lastmod[p] = modifiedIso(t);
+  report.push({ path: p, words: words(t.lede + t.sections.join(' ') + t.faq.flat().join(' ')) });
 }
 for (const p of STATIC_PAGES) {
   write(p.path, page({ ...p, ads: 'no', loader: p.path === '/about/' })); // legal pages and contact: no advertising

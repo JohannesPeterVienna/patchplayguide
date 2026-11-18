@@ -147,7 +147,7 @@ test('decoder: checklist and text export', () => {
 test('translator: data is complete and conservative', async () => {
   const s = await slugs();
   const ids = new Set();
-  assert.equal(T.OPTIONS.length, 20);
+  assert.equal(T.OPTIONS.length, 25);
   for (const o of T.OPTIONS) {
     assert.ok(!ids.has(o.id)); ids.add(o.id);
     for (const k of ['gpu', 'cpu', 'vram']) assert.ok(Number.isInteger(o[k]) && o[k] >= 0 && o[k] <= 3, o.id + k);
@@ -166,20 +166,20 @@ test('translator: lower-first lists follow common guidance', () => {
   assert.equal(vram[0], 'textures');
   assert.ok(![...gpu, ...cpu, ...vram].includes('framegen'));
   assert.equal(T.lowerFirst('unsure').length, 0);
-  assert.equal(T.rank('cpu').length, 20);
+  assert.equal(T.rank('cpu').length, 25);
   assert.ok(T.lowerFirst('gpu').every((o) => o.gpu >= 2 && o.loss <= 2));
 });
 test('translator: search matches names and aliases', () => {
   assert.ok(T.search('dlss').some((o) => o.id === 'upscaler'));
   assert.ok(T.search('SSAO').some((o) => o.id === 'ao'));
-  assert.equal(T.search('').length, 20);
+  assert.equal(T.search('').length, 25);
   assert.equal(T.search('zzzz').length, 0);
 });
 
 /* ---------------- bottleneck finder ---------------- */
 test('finder: every answer leads to an existing node, sizes match the tool page', () => {
-  assert.equal(Object.keys(F.QUESTIONS).length, 10);
-  assert.equal(Object.keys(F.RESULTS).length, 17);
+  assert.equal(Object.keys(F.QUESTIONS).length, 13);
+  assert.equal(Object.keys(F.RESULTS).length, 22);
   for (const t of F.allTargets()) assert.ok(F.node(t), 'missing node ' + t);
 });
 test('finder: every node is reachable and there are no loops', () => {
@@ -203,7 +203,9 @@ test('finder: results link to existing guides and walk() follows answers', async
   assert.equal(F.walk([0, 0, 0]).id, 'r-gpu');
   assert.equal(F.walk([0, 0, 1, 0, 1]).id, 'r-cpu');
   assert.equal(F.walk([1, 0]).id, 'r-shader');
-  assert.equal(F.walk([6]).id, 'r-handheld');
+  assert.equal(F.walk([8]).id, 'r-handheld');
+  assert.equal(F.walk([6, 0, 0]).id, 'r-vrr-above');
+  assert.equal(F.walk([7, 1]).id, 'r-40');
   assert.equal(F.walk([]).kind, 'question');
   assert.equal(F.walk([99]), null);
 });
@@ -361,4 +363,122 @@ test('saved setup: only own platform/GPU/VRAM values survive; bad data never thr
   const num = loadSite({ 'ppg-setup': '{"platform":"pc","gpu":"mid","vram":8}' });
   assert.equal(num.read().vram, '8');
   assert.equal(loadSite({ 'ppg-setup': '{"platform":"ps5pro"}' }).read().platform, 'ps5pro');
+});
+
+/* ---------------- 2026-11-18: calculators, test log, name map, finder links ---------------- */
+const RES = require('../src/assets/js/resolution-core.js');
+const FTM = require('../src/assets/js/frametime-core.js');
+const TL = require('../src/assets/js/testlog-core.js');
+const NM = require('../src/data/names-core.js');
+
+test('resolution: documented factors reproduce the vendors’ own example resolutions', () => {
+  const at = (w, h, fam, mode) => { const r = RES.rows(w, h, fam).find((x) => x.mode === mode); return r.w + 'x' + r.h; };
+  // NVIDIA DLSS Programming Guide: Performance mode inputs 960x540, 1280x720, 1920x1080
+  assert.equal(at(1920, 1080, 'dlss', 'Performance'), '960x540');
+  assert.equal(at(2560, 1440, 'dlss', 'Performance'), '1280x720');
+  assert.equal(at(3840, 2160, 'dlss', 'Performance'), '1920x1080');
+  assert.equal(at(3840, 2160, 'dlss', 'Quality'), '2560x1440');
+  assert.equal(at(3840, 2160, 'dlss', 'Balanced'), '2227x1253');
+  assert.equal(at(3840, 2160, 'fsr', 'Ultra Performance'), '1280x720');
+  assert.equal(at(3840, 2160, 'xess', 'Balanced'), '1920x1080'); // XeSS 1.3+: Balanced = 2.0x
+  assert.equal(at(3840, 2160, 'xessold', 'Balanced'), at(3840, 2160, 'fsr', 'Balanced')); // before 1.3: 1.7x
+  assert.deepEqual(RES.FAMILIES.dlss.modes.map((m) => m[1]), [1.0, 1.5, 1.724, 2.0, 3.0]);
+  assert.deepEqual(RES.FAMILIES.fsr.modes.map((m) => m[1]), [1.0, 1.5, 1.7, 2.0, 3.0]);
+  assert.deepEqual(RES.FAMILIES.xess.modes.map((m) => m[1]), [1.0, 1.3, 1.5, 1.7, 2.0, 2.3, 3.0]);
+});
+test('resolution: parsing, shares, render scale and cross-vendor order', () => {
+  assert.deepEqual(RES.parseRes(' 2560 x 1080 '), { w: 2560, h: 1080 });
+  assert.deepEqual(RES.parseRes('3440×1440'), { w: 3440, h: 1440 });
+  for (const bad of ['', 'abc', '10x10', '99999x1', '1920', '<img>x1080']) assert.equal(RES.parseRes(bad), null);
+  assert.equal(RES.pct(RES.internal(3840, 2160, 2).share), 25);
+  assert.equal(RES.internal(1920, 1080, 0.5), null);
+  assert.equal(RES.scaled(2560, 1440, 50).w, 1280);
+  assert.equal(RES.scaled(2560, 1440, 5), null);
+  const all = RES.allRows(2560, 1440);
+  assert.equal(all.length, 17);
+  for (let i = 1; i < all.length; i++) assert.ok(all[i - 1].pixels >= all[i].pixels);
+  assert.match(RES.text(2560, 1440, RES.rows(2560, 1440, 'dlss')), /DLSS Quality \(1\.5x per axis\): 1707×960/);
+});
+test('frame time: conversion, even pacing, VRR window, frame generation', () => {
+  assert.equal(FTM.round(FTM.ms(60)), 16.67);
+  assert.deepEqual(FTM.evenRates(120, 4).map((r) => r.fps), [120, 60, 40, 30]);
+  assert.equal(FTM.fit(40, 120).kind, 'even'); assert.equal(FTM.fit(40, 120).refreshes, 3);
+  const u = FTM.fit(40, 60); assert.equal(u.kind, 'uneven'); assert.equal(u.lo, 1); assert.equal(u.hi, 2); assert.equal(u.shareHi, 0.5);
+  assert.equal(FTM.round(FTM.fit(50, 60).shareHi, 2), 0.2);
+  assert.equal(FTM.fit(90, 60).kind, 'above');
+  assert.equal(FTM.vrr(55, 48, 120).kind, 'inside');
+  assert.deepEqual([FTM.vrr(40, 48, 120).kind, FTM.vrr(40, 48, 120).times, FTM.vrr(40, 48, 120).hz], ['multiple', 2, 80]);
+  assert.equal(FTM.vrr(35, 40, 60).kind, 'below');
+  assert.equal(FTM.vrr(130, 48, 120).kind, 'above');
+  assert.equal(FTM.vrr(60, 0, 0), null);
+  // a window whose top is at least twice its bottom has no gaps
+  for (let f = 5; f < 48; f++) assert.notEqual(FTM.vrr(f, 48, 120).kind, 'below', String(f));
+  const g = FTM.generate(70, 2, 120); assert.equal(g.shown, 140); assert.ok(g.overRefresh); assert.equal(g.baseForRefresh, 60);
+  assert.equal(FTM.round(FTM.compare(30, 60).savedMs), 16.67);
+  assert.equal(FTM.num('abc', 1, 10), null); assert.equal(FTM.num('5', 1, 10), 5); assert.equal(FTM.num('50', 1, 10), null);
+});
+test('frame time: average FPS and both 1% low readings (worked example of the guide)', () => {
+  const run = (h) => Array.from({ length: 600 }, (_, i) => (i < h ? 56 : 16));
+  assert.equal(FTM.round(FTM.averageFps(run(10)), 1), 60);
+  assert.equal(FTM.round(FTM.averageFps(run(5)), 1), 61.2);
+  const a = FTM.lows(run(10), 0.01), b = FTM.lows(run(5), 0.01);
+  assert.equal(a.frames, 6); assert.equal(FTM.round(a.lowFps, 1), 17.9); assert.equal(a.percentileMs, 56);
+  assert.equal(FTM.round(b.lowFps, 1), 20.3); assert.equal(b.percentileMs, 16);
+  assert.equal(FTM.lows([], 0.01), null);
+});
+test('test log: parsing, median, verdict rule and its error rate', () => {
+  assert.deepEqual(TL.parse('71, 73 72;74,5'), [71, 73, 72, 74.5]);
+  assert.deepEqual(TL.parse('71,73,72'), [71, 73, 72]);
+  assert.deepEqual(TL.parse('abc -5 0 <b> 1e9 60'), [60]);
+  assert.equal(TL.parse('1 2 3 4 5 6 7 8 9').length, TL.MAX_RUNS);
+  assert.equal(TL.median([3, 1, 2]), 2); assert.equal(TL.median([4, 1, 2, 3]), 2.5); assert.equal(TL.median([]), null);
+  const c = TL.compare([71, 73, 72], [75, 74, 77]);
+  assert.equal(c.verdict, 'b-clear'); assert.equal(c.diff, 3); assert.equal(c.luck, 10);
+  assert.equal(TL.compare([71, 75, 72], [75, 74, 77]).verdict, 'overlap');
+  assert.equal(TL.compare([80, 81, 82], [70, 71, 72]).verdict, 'a-clear');
+  assert.equal(TL.compare([71, 73], [75, 74, 77]).verdict, 'few');
+  assert.equal(TL.compare([], [75]).verdict, 'empty');
+  assert.deepEqual([3, 4, 5].map((n) => [TL.choose(2 * n, n), TL.luck(n, n)]), [[20, 10], [70, 35], [252, 126]]);
+  const st = { scene: 'x', nameA: 'High "A"', nameB: 'Med', a: [71, 73, 72], b: [75, 74, 77], la: [], lb: [] };
+  assert.match(TL.summary(st), /Median difference B − A: \+3 fps \(\+4\.2%\)/);
+  assert.match(TL.csv(st), /"High ""A""","average fps",1,71/);
+});
+test('name map: every row is complete, sourced and consistent with the calculator', () => {
+  assert.ok(NM.ROWS.length >= 60);
+  const ids = new Set();
+  for (const r of NM.ROWS) {
+    assert.ok(!ids.has(r.id)); ids.add(r.id);
+    assert.ok(NM.CATS[r.c] && NM.VENDORS[r.v], r.n);
+    assert.ok(r.n.length > 2 && r.g.length > 3 && r.d.length > 40, r.n);
+    assert.ok(r.s.length >= 1); r.s.forEach((s) => assert.ok(NM.SOURCES[s], r.n + ' → ' + s));
+  }
+  for (const [id, s] of Object.entries(NM.SOURCES)) { assert.match(s[1], /^https:\/\//, id); assert.ok(['doc', 'page'].includes(s[2]), id); assert.ok(NM.ROWS.some((r) => r.s.includes(id)), 'unused source ' + id); }
+  // preset factors in the map = factors in the calculator
+  const fam = { DLSS: 'dlss', FSR: 'fsr', XeSS: 'xess' };
+  const modes = NM.ROWS.filter((r) => r.f);
+  assert.equal(modes.length, 17);
+  for (const r of modes) {
+    const [tech, name] = r.n.split(' – ');
+    const m = RES.FAMILIES[fam[tech]].modes.find((x) => x[0] === name || (name === 'Native Anti-Aliasing' && x[0] === 'Native AA'));
+    assert.ok(m, r.n); assert.equal(m[1], r.f, r.n);
+  }
+  assert.deepEqual(NM.filter('balanced', 'upscale').map((r) => r.f).filter(Boolean), [1.724, 1.7, 2.0]);
+  assert.equal(NM.filter('', 'all', 'all').length, NM.ROWS.length);
+  assert.ok(NM.filter('anti-lag').length >= 2);
+  assert.equal(NM.filter('zzzz').length, 0);
+  assert.ok(NM.filter('', 'vrr', 'ps5').every((r) => r.c === 'vrr' && r.v === 'ps5'));
+  assert.equal(NM.csv(NM.ROWS).trim().split('\n').length, NM.ROWS.length + 1);
+});
+test('finder: links, text export and the full list of routes', () => {
+  assert.deepEqual(F.decode('0-0-0'), [0, 0, 0]);
+  assert.deepEqual(F.decode('99'), []); assert.deepEqual(F.decode('<x>'), []); assert.deepEqual(F.decode(undefined), []);
+  assert.equal(F.encode([1, 0]), '1-0');
+  const routes = F.routes();
+  assert.ok(routes.length >= Object.keys(F.RESULTS).length);
+  for (const r of routes) { assert.equal(F.walk(r.path).id, r.result); assert.equal(r.answers.length, r.path.length); }
+  assert.deepEqual(new Set(routes.map((r) => r.result)), new Set(Object.keys(F.RESULTS)));
+  const txt = F.resultText([0, 0, 0]);
+  assert.match(txt, /Likely GPU-bound/); assert.match(txt, /\?path=0-0-0/); assert.match(txt, /^Q: /m);
+  assert.equal(F.resultText([0]), '');
+  for (const r of Object.values(F.RESULTS)) if (r.calc) assert.match(r.calc[0], /^(frame-time-calculator|upscaler-resolution-calculator|settings-test-log)$/);
 });

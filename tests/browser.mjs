@@ -62,7 +62,7 @@ for (const width of [390, 1366]) {
     }));
     if (info.overflow > 1) errs.push('horizontal overflow ' + info.overflow + 'px');
     if (info.visibleAds) errs.push('ad label, rule or margin visible without a delivered ad');
-    if (u.startsWith('/tools/') && !(info.results && info.results.length > 40)) errs.push('tool shows no result');
+    if (/^\/(tools|reference)\/[^/]+\/$/.test(u) && !(info.results && info.results.length > 40)) errs.push('tool shows no result');
     // force ad boxes visible at a realistic size and measure distance to controls and footer
     const dist = await page.evaluate(() => {
       const ads = [...document.querySelectorAll('.ad')];
@@ -249,6 +249,146 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
   await page.goto(base + '/guides/graphics-settings-explained/');
   const note = await page.textContent('#setup-note');
   if (!/PS5/.test(note || '') || recs < 1) bad('setup note/highlight missing'); else console.log(`✓ My setup: ${recs} home cards highlighted; guide note: ${note.trim().slice(0, 80)}…`);
+
+  // ---- tools added on 2026-11-18, clicked through at phone and desktop width ----
+  for (const w of [390, 1366]) {
+    await page.setViewportSize({ width: w, height: 900 });
+    const over = async (what) => { const o = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth); if (o > 1) bad(`${w}px ${what}: horizontal overflow ${o}px`); };
+    const ok = (cond, good, fail) => { if (cond) console.log(`✓ ${w}px ${good}`); else bad(`${w}px ${fail}`); };
+
+    // Upscaler Resolution Calculator: link state, example chip, custom input, bad input, keyboard, copy link
+    await page.goto(base + '/tools/upscaler-resolution-calculator/?out=3840x2160&up=dlss');
+    const rc1 = await page.locator('#rc-table tbody tr').allInnerTexts();
+    await page.click('#rescalc button.chip >> nth=2');
+    const rc2 = await page.locator('#rc-table tbody tr').count(), rcLow = await page.locator('#rc-table tr.low').count();
+    await page.selectOption('#rc-out', 'custom'); await page.fill('#rc-custom', '2560 x 1080');
+    const rcSum = await page.textContent('#rc-summary');
+    await page.fill('#rc-custom', '<b>abc');
+    const rcBad = await page.textContent('#rc-summary'), rcEmpty = await page.locator('#rc-table tbody tr').count();
+    await page.fill('#rc-custom', '3440x1440');
+    await page.locator('input[name="rc-fam"][value="xess"]').focus(); await page.keyboard.press('ArrowRight');
+    const rcKey = await page.locator('input[name="rc-fam"]:checked').getAttribute('value');
+    await page.locator('input[name="rc-fam"][value="scale"]').check(); await page.locator('#rc-scale').fill('50');
+    const rcScale = await page.textContent('#rc-table tbody tr');
+    await page.click('#rc-link');
+    await page.waitForFunction(() => document.getElementById('rc-msg').textContent.length > 0);
+    await over('resolution calculator');
+    ok(rc1.length === 5 && /2560×1440/.test(rc1[1]) && /1920×1080/.test(rc1[3]) && rc2 === 7 && rcLow === 4 && /2560×1080/.test(rcSum) && /width × height/.test(rcBad) && rcEmpty === 0 && rcKey === 'xessold' && /1720×720/.test(rcScale) && /up=scale/.test(page.url()) && /scale=50/.test(page.url()),
+      'resolution calculator: 4K DLSS = 5 presets (Quality 2560×1440), XeSS example at 1080p marks 4 presets below 720 lines, custom and bad input handled, keyboard and slider work, link carries the state',
+      `resolution calculator: ${rc1.length} rows, xess ${rc2}/${rcLow} low, sum=${rcSum}, bad=${rcBad}/${rcEmpty}, key=${rcKey}, scale=${rcScale}, url=${page.url()}`);
+
+    // Frame Time Calculator: uneven/even pacing, VRR window, frame generation, comparison, empty input
+    await page.goto(base + '/tools/frame-time-calculator/?fps=40&hz=60');
+    const ft1 = await page.innerText('#ft-out');
+    await page.fill('#ft-hz', '120');
+    const ft2 = await page.innerText('#ft-out');
+    await page.fill('#ft-min', '48'); await page.fill('#ft-max', '120');
+    const ft3 = await page.innerText('#ft-out');
+    await page.selectOption('#ft-fg', '4'); await page.fill('#ft-vs', '60');
+    const ft4 = await page.innerText('#ft-out');
+    await page.fill('#ft-fps', '');
+    const ft5 = await page.textContent('#ft-summary');
+    await page.click('#ftcalc button.chip >> nth=3');
+    const ft6 = await page.innerText('#ft-out');
+    await over('frame time calculator');
+    ok(/Uneven pacing/.test(ft1) && /16\.67 ms or 33\.33 ms/.test(ft1) && /Even pacing/.test(ft2) && /exactly 3 refreshes/.test(ft2) && /whole multiple fits/.test(ft3) && /80 Hz/.test(ft3) && /160 fps on screen/.test(ft4) && /8\.33 ms less per frame/.test(ft4) && /Enter a frame rate/.test(ft5) && /140 fps on screen/.test(ft6) && /fg=2/.test(page.url()),
+      'frame time calculator: 40 fps is uneven on 60 Hz and even on 120 Hz, fits a 48–120 Hz window doubled, 4× generation and comparison shown, empty input explained',
+      `frame time calculator: ${[ft1, ft2, ft3, ft4, ft5, ft6].map((t) => t.replace(/\s+/g, ' ').slice(0, 70)).join(' | ')}`);
+
+    // Settings Test Log: example, verdict flips on overlap, restore after reload, link, hostile input, CSV, clear
+    await page.goto(base + '/tools/settings-test-log/');
+    await page.click('#tl-example');
+    const tl1 = await page.innerText('#tl-out'), demo = await page.isVisible('#tl-demo');
+    await page.fill('#tl-a', '71 75 72');
+    const tl2 = await page.innerText('#tl-out'), demo2 = await page.isVisible('#tl-demo');
+    await page.fill('#tl-na', '<img src=x onerror="window.__x=1">');
+    await page.reload();
+    const tl3 = await page.inputValue('#tl-a'), tlName = await page.innerHTML('#tl-out');
+    const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#tl-csv')]);
+    const csv = fs.readFileSync(await dl.path(), 'utf8');
+    await page.click('#tl-clear');
+    const tl4 = await page.innerText('#tl-out');
+    await page.goto(base + '/tools/settings-test-log/?a=60,61,62,63,64&b=70%2071%2072%2073%2074&nb=%3Cscript%3Ewindow.__x%3D1%3C%2Fscript%3E');
+    const tl5 = await page.innerText('#tl-out');
+    const xss = await page.evaluate(() => window.__x);
+    await page.click('#tl-clear');
+    await over('test log');
+    ok(/every run of setup B is faster/.test(tl1) && /1 of 10 cases/.test(tl1) && demo && /No clear difference/.test(tl2) && !demo2 && tl3 === '71 75 72' && !/<img/.test(tlName) && /"average fps",1,71/.test(csv) && /Type the average FPS/.test(tl4) && /1 of 126 cases/.test(tl5) && xss === undefined,
+      'test log: invented example is labeled and gives “clear” (1 in 10), overlap gives “no clear difference”, entries survive a reload, 5+5 runs from a link give 1 in 126, hostile input stays text, CSV exported',
+      `test log: ${[tl1, tl2, tl4, tl5].map((t) => t.replace(/\s+/g, ' ').slice(0, 80)).join(' | ')} demo=${demo}/${demo2} restored=${tl3} xss=${xss}`);
+    // blank worksheet: in print mode only the worksheet stays visible
+    await page.goto(base + '/tools/settings-test-log/');
+    await page.emulateMedia({ media: 'print' });
+    await page.evaluate(() => document.documentElement.classList.add('print-sheet'));
+    const sheet = await page.evaluate(() => ({ ws: getComputedStyle(document.querySelector('.worksheet')).visibility, tool: getComputedStyle(document.querySelector('#testlog')).visibility, cells: document.querySelectorAll('.worksheet td').length }));
+    await page.emulateMedia({ media: 'screen' });
+    ok(sheet.ws === 'visible' && sheet.tool === 'hidden' && sheet.cells === 32, 'test log: “Print blank worksheet” prints only the worksheet (32 empty cells)', `worksheet print: ${JSON.stringify(sheet)}`);
+
+    // Setting-name map: link state, filters, chips, no match, reset, CSV of the shown rows
+    await page.goto(base + '/reference/setting-names/?q=balanced');
+    const total = await page.locator('#nm-list > li').count();
+    const nm1 = await page.locator('#nm-list > li:visible').count();
+    await page.selectOption('#nm-ven', 'intel');
+    const nm2 = await page.locator('#nm-list > li:visible').allInnerTexts();
+    await page.click('#nm-reset');
+    const nm3 = await page.locator('#nm-list > li:visible').count();
+    await page.fill('#nm-q', 'zzzz');
+    const none = await page.isVisible('#nm-none');
+    await page.click('#names button.chip >> nth=4');
+    const nm4 = await page.locator('#nm-list > li:visible').count();
+    const [dl2] = await Promise.all([page.waitForEvent('download'), page.click('#nm-csv')]);
+    const csv2 = fs.readFileSync(await dl2.path(), 'utf8').trim().split('\n');
+    await page.goto(base + '/reference/setting-names/?cat=vrr&on=ps5');
+    const nm5 = await page.locator('#nm-list > li:visible').count();
+    const srcOk = await page.evaluate(() => [...document.querySelectorAll('.nm-s a')].every((a) => document.getElementById(a.getAttribute('href').slice(1))));
+    await over('name map');
+    ok(total >= 60 && nm1 === 4 && nm2.length === 2 && /2× per axis|2\.0× per axis/.test(nm2.join()) && nm3 === total && none && nm4 >= 5 && csv2.length === nm4 + 1 && /github\.com|amd\.com/.test(csv2[1]) && nm5 === 2 && srcOk,
+      `name map: ${total} names; “balanced” → 4, Intel only → 2, reset → all, no-match hint, “latency” chip → ${nm4} with CSV, link ?cat=vrr&on=ps5 → 2, every source number resolves`,
+      `name map: total=${total} balanced=${nm1} intel=${nm2.length} reset=${nm3} none=${none} chip=${nm4} csv=${csv2.length} ps5vrr=${nm5} src=${srcOk}`);
+
+    // Bottleneck Finder: result from a link, new branches, deep links into the calculators, text export
+    await page.goto(base + '/tools/bottleneck-finder/?path=6-0-1');
+    const fd1 = await page.textContent('#fd-stage h3'), fdCalc = await page.locator('#fd-stage .glinks a[href^="/tools/frame-time-calculator/"]').count();
+    await page.click('#fd-restart');
+    await page.locator('#fd-stage button.answer').nth(7).click(); await page.locator('#fd-stage button.answer').nth(1).click();
+    const fd2 = await page.textContent('#fd-stage h3'), fdUrl = page.url();
+    const fdText = await page.evaluate(() => window.PPGFinder.resultText([7, 1]));
+    const routes = await page.locator('.tree li').count();
+    await page.goto(base + '/tools/bottleneck-finder/?path=99-1');
+    const fd3 = await page.textContent('#fd-stage h3');
+    await over('finder');
+    ok(/below the VRR window/i.test(fd1) && fdCalc === 1 && /40 fps mode needs 120 Hz/.test(fd2) && /path=7-1/.test(fdUrl) && /What to do now:/.test(fdText) && routes >= 30 && /What do you notice most/.test(fd3),
+      `finder: link ?path=6-0-1 opens “${fd1}”, console branch reaches “${fd2}”, tree with ${routes} lines on the page, invalid link falls back to the start`,
+      `finder: ${fd1} / ${fd2} / ${fdUrl} / routes=${routes} / ${fd3}`);
+
+    // Settings Translator from a link, Patch Decoder sample lines
+    await page.goto(base + '/tools/settings-translator/?b=vram&q=texture');
+    const trB = await page.locator('input[name="tr-b"]:checked').getAttribute('value'), trN = await page.locator('#tr-grid .opt').count();
+    await page.click('#translator button.chip >> nth=4');
+    const trAll = await page.locator('#tr-grid .opt').count();
+    await page.goto(base + '/tools/patch-decoder/');
+    await page.locator('input[name="dec-mode"][value="paste"]').check();
+    await page.click('#dec-sample');
+    await page.selectOption('#dec-plat', 'all');
+    const decN = await page.locator('#dec-list > li').count(), decTxt = await page.innerText('#dec-list');
+    await page.click('#dec-clear');
+    await over('translator/decoder');
+    ok(trB === 'vram' && trN >= 2 && trN < 25 && trAll === 25 && decN === 7 && /40 fps mode/.test(decTxt), `translator: link ?b=vram&q=texture → VRAM, ${trN} options, “show all” → 25; decoder: 7 invented sample lines sorted`, `translator ${trB}/${trN}/${trAll}, decoder ${decN}`);
+
+    // Home: the quick start leads straight to a result; guides link into tools with a preloaded example
+    await page.goto(base + '/');
+    await page.selectOption('#qk-out', '3840x2160'); await page.selectOption('#qk-up', 'fsr');
+    await Promise.all([page.waitForNavigation(), page.click('#quick button[type="submit"]')]);
+    const qk = await page.locator('#rc-table tbody tr').count(), qkFam = await page.locator('input[name="rc-fam"]:checked').getAttribute('value');
+    await page.goto(base + '/guides/how-to-test-a-settings-change/');
+    await Promise.all([page.waitForNavigation(), page.click('aside.try a.btn')]);
+    const tryOut = await page.innerText('#tl-out'), tryName = await page.inputValue('#tl-na');
+    await page.click('#tl-clear');
+    ok(qk === 5 && qkFam === 'fsr' && /every run of setup B is faster/.test(tryOut) && tryName === 'Shadows: High', 'home quick start opens the calculator with the chosen display and upscaler; the testing guide opens its example in the test log', `home quick start ${qk}/${qkFam}; try link: ${tryOut.slice(0, 80)} / ${tryName}`);
+  }
+  // merged guide: the old address is a redirect page to the testing guide
+  const red = fs.readFileSync(path.join(DOCS, 'guides/after-update-retest-routine/index.html'), 'utf8');
+  if (!/http-equiv="refresh" content="0; url=\/guides\/how-to-test-a-settings-change\/"/.test(red)) bad('redirect for the merged guide missing'); else console.log('✓ /guides/after-update-retest-routine/ redirects to the testing guide');
 
   if (errs.length) bad('interactive errors:\n   ' + errs.join('\n   '));
   await ctx.close();

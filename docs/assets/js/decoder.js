@@ -86,6 +86,14 @@
     sortNow();
   });
   $('dec-input').addEventListener('input', updateStale);
+  // invented lines (no real game) so the paste mode can be tried without leaving the page
+  $('dec-sample').addEventListener('click', function () {
+    $('dec-input').value = ['+ Added a frame rate cap option', 'Fixed a crash when changing resolution on PC', 'Shader cache is rebuilt after this update', 'Updated FSR to a newer version; Balanced is the new default', 'Removed the low texture preset on Xbox Series S', 'Known issue: stutter on Steam Deck in the hub', 'PS5: added a 40 fps mode for 120 Hz displays'].join('\n');
+    store(KEY_TEXT, $('dec-input').value);
+    sortNow();
+    $('dec-summary').focus();
+  });
+  $('dec-print').addEventListener('click', function () { if (isStale()) sortNow(); window.print(); });
   $('dec-checks').addEventListener('change', function (e) {
     var i = e.target.getAttribute('data-i');
     if (i === null) return;

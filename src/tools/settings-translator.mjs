@@ -13,9 +13,11 @@ const toolHtml = `<section class="tool" id="translator" aria-labelledby="tr-h">
 <label><input type="radio" name="tr-b" value="unsure" checked><span>Not sure</span></label>
 </div></fieldset>
 <label for="tr-q">Find an option (for example “shadow”, “DLSS”, “fog”)<input type="search" id="tr-q" autocomplete="off"></label>
+<div class="examples"><span class="tool-sub">Try:</span><button type="button" class="chip" data-q="shadow">shadow</button><button type="button" class="chip" data-q="DLSS">DLSS</button><button type="button" class="chip" data-q="ray">ray tracing</button><button type="button" class="chip" data-q="texture">texture</button><button type="button" class="chip" data-q="">show all</button></div>
 <div id="tr-first" class="first" aria-live="polite"></div>
-<p id="tr-summary" class="sum"></p>
+<p id="tr-summary" class="sum" tabindex="-1"></p>
 <div id="tr-grid" class="matrix results"></div>
+<div class="row tool-actions"><button type="button" id="tr-link">Copy link to this view</button><button type="button" id="tr-copy" class="ghost">Copy list as text</button><button type="button" id="tr-print" class="ghost">Print</button><span id="tr-msg" class="tool-sub" aria-live="polite"></span></div>
 </section>`;
 
 const lists = tbl('Lower-first lists generated from the matrix', ['Bottleneck', 'Lower first, in this order', 'Leave alone (little relief for this bottleneck)'],
@@ -54,8 +56,8 @@ export default {
   description: 'An interactive matrix of 20 common graphics options with their typical GPU, CPU and VRAM load. Pick your bottleneck to see which settings to lower first.',
   kicker: 'Tool · graphics settings',
   h1: 'Settings Translator: what each option costs, and what to lower first',
-  lede: 'Graphics menus use different names for the same ideas, and rarely say what an option costs. The Settings Translator lists twenty common options with the typical load they put on the graphics card (GPU), the processor (CPU) and video memory (VRAM). Choose what limits your system and the options that usually help most with the least visible loss move to the top.',
-  scripts: ['translator-core.js', 'translator.js'],
+  lede: 'Graphics menus use different names for the same ideas, and rarely say what an option costs. The Settings Translator lists twenty-five common options with the typical load they put on the graphics card (GPU), the processor (CPU) and video memory (VRAM). Choose what limits your system and the options that usually help most with the least visible loss move to the top.',
+  scripts: ['toolkit.js', 'translator-core.js', 'translator.js'],
   toolHtml,
   sections: [
     `<h2 id="read">How to read the matrix</h2>
@@ -89,5 +91,6 @@ ${pipe}
     ['PCGamingWiki', 'https://www.pcgamingwiki.com/', 'which settings individual PC games expose'],
     ['Game developers’ own PC settings descriptions', null, 'many games describe the cost of each option in the menu; trust those over general tables']
   ],
-  related: ['graphics-settings-explained', 'cpu-or-gpu-bottleneck', 'vram-full-what-to-lower']
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-18', 'Five options added (native-resolution anti-aliasing, global illumination, ray-traced shadows, texture streaming budget, hair and cloth); views can be linked, the list can be copied and printed.']],
+  related: ['bottleneck-finder', 'setting-names', 'graphics-settings-explained']
 };

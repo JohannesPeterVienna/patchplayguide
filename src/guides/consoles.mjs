@@ -115,7 +115,7 @@ ${fig('pro-fig', 'Comparison sheet: same scene, three modes, notes on sharpness,
 <li>Note sharpness, smoothness, and whether ray-traced reflections or lighting are present.</li>
 <li>Decide by how it feels in motion, not by a still image.</li>
 </ol>
-<p>PSSR and other upscalers can show artifacts on fine detail or particles; patches have changed upscaler behavior in some games. After an update, compare again – the <a href="/guides/after-update-retest-routine/">re-test routine</a> works on consoles too.</p>`,
+<p>PSSR and other upscalers can show artifacts on fine detail or particles; patches have changed upscaler behavior in some games. After an update, compare again – the <a href="/guides/how-to-test-a-settings-change/#after-update">re-test routine</a> works on consoles too.</p>`,
     `<h2 id="worth">When the Pro makes a difference</h2>
 <p>The Pro helps most in games that are GPU-limited on the standard PS5 and that have been updated to use it – typically graphically demanding games whose performance modes look soft or drop frames. It helps less in games that are CPU-limited, because the CPU is essentially unchanged, and in games that already run at a stable, sharp 60 fps on the PS5. The <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 modes guide</a> explains the base trade-off, and the <a href="/guides/vrr-120hz-console-setup/">VRR and 120 Hz guide</a> covers display settings that matter just as much.</p>`,
     `<h2 id="display">The display still matters</h2>
@@ -180,7 +180,7 @@ ${fig('xb-fig', 'Bars comparing Series S and Series X: CPU nearly equal, GPU abo
 <p>On <b>Series X</b> the choice works like on PS5: performance for action and responsiveness, quality for cinematic games – see <a href="/guides/ps5-performance-vs-fidelity-mode/">performance vs fidelity modes</a>, which applies equally here. On <b>Series S</b>, if a game offers both modes, the performance mode often drops resolution considerably; on a 1080p TV that is usually a good trade, on a large 4K TV judge the softness yourself.</p>
 <p>If a game offers only one mode on Series S, it is often the developer’s decision to keep memory and frame-rate stable. Patches sometimes add modes to Series S later, after optimization; the <a href="/tools/patch-decoder/">Patch Decoder</a> helps you spot such lines with the platform filter set to Xbox.</p>`,
     `<h2 id="patches">Patches and the Series S</h2>
-<p>Series S versions are often optimized after launch: memory savings allow better textures, new modes or a more stable frame rate. Equally, a large content update can make a game heavier. When an update mentions “Series S” or “Xbox Series X|S”, re-check your mode and compare in a familiar scene, following the <a href="/guides/after-update-retest-routine/">re-test routine</a>.</p>`,
+<p>Series S versions are often optimized after launch: memory savings allow better textures, new modes or a more stable frame rate. Equally, a large content update can make a game heavier. When an update mentions “Series S” or “Xbox Series X|S”, re-check your mode and compare in a familiar scene, following the <a href="/guides/how-to-test-a-settings-change/#after-update">re-test routine</a>.</p>`,
     `<h2 id="tv">Which TV suits which console</h2>
 <p>The Series S makes most sense with a 1080p or 1440p display, or a 4K TV viewed from a distance. The Series X is aimed at 4K TVs, and its 60 and 120 fps modes benefit most from an HDMI 2.1 TV with VRR. On either console, the TV’s game mode affects input delay more than most in-game options.</p>`,
     `<h2 id="smart">One purchase, the right version</h2>
@@ -197,5 +197,55 @@ ${fig('xb-fig', 'Bars comparing Series S and Series X: CPU nearly equal, GPU abo
     ['Xbox Support', 'https://support.xbox.com/', 'TV &amp; display options, 120 Hz and VRR settings'],
     ['Xbox Wire', null, 'Microsoft’s official Xbox news site']
   ],
-  related: ['vrr-120hz-console-setup', 'ps5-performance-vs-fidelity-mode', 'after-update-retest-routine']
+  related: ['vrr-120hz-console-setup', 'ps5-performance-vs-fidelity-mode', 'how-to-test-a-settings-change']
 };
+
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026: worked examples and platform documentation (sources in each guide).
+// ---------------------------------------------------------------------------------------------------
+import { createRequire } from 'node:module';
+import { tryBox, SRC, addAfter, revise } from '../h.mjs';
+const require = createRequire(import.meta.url);
+const FT = require('../assets/js/frametime-core.js');
+const r2 = (x) => FT.round(x, 2).toFixed(2).replace(/\.?0+$/, '');
+const mpx = (w, h) => (w * h / 1e6).toFixed(2);
+const holds = (fps, hz) => { const f = FT.fit(fps, hz); return f.kind === 'even' ? `even: ${f.refreshes} refresh${f.refreshes > 1 ? 'es' : ''} per frame` : f.kind === 'uneven' ? `uneven: ${f.lo} or ${f.hi} refreshes (${r2(f.loMs)} / ${r2(f.hiMs)} ms)` : 'not possible: above the refresh rate'; };
+
+// --- PS5 performance vs fidelity ---
+addAfter(ps5Modes, 'balanced', `<h2 id="outputs">Worked example: which frame rates fit which output</h2>
+<p>The same arithmetic decides for every target, not only for 40 fps. Divide the output’s refresh rate by the frame rate: a whole number means every frame is held equally long; anything else means alternating holds unless VRR is active.</p>
+${tbl('Frame-rate targets on a 60 Hz and a 120 Hz output without VRR (calculated)', ['Target', 'Frame time', 'On a 60 Hz output', 'On a 120 Hz output'],
+  [30, 40, 60, 120].map((f) => [`${f} fps`, `${r2(FT.ms(f))} ms`, holds(f, 60), holds(f, 120)]))}
+<p>From this follows a short decision table for the mode menu:</p>
+${tbl('What your display allows', ['Your TV or monitor', 'Modes that pace evenly', 'What to do'], [
+  ['60 Hz, no VRR', '30 fps and 60 fps modes', 'Choose between fidelity (30) and performance (60); a 40 fps mode is not offered or would judder'],
+  ['120 Hz, no VRR', '30, 40, 60 and 120 fps modes', 'Turn on 120 Hz output; a 40 fps “balanced” mode becomes a real option'],
+  ['120 Hz with VRR', 'The above, plus unlocked frame rates inside the VRR window', 'Turn on 120 Hz output and VRR; performance modes that dip stay smooth']
+])}
+<p>Sony’s support pages name the settings: <b>120 Hz Output</b> and <b>VRR</b> are under Settings → Screen and Video → Video Output; the system default for the mode is under Settings → Saved Data and Game/App Settings → Game Presets, with the choice “Performance Mode or Resolution Mode”. Sony describes VRR as enabled automatically for supported games on an HDMI 2.1 VRR-compatible display; the extra option “Apply to Unsupported Games” extends it to other PS5 games and can be switched off if a game then misbehaves.</p>
+${tryBox('Check any frame rate against your TV’s refresh rate and VRR window.', '/tools/frame-time-calculator/?fps=40&hz=120', 'Open the Frame Time Calculator with 40 fps at 120 Hz')}`);
+revise(ps5Modes, '2026-11-18', 'Worked example added: frame-rate targets on 60 Hz and 120 Hz outputs, a decision table by display, and the PS5 setting names as given by PlayStation Support.', [SRC.psres, SRC.pspresets, SRC.psvrr]);
+
+// --- PS5 Pro ---
+const up = (w, h) => [`${w}×${h}`, `${mpx(w, h)} MP`, `${(3840 * 2160 / (w * h)).toFixed(2)}×`, `${Math.round(w * h / (3840 * 2160) * 100)}%`];
+addAfter(ps5Pro, 'label', `<h2 id="pixels">Worked example: how much of a 4K image is reconstructed</h2>
+<p>Sony does not publish fixed presets for PSSR the way PC upscalers have “Quality” or “Performance”; each developer chooses the internal resolution of each mode, and many games vary it from frame to frame. What you can calculate is how much work the upscaler has to do for a given internal resolution.</p>
+${tbl('Internal resolution and reconstruction to a 4K output (arithmetic)', ['Rendered internally', 'Pixels rendered', 'Output pixels per rendered pixel', 'Share of the 4K image that is rendered'], [
+  up(3840, 2160), up(3200, 1800), up(2560, 1440), up(1920, 1080)
+], 'For comparison, the documented PC presets: DLSS and FSR Quality render 2560×1440 for a 4K output, Performance renders 1920×1080.')}
+<p>When patch notes or a developer’s post name a mode’s internal resolution, this table tells you what it means: a mode that renders 1440p and outputs 4K asks the upscaler to produce 2.25 output pixels from every rendered one – the same ratio as “Quality” on PC. A performance mode that renders 1080p asks for four. The better the upscaler, the lower a developer can go before you notice, which is what the upgraded PSSR of 2026 is about: Sony announced it on February 27, 2026, and the system setting “Enhance PSSR Image Quality” applies it to PS5 Pro games that already support PSSR.</p>
+${tryBox('Use the render-scale slider to see any internal resolution for a 4K output.', '/tools/upscaler-resolution-calculator/?out=3840x2160&up=scale&scale=67', 'Open the Upscaler Resolution Calculator')}`);
+revise(ps5Pro, '2026-11-18', 'Worked example added: how many output pixels the upscaler reconstructs per rendered pixel at common internal resolutions.', [SRC.pssr]);
+
+// --- Xbox Series S vs X ---
+addAfter(xbox, 'hardware', `<h2 id="ratio">Worked example: the gap in numbers</h2>
+<p>Microsoft’s published figures allow a simple comparison of what each console is asked to do. The resolution targets are 4K for the Series X and 1440p for the Series S.</p>
+${tbl('Targets and resources side by side (from Microsoft’s published specifications; ratios calculated)', ['', 'Series X', 'Series S', 'Ratio X : S'], [
+  ['Pixels at the resolution target', `3840×2160 = ${mpx(3840, 2160)} MP`, `2560×1440 = ${mpx(2560, 1440)} MP`, '2.25 : 1'],
+  ['GPU compute', 'about 12 teraflops', 'about 4 teraflops', '3 : 1'],
+  ['Memory', '16 GB', '10 GB', '1.6 : 1']
+])}
+<p>Two things stand out. The GPU gap (3 to 1) is larger than the pixel gap between the two targets (2.25 to 1). If a Series X mode uses its GPU fully at 4K, the Series S cannot run the same settings at 1440p; it has to give up a further quarter, which is why Series S versions often render below 1440p or drop effects. And memory shrinks least in the ratio but hurts most in practice, because a game’s textures and world data do not get smaller when the resolution does – the reason texture quality and missing ray tracing are the typical Series S differences.</p>
+<p>Xbox Support gives the path to the display settings as Profile &amp; system → Settings → General → TV &amp; display options. For 4K at 120 Hz it names an Ultra High Speed HDMI cable and a TV with HDMI 2.1; the checkbox “Allow variable refresh rate” sits under Video modes.</p>
+${tryBox('See what an upscaler renders for a 1440p or a 4K output.', '/tools/upscaler-resolution-calculator/?out=2560x1440&up=fsr', 'Open the Upscaler Resolution Calculator')}`);
+revise(xbox, '2026-11-18', 'Worked example added: pixel, GPU and memory ratios between Series X and Series S; menu path and 120 Hz requirements as given by Xbox Support.', [SRC.xbtv, SRC.xb120, SRC.xbwire]);

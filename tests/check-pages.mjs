@@ -36,7 +36,8 @@ function element(html, openRe) {
 const sitemap = [...fs.readFileSync(path.join(DOCS, 'sitemap.xml'), 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(ORIGIN, ''));
 const titles = new Map(), descs = new Map();
 const isGuide = (u) => /^\/guides\/[^/]+\/$/.test(u);
-const isTool = (u) => /^\/tools\/[^/]+\/$/.test(u);
+const isTool = (u) => /^\/(tools|reference)\/[^/]+\/$/.test(u);
+const isReference = (u) => /^\/reference\/[^/]+\/$/.test(u);
 const LEGAL = ['/imprint/', '/privacy/', '/contact/'];
 const report = [];
 
@@ -123,18 +124,26 @@ for (const p of pages) {
     if (!/<svg viewBox="[^"]+" role="img"/.test(article)) fail(url, 'needs an inline SVG diagram');
     if (!/id="faq"/.test(article)) fail(url, 'FAQ section missing');
     if (!/id="sources"/.test(article)) fail(url, 'sources section missing');
-    const rev = (article.match(/Reviewed November ([234]), 2026/) || [])[1];
+    const rev = (article.match(/Reviewed November (\d{1,2}), 2026/) || [])[1];
     if (!rev) fail(url, 'reviewed date missing');
     if (!/id="changelog"/.test(article)) fail(url, 'change log missing');
     const ld = JSON.parse(get(html, /<script type="application\/ld\+json">([\s\S]*?)<\/script>/));
     const types = ld['@graph'].map((n) => n['@type']);
-    for (const t of ['BreadcrumbList', 'FAQPage', isGuide(url) ? 'Article' : 'WebApplication']) if (!types.includes(t)) fail(url, 'JSON-LD missing ' + t);
+    for (const t of ['BreadcrumbList', 'FAQPage', isGuide(url) || isReference(url) ? 'Article' : 'WebApplication']) if (!types.includes(t)) fail(url, 'JSON-LD missing ' + t);
     const main = ld['@graph'].find((n) => n['@type'] === 'Article' || n['@type'] === 'WebApplication');
     // dateModified = newest change-log entry (also non-content corrections such as the 2026-11-04 author line);
     // the "Reviewed" stamp is the last content review and can be older, never newer
     const logDates = [...article.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/g)].map((m) => m[1]).sort();
     const newest = logDates[logDates.length - 1];
-    if (main && (main.datePublished !== '2026-11-02' || main.dateModified !== newest || `2026-11-0${rev}` > newest)) fail(url, 'datePublished/dateModified wrong or not matching the change log');
+    // first publication = oldest change-log entry: 2026-11-02 for the original pages, 2026-11-18 for the pages added then
+    if (main && (main.datePublished !== logDates[0] || !['2026-11-02', '2026-11-18'].includes(main.datePublished) || main.dateModified !== newest || `2026-11-${String(rev).padStart(2, '0')}` !== newest)) fail(url, 'datePublished/dateModified/Reviewed wrong or not matching the change log');
+    if (newest < '2026-11-18') fail(url, 'page was not part of the 2026-11-18 revision');
+    if (isGuide(url) && !/<aside class="try">[\s\S]*?href="\/(tools|reference)\//.test(article)) fail(url, 'guide has no “try it with your values” link to a tool');
+    // every source link is https, and every page names at least one linked official source
+    const srcBlock = element(article, /<section id="sources"/) || '';
+    const links = [...srcBlock.matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]);
+    if (!links.length) fail(url, 'no linked source');
+    for (const l of links) if (!/^https:\/\//.test(l)) fail(url, 'source link is not https: ' + l);
     if (get(fs.readFileSync(path.join(DOCS, 'sitemap.xml'), 'utf8'), new RegExp(`<loc>${ORIGIN}${url}</loc><lastmod>([^<]+)</lastmod>`)) !== newest) fail(url, 'sitemap lastmod does not match the change log');
     const faq = ld['@graph'].find((n) => n['@type'] === 'FAQPage');
     if (faq && faq.mainEntity.length < 3) fail(url, 'FAQ too short');
@@ -152,7 +161,8 @@ for (const p of pages) {
   // internal links
   for (const m of html.matchAll(/href="(\/[^"]*)"/g)) {
     const [p0, hash] = m[1].split('#');
-    const target = p0 || url;
+    if (/&(?!amp;)/.test(m[1])) fail(url, 'unescaped & in link ' + m[1]);
+    const target = p0.split('?')[0] || url; // tool links may carry a preloaded example in the query
     if (/^\/assets\/|\.svg$|\.txt$|\.xml$/.test(target)) { if (!fs.existsSync(path.join(DOCS, target.split('?')[0]))) fail(url, 'missing asset ' + target); continue; }
     const t = byUrl.get(target);
     if (!t) { fail(url, 'broken link ' + m[1]); continue; }
@@ -178,6 +188,10 @@ for (const [f, s] of Object.entries(must)) if (!fs.readFileSync(path.join(DOCS, 
 for (const f of ['OFL-chakra-petch.txt', 'OFL-ibm-plex-sans.txt', 'OFL-jetbrains-mono.txt']) if (!fs.existsSync(path.join(DOCS, 'assets/fonts', f))) fail('fonts', 'license missing ' + f);
 const guides = sitemap.filter(isGuide).length, tools = sitemap.filter(isTool).length;
 if (guides + tools < 15) fail('site', 'fewer than 15 guide/tool pages');
+// the tools hub and the home page link every tool and reference page
+for (const hub of ['/', '/tools/']) for (const u of sitemap.filter(isTool)) if (!byUrl.get(hub).html.includes(`href="${u}"`)) fail(hub, 'does not link ' + u);
+// pages that claim invented numbers say so next to them; nothing claims own measurements
+for (const p of pages) if (/\bin our (tests|testing|benchmarks|lab)\b|\bour (tests|benchmarks|measurements) (show|showed|found|confirm)|\bwe (tested|benchmarked) (it|this|the|on|with)\b/i.test(text(p.html))) fail(p.url, 'claims own measurements');
 const priv = byUrl.get('/privacy/').html;
 for (const s of ["Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites.", 'adssettings.google.com', 'aboutads.info', 'youronlinechoices.eu', 'policies.google.com/technologies/partner-sites', 'dsb@dsb.gv.at', 'www.dsb.gv.at', 'GitHub Pages', 'G-T00HRG2YVF', 'limited ads']) if (!priv.includes(s)) fail('/privacy/', 'missing: ' + s);
 const imp = byUrl.get('/imprint/').html;

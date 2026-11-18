@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-ads="no" data-stats="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.PPG_NO_GOOGLE=(function(l){var h=l.hostname,q=/[?&]stats_test=1(&|$)/.test(l.search),t=q;try{if(q)sessionStorage.setItem('ppg-stats-test','1');t=q||sessionStorage.getItem('ppg-stats-test')==='1';}catch(e){}return t||l.protocol==='file:'||h==='localhost'||h==='127.0.0.1'||h==='::1'||h==='[::1]';})(location);</script>
+<title>Tools – calculators, finder and test log for game settings</title>
+<meta name="description" content="All Patch Play Guide tools: Upscaler Resolution Calculator, Frame Time Calculator, Settings Test Log, Bottleneck Finder, Settings Translator and Patch Decoder.">
+<link rel="canonical" href="https://patchplayguide.com/tools/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tools – calculators, finder and test log for game settings">
+<meta property="og:description" content="All Patch Play Guide tools: Upscaler Resolution Calculator, Frame Time Calculator, Settings Test Log, Bottleneck Finder, Settings Translator and Patch Decoder.">
+<meta property="og:url" content="https://patchplayguide.com/tools/">
+<meta property="og:image" content="https://patchplayguide.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#EEEDE9">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261118a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script data-ads-loader>if(!window.PPG_NO_GOOGLE){(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905';s.crossOrigin='anonymous';document.head.appendChild(s);})();}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Tools","item":"https://patchplayguide.com/tools/"}]}]}</script>
+<script src="/assets/js/consent.js?v=20261118a" defer></script>
+<script src="/assets/js/stats-window.js?v=20261118a" defer></script>
+<script src="/assets/js/site.js?v=20261118a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Settings, decoded and tested</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/" aria-current="page">Tools</a></li><li><a href="/reference/setting-names/">Setting names</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Tools</li></ol></nav>
+<p class="kicker">Tools</p><h1>Tools for graphics settings and testing</h1>
+<p class="lede" style="max-width:72ch">Six tools and one reference. The calculators work only with documented factors and arithmetic; the finder and the translator give typical, qualitative guidance; the test log works only with numbers you measure yourself. All of them run in your browser, can be used with the keyboard, and let you copy, link or print the result.</p>
+<div class="tools3">
+<a class="tcard" href="/tools/upscaler-resolution-calculator/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><rect x="9" y="10" width="26" height="18" fill="none" stroke="#A5B5C4" stroke-width="2"/><rect x="9" y="10" width="15" height="10" fill="#47D98A"/><path d="M9 34h26" stroke="#3A5267" stroke-width="3"/><path d="M9 34h11" stroke="#7CC4FF" stroke-width="3"/></svg><h3>Upscaler Resolution Calculator</h3><p>What DLSS, FSR and XeSS really render on your display in each mode – internal resolution, megapixels and pixel share, from the vendors’ documented factors.</p><span class="go">Calculate →</span></a>
+<a class="tcard" href="/tools/frame-time-calculator/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M8 30h28" stroke="#A5B5C4" stroke-width="2"/><path d="M10 26v8M18 26v8M26 26v8M34 26v8" stroke="#A5B5C4" stroke-width="1.6"/><rect x="10" y="12" width="16" height="8" fill="#47D98A"/><rect x="26" y="12" width="8" height="8" fill="#FFC531"/></svg><h3>Frame Time Calculator</h3><p>Frames per second in milliseconds: does a frame rate divide your refresh rate, fit your VRR window, and what does frame generation show versus render?</p><span class="go">Calculate →</span></a>
+<a class="tcard" href="/tools/settings-test-log/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M9 14h26M9 30h26" stroke="#3A5267" stroke-width="2"/><circle cx="13" cy="14" r="3" fill="#FFC531"/><circle cx="19" cy="14" r="3" fill="#FFC531"/><circle cx="16" cy="14" r="3" fill="#FFC531"/><circle cx="27" cy="30" r="3" fill="#47D98A"/><circle cx="33" cy="30" r="3" fill="#47D98A"/><circle cx="30" cy="30" r="3" fill="#47D98A"/></svg><h3>Settings Test Log</h3><p>Type in your own test runs before and after a change. The log shows medians and spread and says whether the difference is real – with a printable worksheet.</p><span class="go">Open the log →</span></a>
+<a class="tcard" href="/tools/bottleneck-finder/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><circle cx="22" cy="11" r="4" fill="#FFC531"/><path d="M22 15v6M22 21l-9 7M22 21l9 7" stroke="#A5B5C4" stroke-width="2" fill="none"/><circle cx="13" cy="31" r="4" fill="#47D98A"/><circle cx="31" cy="31" r="4" fill="#FF6B7F"/></svg><h3>Bottleneck Finder</h3><p>Low FPS, stutter, tearing or input lag? A few questions lead to the likely cause – GPU, CPU, VRAM, shaders, a limiter or the display chain – and the next steps.</p><span class="go">Start the finder →</span></a>
+<a class="tcard" href="/tools/settings-translator/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M9 13h26M9 22h26M9 31h26" stroke="#3A5267" stroke-width="4"/><path d="M9 13h20" stroke="#7CC4FF" stroke-width="4"/><path d="M9 22h10" stroke="#47D98A" stroke-width="4"/><path d="M9 31h16" stroke="#FF6B7F" stroke-width="4"/></svg><h3>Settings Translator</h3><p>Twenty-five common graphics options with their typical GPU, CPU and VRAM load. Pick your bottleneck to see what to lower first.</p><span class="go">Open translator →</span></a>
+<a class="tcard" href="/tools/patch-decoder/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M10 14h8M14 10v8" stroke="#47D98A" stroke-width="2.6"/><path d="M10 23c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0" stroke="#FFC531" stroke-width="2.4" fill="none"/><path d="M10 32h8" stroke="#FF6B7F" stroke-width="2.6"/><path d="M23 14h12M23 23h10M23 32h12" stroke="#A5B5C4" stroke-width="2"/></svg><h3>Patch Decoder</h3><p>Paste patch notes and sort every line into + improvement, ~ change or − removal, by category and platform, with a checklist to tick off.</p><span class="go">Open decoder →</span></a>
+<a class="tcard" href="/reference/setting-names/"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="2" width="40" height="40" rx="8" fill="none" stroke="#FFC531" stroke-width="2"/><path d="M9 13h10M9 22h10M9 31h10" stroke="#A5B5C4" stroke-width="2.4"/><path d="M19 13c8 0 8 9 16 9M19 31c8 0 8-9 16-9M19 22h16" stroke="#FFC531" stroke-width="2" fill="none"/></svg><h3>Setting-name map</h3><p>The same setting under different names: every DLSS, FSR and XeSS preset, frame generation, latency features, VRR and console terms, each with its official source.</p><span class="go">Search the map →</span></a>
+</div>
+<section class="band"><h2>Which tool for which question?</h2>
+<div class="tbl" role="region" aria-label="Which tool answers which question" tabindex="0"><table><caption>Which tool answers which question</caption><thead><tr><th scope="col">Your question</th><th scope="col">Tool</th><th scope="col">What it is based on</th></tr></thead><tbody>
+<tr><th scope="row">What resolution does my game render in Balanced mode?</th><td><a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a></td><td>Scale factors documented by NVIDIA, AMD and Intel</td></tr>
+<tr><th scope="row">Why does 40 fps judder on my TV? Does my frame rate fit my VRR range?</th><td><a href="/tools/frame-time-calculator/">Frame Time Calculator</a></td><td>Arithmetic: 1000 ÷ fps, refresh rate ÷ frame rate</td></tr>
+<tr><th scope="row">Did my settings change really gain anything?</th><td><a href="/tools/settings-test-log/">Settings Test Log</a></td><td>Your own runs; a counting rule for chance results</td></tr>
+<tr><th scope="row">Why is my game slow, stuttering or tearing?</th><td><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></td><td>A published decision tree of symptoms and quick tests</td></tr>
+<tr><th scope="row">Which options should I lower first?</th><td><a href="/tools/settings-translator/">Settings Translator</a></td><td>Typical, qualitative load levels – not benchmarks</td></tr>
+<tr><th scope="row">What in these patch notes matters for me?</th><td><a href="/tools/patch-decoder/">Patch Decoder</a></td><td>Published word rules, applied in your browser</td></tr>
+<tr><th scope="row">What does this name in the menu mean?</th><td><a href="/reference/setting-names/">Setting-name map</a></td><td>Vendor and platform documentation, linked per entry</td></tr>
+</tbody></table></div></section>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>Calculators, a setting-name map and guides for game graphics settings, console modes and repeatable tests. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a></li><li><a href="/tools/frame-time-calculator/">Frame Time Calculator</a></li><li><a href="/tools/settings-test-log/">Settings Test Log</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/reference/setting-names/">Setting-name map</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

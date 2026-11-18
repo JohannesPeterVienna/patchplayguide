@@ -214,3 +214,61 @@ ${fig('up-fig', 'Recommended starting mode by output resolution: 1080p Quality, 
   ],
   related: ['frame-generation-explained', 'graphics-settings-explained', 'steam-deck-frame-cap-tdp-battery']
 };
+
+// ---------------------------------------------------------------------------------------------------
+// Revision of November 18, 2026: worked examples and vendor-documented numbers (sources in each guide).
+// ---------------------------------------------------------------------------------------------------
+import { createRequire } from 'node:module';
+import { tryBox, SRC, addAfter, replaceSection, swap, revise } from '../h.mjs';
+const require = createRequire(import.meta.url);
+const R = require('../assets/js/resolution-core.js');
+const N = require('../data/names-core.js');
+const mpx = (w, h) => R.mp(w * h).toFixed(2);
+const at = (w, h, fam, mode) => { const f = R.FAMILIES[fam].modes.find((m) => m[0] === mode)[1]; const r = R.internal(w, h, f); return `${r.w}×${r.h} · ${R.mp(r.pixels).toFixed(2)} MP`; };
+
+// --- graphics settings explained ---
+addAfter(graphicsSettings, 'resolution', `<h2 id="pixels">Worked example: the pixel bill</h2>
+<p>Resolution is the one setting whose effect you can calculate before you touch it. Multiply width by height and you have the number of pixels the GPU shades for every frame; multiply by the frame rate and you have the pixels per second.</p>
+${tbl('Pixels per frame at common outputs, natively and with the documented DLSS/FSR factors', ['Output', 'Native', 'Quality (1.5× per axis)', 'Performance (2.0× per axis)', 'Native pixels per second at 60 fps'],
+  [[1920, 1080, '1080p'], [2560, 1440, '1440p'], [3840, 2160, '4K']].map(([w, h, n]) => [n, `${w}×${h} · ${mpx(w, h)} MP`, at(w, h, 'dlss', 'Quality'), at(w, h, 'dlss', 'Performance'), `${Math.round(w * h * 60 / 1e6)} million`]),
+  'MP = megapixels (million pixels). Factors from the NVIDIA DLSS Programming Guide and AMD’s FSR documentation; arithmetic ours.')}
+<p>Read the table diagonally and a useful rule appears: <b>4K with Quality upscaling renders exactly as many pixels as native 1440p (3.69 MP), and 4K with Performance upscaling exactly as many as native 1080p (2.07 MP)</b>. That is why a card that handles a game at native 1440p can usually drive a 4K display in Quality mode at a similar frame rate, minus the cost of the upscaler itself. Going from native 4K to Quality removes 56% of the shaded pixels in one step – no combination of shadow and fog settings comes close to that.</p>
+${tryBox('The calculator shows the internal resolution of every DLSS, FSR and XeSS preset for your own display, including ultrawide and handheld screens.', '/tools/upscaler-resolution-calculator/', 'Open the Upscaler Resolution Calculator')}`);
+swap(graphicsSettings, 'has the full list of twenty options', 'has the full list of twenty-five options');
+revise(graphicsSettings, '2026-11-18', 'Worked example added: pixels per frame for common outputs and upscaler factors, with the vendor documents as sources.', [SRC.dlss, SRC.fsr]);
+
+// --- frame generation explained ---
+const fgRows = N.ROWS.filter((r) => r.c === 'framegen');
+replaceSection(frameGen, 'versions', `<h2 id="versions">Which versions exist – in the game or in the driver</h2>
+<p>The names fall into two groups. <b>In-game</b> frame generation is built in by the developer and receives motion vectors, depth and the position of the interface from the game. <b>Driver-level</b> frame generation is switched on in the graphics driver for games that have none of their own; it only sees finished images.</p>
+${tbl('Frame generation by name (from vendor documentation, November 2026)', ['Name', 'From', 'Kind', 'What the vendor documents'], fgRows.map((r) => [r.n, N.VENDORS[r.v], r.g, r.d]))}
+<p>Which of these a game offers is the developer’s decision, and requirements change with drivers. The <a href="/reference/setting-names/?cat=framegen">setting-name map</a> keeps this list with its sources. Tools from other makers that add frame generation from outside the game work like the driver-level kind: without the game’s motion data.</p>`);
+addAfter(frameGen, 'cost', `<h2 id="numbers">Worked example: what the switch changes in milliseconds</h2>
+<p>Take a game that renders 60 frames per second. Each rendered frame takes 16.67 ms, and that is also how often the game reads your input. With 2× generation the display receives 120 images per second, one every 8.33 ms – but the game still advances every 16.67 ms. Half of what you see is interpolated between two moments the game actually simulated.</p>
+<p>Generation is not free, and NVIDIA publishes what it costs. Its developer documentation lists the time DLSS Frame Generation needs per frame and the video memory it allocates:</p>
+${tbl('DLSS Frame Generation: cost per frame and memory, as published by NVIDIA', ['Output', 'RTX 4090, 2×', 'RTX 5080, 2×', 'RTX 5080, 4×', 'RTX 5090, 2×', 'RTX 5090, 4×', 'VRAM estimate'], [
+  ['1080p', '1.35 ms', '1.45 ms', '2.43 ms', '1.07 ms', '1.78 ms', '272 MB'],
+  ['1440p', '1.78 ms', '2.04 ms', '3.61 ms', '1.46 ms', '2.48 ms', '489 MB'],
+  ['4K', '2.77 ms', '2.84 ms', '5.25 ms', '1.72 ms', '3.32 ms', '725 MB']
+], 'NVIDIA’s own profiling figures from the Streamline DLSS-G programming guide, described there as a rough estimate; they are not measurements of ours. NVIDIA lists no 4× value for the RTX 4090.')}
+<p>Now the arithmetic. If the graphics card is already fully loaded at 60 fps and generation adds 2.84 ms of GPU work to each rendered frame (NVIDIA’s 4K figure for an RTX 5080), a rendered frame takes about 16.67 + 2.84 = 19.51 ms. That is 51 rendered frames per second and 102 shown – not 120 – and the game now reads input every 19.51 ms instead of every 16.67 ms. This is a simplified model with one vendor figure, not a prediction for your system, but it explains two things players notice: the counter does not quite double, and the game can feel a little slower to respond than before although the counter is much higher.</p>
+<p>AMD publishes memory figures for its versions too: FSR Frame Generation 3.1.6 needs about 124 MB at 1080p, 214 MB at 1440p and 457 MB at 4K; the machine-learning FSR Frame Generation 4.0.2 about 111, 313 and 410 MB. On a card whose memory is already full, that is the reason frame generation can make things worse – see <a href="/guides/vram-full-what-to-lower/">VRAM full: what to lower first</a>.</p>
+<p>The vendors also say what base frame rate they have in mind. Intel names 40 fps as the minimum and 60 fps as the recommended input for XeSS Frame Generation. AMD’s pacing notes say the rendered frame rate should sit slightly below half the desired output frame rate – for a 120 Hz display, a little under 60.</p>
+${tryBox('Enter your rendered frame rate, the multiplier and your display’s refresh rate to see shown versus rendered frame times.', '/tools/frame-time-calculator/?fps=60&hz=120&fg=2', 'Open the Frame Time Calculator with this example')}`);
+swap(frameGen, 'Thresholds are broad, commonly cited guidance – not measurements. Vendors themselves recommend a solid base frame rate.', 'Thresholds are broad guidance – not measurements. Intel’s documentation names 40 fps as the minimum and 60 fps as the recommended input frame rate for XeSS Frame Generation.');
+revise(frameGen, '2026-11-18', 'Version list replaced by a sourced table of in-game and driver-level frame generation; worked example with NVIDIA’s published cost and memory figures and AMD’s and Intel’s base-frame-rate guidance added.', [SRC.dlssg, SRC.fsrfg, SRC.fsrfg4, SRC.fsrsc, SRC.xessfg, SRC.afmf, SRC.smooth]);
+
+// --- DLSS vs FSR vs XeSS ---
+const modeRow = (fam, name) => { const m = R.FAMILIES[fam].modes.find((x) => x[0] === name); if (!m) return '–'; const a = R.internal(3840, 2160, m[1]), b = R.internal(2560, 1440, m[1]); return `${m[1]}× · ${a.w}×${a.h} · ${b.w}×${b.h}`; };
+replaceSection(upscalers, 'modes', `<h2 id="modes">What the modes mean in pixels</h2>
+<p>Each vendor documents a scale factor per axis for every preset; the game divides the output width and height by it. The table gives the factor and the resulting internal resolution for a 4K and a 1440p output.</p>
+${tbl('Documented preset factors and internal resolutions (factor · from 3840×2160 · from 2560×1440)', ['Preset name', 'DLSS', 'FSR 3.1 and FSR 4', 'XeSS 1.3 and newer'],
+  [['Native AA / DLAA', modeRow('dlss', 'DLAA'), modeRow('fsr', 'Native AA'), modeRow('xess', 'Native AA')], ['Ultra Quality Plus', '–', '–', modeRow('xess', 'Ultra Quality Plus')], ['Ultra Quality', '–', '–', modeRow('xess', 'Ultra Quality')],
+    ...['Quality', 'Balanced', 'Performance', 'Ultra Performance'].map((n) => [n, modeRow('dlss', n), modeRow('fsr', n), modeRow('xess', n)])],
+  'Factors from the NVIDIA DLSS Programming Guide 310.6.0, AMD’s FSR 3.1.6 and FSR 4.1.2 documentation and Intel’s XeSS-SR Developer Guide. Games may use their own values or a free slider – if the menu shows an internal resolution, that number counts.')}
+<p>Three lessons follow from the table. First, even “Quality” renders well under half the pixels of native resolution (44.4% with DLSS and FSR), which is why it gains so much performance. Second, the <b>output resolution matters</b>: Performance mode at 4K renders a full 1080p image and usually looks good; Performance mode at a 1080p output renders only 960×540 and looks noticeably softer. The lower your display resolution, the higher the mode you should pick.</p>
+<p>Third, <b>the same name is not the same setting across vendors</b>. Intel moved its presets down one step with XeSS 1.3: XeSS “Quality” (1.7×) renders what FSR calls Balanced, and XeSS “Balanced” (2.0×) renders what DLSS and FSR call Performance. If you compare upscalers at “the same” preset, you are comparing 44.4% of the pixels with 34.6%. For a fair comparison, match the internal resolution instead of the name – XeSS Ultra Quality (1.5×) against DLSS or FSR Quality (1.5×). Before version 1.3, XeSS used the same steps as the others (Quality 1.5×, Balanced 1.7×, Performance 2.0×), so a game update that raises the XeSS version can lower the internal resolution of your preset without any change in the menu.</p>
+${tryBox('Pick your display and compare all three vendors side by side, sorted by rendered pixels.', '/tools/upscaler-resolution-calculator/?out=2560x1440&up=all', 'Open the Upscaler Resolution Calculator')}`);
+swap(upscalers, 'Recent Radeon cards (RX 9000 series)', 'AMD’s FSR 4.1.2 documentation lists Radeon RX 9000 cards (FP8 model), RX 7000 and RX 6000 cards (INT8 model) and selected Ryzen integrated graphics');
+swap(upscalers, 'Intel Arc with dedicated hardware; other GPUs through a compatible path', 'Intel Arc; other GPUs with Shader Model 6.4 support through a cross-vendor path');
+revise(upscalers, '2026-11-18', 'Mode table now uses the exact factors each vendor documents, including XeSS 1.3 and newer; added that preset names differ between vendors; FSR 4 and XeSS hardware rows updated from current vendor documentation.', [SRC.dlss, SRC.fsr, SRC.fsr4, SRC.xess]);

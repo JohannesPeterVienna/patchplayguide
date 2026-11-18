@@ -49,9 +49,26 @@
   }
 
   tool.addEventListener('change', function (e) { if (e.target.name === 'tr-b') render(); });
+  function current() { return (tool.querySelector('input[name="tr-b"]:checked') || {}).value || 'unsure'; }
+  function listText() {
+    var b = current(), first = T.lowerFirst(b, 5);
+    var head = LABEL[b] ? 'Lower first when the ' + LABEL[b] + ' is the limit:' : 'Options by combined typical load:';
+    var list = (first.length ? first : T.search($('tr-q').value, T.rank(b)).slice(0, 8));
+    return [head].concat(list.map(function (o, i) { return (i + 1) + '. ' + o.name + ' – ' + o.tip; }), ['Typical, qualitative guidance – test in your own scene.', 'https://patchplayguide.com/tools/settings-translator/' + (LABEL[b] ? '?b=' + b : '')]).join('\n');
+  }
+  tool.addEventListener('click', function (e) {
+    var chip = e.target.closest('button[data-q]');
+    if (chip) { $('tr-q').value = chip.getAttribute('data-q'); render(); $('tr-summary').focus(); return; }
+    if (!K) return;
+    if (e.target.id === 'tr-link') { var p = {}; if (current() !== 'unsure') p.b = current(); if ($('tr-q').value.trim()) p.q = $('tr-q').value.trim(); K.copy(K.url(p), $('tr-msg'), 'Link copied – it reopens this view.'); }
+    if (e.target.id === 'tr-copy') K.copy(listText(), $('tr-msg'), 'List copied as text.');
+    if (e.target.id === 'tr-print') window.print();
+  });
   $('tr-q').addEventListener('input', render);
-  var savedB = null;
+  var savedB = null, K = window.PPGKit, P = K ? K.read() : {};
   try { savedB = localStorage.getItem(KEY); } catch (e) { /* none */ }
+  if (typeof P.b === 'string') savedB = P.b; // a link from the finder or a shared link wins over the stored choice
+  if (typeof P.q === 'string') $('tr-q').value = P.q.slice(0, 40);
   // only our own bottleneck keys are used from storage (anything else is ignored)
   var r = (savedB === 'unsure' || (typeof savedB === 'string' && Object.prototype.hasOwnProperty.call(LABEL, savedB))) && tool.querySelector('input[name="tr-b"][value="' + savedB + '"]');
   if (r) r.checked = true;

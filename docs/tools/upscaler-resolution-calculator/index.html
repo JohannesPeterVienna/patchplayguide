@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" data-ads="yes" data-stats="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.PPG_NO_GOOGLE=(function(l){var h=l.hostname,q=/[?&]stats_test=1(&|$)/.test(l.search),t=q;try{if(q)sessionStorage.setItem('ppg-stats-test','1');t=q||sessionStorage.getItem('ppg-stats-test')==='1';}catch(e){}return t||l.protocol==='file:'||h==='localhost'||h==='127.0.0.1'||h==='::1'||h==='[::1]';})(location);</script>
+<title>Upscaler Resolution Calculator: DLSS, FSR, XeSS pixels</title>
+<meta name="description" content="Enter your display resolution and see what DLSS, FSR and XeSS really render in each mode: internal resolution, megapixels and pixel share, from vendor docs.">
+<link rel="canonical" href="https://patchplayguide.com/tools/upscaler-resolution-calculator/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta name="google-adsense-account" content="ca-pub-7811071715414905">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Upscaler Resolution Calculator: DLSS, FSR, XeSS pixels">
+<meta property="og:description" content="Enter your display resolution and see what DLSS, FSR and XeSS really render in each mode: internal resolution, megapixels and pixel share, from vendor docs.">
+<meta property="og:url" content="https://patchplayguide.com/tools/upscaler-resolution-calculator/">
+<meta property="og:image" content="https://patchplayguide.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:site_name" content="Patch Play Guide">
+<meta property="og:locale" content="en_US">
+<meta name="theme-color" content="#EEEDE9">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261118a">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
+<script data-ads-loader>if(!window.PPG_NO_GOOGLE){(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905';s.crossOrigin='anonymous';document.head.appendChild(s);})();}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"Tools","item":"https://patchplayguide.com/tools/"},{"@type":"ListItem","position":3,"name":"Upscaler Resolution Calculator","item":"https://patchplayguide.com/tools/upscaler-resolution-calculator/"}]},{"@type":"WebApplication","name":"Upscaler Resolution Calculator","description":"Enter your display resolution and see what DLSS, FSR and XeSS really render in each mode: internal resolution, megapixels and pixel share, from vendor docs.","url":"https://patchplayguide.com/tools/upscaler-resolution-calculator/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (runs in the web browser)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"inLanguage":"en-US","datePublished":"2026-11-18","dateModified":"2026-11-18","publisher":{"@type":"Organization","name":"AdStern – Agentur für digitales Marketing","url":"https://patchplayguide.com/imprint/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What resolution does DLSS Quality render at 1440p?","acceptedAnswer":{"@type":"Answer","text":"NVIDIA documents a factor of 1.5 per axis for Quality, so a 2560×1440 output is rendered at 1707×960, which is 44.4% of the output pixels."}},{"@type":"Question","name":"Is XeSS Quality the same as DLSS Quality?","acceptedAnswer":{"@type":"Answer","text":"No. Since XeSS 1.3, Intel documents 1.7× for Quality, while DLSS and FSR Quality use 1.5×. At 4K that is 2259×1271 for XeSS against 2560×1440 for DLSS and FSR."}},{"@type":"Question","name":"Why does Performance mode look worse at 1080p than at 4K?","acceptedAnswer":{"@type":"Answer","text":"The factor is the same, 2.0× per axis, but the input is not: 4K output is rendered at 1920×1080, a 1080p output at only 960×540. The upscaler has a quarter of the real pixels to work with."}},{"@type":"Question","name":"Does a lower internal resolution always raise the frame rate?","acceptedAnswer":{"@type":"Answer","text":"Only when the graphics card is the limit. The pixel share describes how much less the GPU has to shade; if the CPU limits the frame rate, fewer pixels change little."}}]}]}</script>
+<script src="/assets/js/consent.js?v=20261118a" defer></script>
+<script src="/assets/js/stats-window.js?v=20261118a" defer></script>
+<script src="/assets/js/site.js?v=20261118a" defer></script>
+<script src="/assets/js/toolkit.js?v=20261118a" defer></script>
+<script src="/assets/js/resolution-core.js?v=20261118a" defer></script>
+<script src="/assets/js/resolution.js?v=20261118a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="mast">
+<div class="wrap mast-in"><a class="brand" href="/"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><span><b>Patch Play Guide</b><small>Settings, decoded and tested</small></span></a>
+<nav class="main-nav" aria-label="Main"><ul><li><a href="/tools/" aria-current="true">Tools</a></li><li><a href="/reference/setting-names/">Setting names</a></li><li><a href="/guides/">Guides</a></li><li><a href="/about/">About</a></li></ul></nav></div>
+</header>
+<main id="main"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/tools/">Tools</a></li><li aria-current="page">Upscaler Resolution Calculator</li></ol></nav>
+<article class="doc doc-tool">
+<p class="kicker">Tool · calculator</p>
+<h1>Upscaler Resolution Calculator: what each mode really renders</h1>
+<p class="byline">Published by <a href="/about/">AdStern, Vienna</a></p><p class="meta"><span class="stamp">Reviewed November 18, 2026</span><span>4 min read</span><a href="/about/#checks">How we check pages</a></p>
+<p class="lede">“Quality”, “Balanced” and “Performance” sound the same in every game, but they are not the same number of pixels. Pick your output resolution and this calculator shows the internal render resolution of every documented DLSS, FSR and XeSS preset, how many megapixels that is and what share of your display’s pixels the game actually shades.</p>
+<section class="tool" id="rescalc" aria-labelledby="rc-h">
+<div class="tool-head"><h2 id="rc-h">Upscaler Resolution Calculator</h2><p class="tool-sub">Vendor-documented factors · pure arithmetic</p></div>
+<div class="filters">
+<label for="rc-out">Output resolution (what your display shows)<select id="rc-out"></select></label>
+<label for="rc-floor">Mark modes that render fewer lines than<select id="rc-floor"><option value="0">Do not mark</option><option value="540">540 lines</option><option value="720">720 lines</option><option value="900">900 lines</option><option value="1080">1080 lines</option></select></label>
+</div>
+<div id="rc-custom-wrap" hidden><label for="rc-custom">Custom output, width × height<input type="text" id="rc-custom" inputmode="text" autocomplete="off" placeholder="2560x1080"></label></div>
+<fieldset><legend>Upscaler</legend><div class="seg">
+<label><input type="radio" name="rc-fam" value="all" checked><span>All three</span></label>
+<label><input type="radio" name="rc-fam" value="dlss"><span>DLSS</span></label>
+<label><input type="radio" name="rc-fam" value="fsr"><span>FSR</span></label>
+<label><input type="radio" name="rc-fam" value="xess"><span>XeSS</span></label>
+<label><input type="radio" name="rc-fam" value="xessold"><span>XeSS before 1.3</span></label>
+<label><input type="radio" name="rc-fam" value="scale"><span>Render-scale slider</span></label>
+</div></fieldset>
+<div id="rc-scale-wrap" hidden><label for="rc-scale">Render scale per axis: <span id="rc-scale-v">67%</span><input type="range" id="rc-scale" min="25" max="100" step="1" value="67"></label></div>
+<p id="rc-summary" class="sum" tabindex="-1" aria-live="polite"></p>
+<div id="rc-table" class="results tool-table"></div>
+<div class="row tool-actions"><button type="button" id="rc-link">Copy link to this result</button><button type="button" id="rc-copy" class="ghost">Copy as text</button><button type="button" id="rc-print" class="ghost">Print</button><span id="rc-msg" class="tool-sub" aria-live="polite"></span></div>
+<div class="examples"><span class="tool-sub">Examples:</span>
+<button type="button" class="chip" data-ex="out=2560x1440&amp;up=dlss">1440p with DLSS</button>
+<button type="button" class="chip" data-ex="out=3840x2160&amp;up=all">4K, all vendors side by side</button>
+<button type="button" class="chip" data-ex="out=1920x1080&amp;up=xess&amp;floor=720">1080p with XeSS, mark below 720 lines</button>
+<button type="button" class="chip" data-ex="out=1280x800&amp;up=fsr">Steam Deck screen with FSR</button>
+<button type="button" class="chip" data-ex="out=3440x1440&amp;up=scale&amp;scale=80">Ultrawide at 80% render scale</button>
+</div>
+</section>
+<div class="explain">
+<section><h2 id="how">How the calculator works</h2>
+<p>An upscaler preset is a division. Each vendor documents a <b>scale factor per axis</b> for every preset, and the game divides the output width and height by it. DLSS Quality has the factor 1.5, so a 2560×1440 output is rendered at 2560 ÷ 1.5 by 1440 ÷ 1.5, which is 1707×960. Because both axes shrink, the pixel count falls with the square of the factor: 1.5 × 1.5 = 2.25, so Quality shades 1 ÷ 2.25 = 44.4% of the output pixels.</p>
+<p>The calculator does exactly this for every preset and rounds to whole pixels. The megapixel column is width × height ÷ 1,000,000; the bar shows the share of the output pixels. The factors come from three developer documents: NVIDIA’s DLSS Programming Guide, AMD’s FSR SDK documentation and Intel’s XeSS-SR Developer Guide. They are listed under <a href="#sources">Sources</a>, and none of the numbers on this page is a measurement of ours.</p></section>
+<div class="ad" data-slot="tool" hidden><span class="ad-label">Advertisement</span></div>
+<section><h2 id="names">Same name, different pixels</h2>
+<p>The preset names look standardized, but only some of them are. DLSS and FSR agree on Quality (1.5×), Performance (2.0×) and Ultra Performance (3.0×), and differ slightly on Balanced: NVIDIA documents 1.724×, AMD 1.7×. Intel’s names sit one step lower since XeSS 1.3: XeSS Quality uses 1.7×, roughly what the others call Balanced, and XeSS Balanced uses 2.0×, exactly what the others call Performance.</p>
+<div class="tbl" role="region" aria-label="The same preset name at 4K output (3840×2160): factor per axis, internal resolution and share of the output pixels" tabindex="0"><table><caption>The same preset name at 4K output (3840×2160): factor per axis, internal resolution and share of the output pixels</caption><thead><tr><th scope="col">Preset name</th><th scope="col">DLSS</th><th scope="col">FSR</th><th scope="col">XeSS 1.3 and newer</th><th scope="col">XeSS before 1.3</th></tr></thead><tbody><tr><th scope="row">Quality</th><td>1.5× → 2560×1440 (44.4%)</td><td>1.5× → 2560×1440 (44.4%)</td><td>1.7× → 2259×1271 (34.6%)</td><td>1.5× → 2560×1440 (44.4%)</td></tr><tr><th scope="row">Balanced</th><td>1.724× → 2227×1253 (33.6%)</td><td>1.7× → 2259×1271 (34.6%)</td><td>2.0× → 1920×1080 (25.0%)</td><td>1.7× → 2259×1271 (34.6%)</td></tr><tr><th scope="row">Performance</th><td>2.0× → 1920×1080 (25.0%)</td><td>2.0× → 1920×1080 (25.0%)</td><td>2.3× → 1670×939 (18.9%)</td><td>2.0× → 1920×1080 (25.0%)</td></tr><tr><th scope="row">Ultra Performance</th><td>3.0× → 1280×720 (11.1%)</td><td>3.0× → 1280×720 (11.1%)</td><td>3.0× → 1280×720 (11.1%)</td><td>not offered</td></tr></tbody></table></div><p class="small">Calculated from the factors each vendor documents for developers. Individual games can ship other ratios.</p>
+<p>Two practical consequences follow. If you switch a game from DLSS or FSR to XeSS and keep “Quality”, the game renders about 22% fewer pixels than before (34.6% instead of 44.4% of the output). And a game that updated its XeSS version from before 1.3 to 1.3 or newer renders fewer pixels under the same preset name, unless the developer kept the legacy factors – a change worth checking after a patch that mentions XeSS. The <a href="/reference/setting-names/?q=balanced">setting-name map</a> lists every preset with its source.</p></section>
+<section><h2 id="read">How to read the result</h2>
+<figure class="fig"><div class="fig-scroll" tabindex="0" role="group" aria-label="Diagram, scrolls sideways on small screens"><svg viewBox="0 0 640 330" role="img" aria-labelledby="rc-fig-t"><title id="rc-fig-t">Nested rectangles drawn to scale: a 4K output frame and the smaller frames that DLSS Quality, Balanced, Performance and Ultra Performance render</title><rect class="g-bg" width="640" height="330"/>
+<rect x="20" y="20" width="480" height="270" fill="none" stroke="#FFC531" stroke-width="2"/><text class="g-tm" x="28" y="282">Output 3840×2160 · 100%</text>
+<rect x="20" y="20" width="320" height="180" fill="#16273A" stroke="#7CC4FF" stroke-width="1.5"/><text class="g-tm" x="28" y="192">Quality 2560×1440 · 44.4%</text>
+<rect x="20" y="20" width="278" height="157" fill="#1B3148" stroke="#7CC4FF" stroke-width="1.5"/><text class="g-tm" x="28" y="169">Balanced 2227×1253 · 33.6%</text>
+<rect x="20" y="20" width="240" height="135" fill="#213B55" stroke="#47D98A" stroke-width="1.5"/><text class="g-tm" x="28" y="147">Performance 1920×1080 · 25%</text>
+<rect x="20" y="20" width="160" height="90" fill="#284662" stroke="#FF6B7F" stroke-width="1.5"/><text class="g-tm" x="28" y="102">Ultra Perf. 1280×720</text>
+<text class="g-tm" x="514" y="40">DLSS at 4K,</text><text class="g-tm" x="514" y="58">drawn to scale</text>
+<text class="g-tm" x="20" y="316">Every rectangle is what the game renders; the upscaler rebuilds the rest.</text></svg></div><figcaption>DLSS presets at 4K output, drawn to scale. The areas show why the frame rate changes so much: Performance mode shades a quarter of the pixels of the output frame, Ultra Performance one ninth.</figcaption></figure>
+<p><b>Internal resolution</b> tells you how much real detail the upscaler has to work with. The same preset gives very different inputs on different displays: Performance mode renders 1920×1080 for a 4K display but only 960×540 for a 1080p display. The option “Mark modes that render fewer lines than…” highlights every preset that falls under a line count you choose, so you can see at a glance which presets get thin on your screen. Which floor looks acceptable is your call – compare two presets in one scene and trust your eyes.</p>
+<p><b>Share of output pixels</b> is the number that relates to GPU load. Most per-pixel work scales with it, so going from Quality (44.4%) to Performance (25%) removes almost half of the shaded pixels. It is not a frame-rate prediction: the upscaler itself costs time, parts of a frame do not depend on resolution, and if the CPU is the limit the frame rate barely moves. To find out which case applies to you, use the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a>, and verify a change with the <a href="/tools/settings-test-log/">Settings Test Log</a>.</p>
+<p><b>Render-scale slider</b> covers games that offer a percentage instead of presets, and engine upscalers such as TSR. The percentage is per axis as well: 67% per axis is the same as the 1.5× Quality factor.</p></section>
+<section><h2 id="limits">What the calculator does not know</h2>
+<p>The factors are the documented presets, not a promise about a particular game. Developers may choose their own ratios, offer a free slider, or combine an upscaler with dynamic resolution, where the internal resolution changes from frame to frame. Rounding can differ by a pixel between implementations. If a game shows its internal resolution in the menu, that number wins. Console games rarely expose presets at all; there the developer picks the internal resolution per mode, see <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 performance and fidelity modes</a>.</p></section>
+<section id="faq" class="faq"><h2>Frequently asked questions</h2><div class="qa"><h3>What resolution does DLSS Quality render at 1440p?</h3><p>NVIDIA documents a factor of 1.5 per axis for Quality, so a 2560×1440 output is rendered at 1707×960, which is 44.4% of the output pixels.</p></div><div class="qa"><h3>Is XeSS Quality the same as DLSS Quality?</h3><p>No. Since XeSS 1.3, Intel documents 1.7× for Quality, while DLSS and FSR Quality use 1.5×. At 4K that is 2259×1271 for XeSS against 2560×1440 for DLSS and FSR.</p></div><div class="qa"><h3>Why does Performance mode look worse at 1080p than at 4K?</h3><p>The factor is the same, 2.0× per axis, but the input is not: 4K output is rendered at 1920×1080, a 1080p output at only 960×540. The upscaler has a quarter of the real pixels to work with.</p></div><div class="qa"><h3>Does a lower internal resolution always raise the frame rate?</h3><p>Only when the graphics card is the limit. The pixel share describes how much less the GPU has to shade; if the CPU limits the frame rate, fewer pixels change little.</p></div></section>
+<section id="sources" class="sources"><h2>Sources</h2><ul><li><a href="https://github.com/NVIDIA/DLSS/blob/main/doc/DLSS_Programming_Guide_Release.pdf" rel="noopener">NVIDIA – DLSS Super Resolution Programming Guide 310.6.0</a> – scaling ratios per mode, memory table; accessed November 18, 2026</li><li><a href="https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/main/Kits/FidelityFX/docs/techniques/super-resolution-upscaler.md" rel="noopener">AMD – FidelityFX Super Resolution 3.1.6 upscaler documentation</a> – scaling modes, memory table; accessed November 18, 2026</li><li><a href="https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/main/Kits/FidelityFX/docs/techniques/super-resolution-ml.md" rel="noopener">AMD – FSR Upscaling 4.1.2 documentation</a> – scaling modes, supported hardware, memory table; accessed November 18, 2026</li><li><a href="https://github.com/intel/xess/blob/main/doc/xess_sr_developer_guide_english.md" rel="noopener">Intel – XeSS Super Resolution Developer Guide</a> – preset scale factors for XeSS 1.3+ and earlier versions; accessed November 18, 2026</li></ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>
+<section id="changelog" class="changelog"><h2>Change log</h2><ul><li><time datetime="2026-11-18">2026-11-18</time> First published.</li></ul></section>
+</div>
+<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul><li><a href="/guides/dlss-vs-fsr-vs-xess/"><span class="k">upscaling</span>DLSS vs FSR vs XeSS: which upscaler mode to pick</a></li><li><a href="/reference/setting-names/"><span class="k">Reference</span>Setting-name map</a></li><li><a href="/tools/frame-time-calculator/"><span class="k">Tool</span>Frame Time Calculator</a></li></ul></nav>
+</article>
+</div></main>
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div><p class="foot-brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="7" fill="#0E1A24" stroke="#FFC531" stroke-width="2"/><path d="M9 13h8M13 9v8" stroke="#47D98A" stroke-width="2.6" stroke-linecap="square"/><path d="M9 21.5c1.4-1.6 2.6-1.6 4 0s2.6 1.6 4 0" stroke="#FFC531" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 29h8" stroke="#FF6B7F" stroke-width="2.6" stroke-linecap="square"/><path d="M22 10h9M22 15h7M22 21h9M22 27h6M22 31h8" stroke="#9FB0C0" stroke-width="1.6"/></svg><b>Patch Play Guide</b></p><p>Calculators, a setting-name map and guides for game graphics settings, console modes and repeatable tests. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a></li><li><a href="/tools/frame-time-calculator/">Frame Time Calculator</a></li><li><a href="/tools/settings-test-log/">Settings Test Log</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/reference/setting-names/">Setting-name map</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
+</div>
+<p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
+<p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
+</div></footer>
+</body>
+</html>

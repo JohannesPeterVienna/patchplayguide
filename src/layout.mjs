@@ -7,15 +7,19 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261105u'
+  v: '20261118a'
 };
-const DATE_TEXT = { '2026-11-02': 'November 2, 2026', '2026-11-03': 'November 3, 2026', '2026-11-04': 'November 4, 2026' };
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+/** '2026-11-18' -> 'November 18, 2026' */
+export const dateText = (iso) => { const [y, m, d] = iso.split('-').map(Number); return `${MONTHS[m - 1]} ${d}, ${y}`; };
 // 2026-11-04: the byline named an "editorial team" that does not exist. The correction is logged on every
 // guide and tool page and sets dateModified; the "Reviewed" stamp keeps the date of the last content review.
 /** Change log of a guide/tool: its own dated entries only. */
-export const logOf = (x) => (x.changelog && x.changelog.length ? x.changelog : [[SITE.reviewedIso, 'First published.']]);
+export const logOf = (x) => (x.changelog && x.changelog.length ? x.changelog : [[publishedIso(x), 'First published.']]);
+/** First publication: 2026-11-02 for the original pages, the page's own date for later ones. */
+export const publishedIso = (x) => x.published || SITE.reviewedIso;
 /** Date of the last content review (newest own change-log entry). */
-export const reviewedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : SITE.reviewedIso);
+export const reviewedIso = (x) => (x.changelog && x.changelog.length ? x.changelog[x.changelog.length - 1][0] : publishedIso(x));
 /** Last change of a guide/tool: the newest change-log date (first publication when there is none). */
 /** Last change of a guide/tool page (dateModified, sitemap lastmod). */
 export const modifiedIso = (x) => logOf(x).at(-1)[0];
@@ -27,9 +31,8 @@ export const words = (html) => strip(String(html)
   .split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
 
 const NAV = [
-  ['/tools/patch-decoder/', 'Patch Decoder'],
-  ['/tools/settings-translator/', 'Settings Translator'],
-  ['/tools/bottleneck-finder/', 'Bottleneck Finder'],
+  ['/tools/', 'Tools'],
+  ['/reference/setting-names/', 'Setting names'],
   ['/guides/', 'Guides'],
   ['/about/', 'About']
 ];
@@ -69,7 +72,7 @@ export function page(opts) {
   if (opts.ld) ld.push(...opts.ld);
   const ldTag = ld.length ? `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': ld }).replace(/</g, '\\u003c')}</script>` : '';
   const scripts = ['consent.js', 'stats-window.js', 'site.js', ...(opts.scripts || [])].map((s) => `<script src="/assets/js/${s}?v=${SITE.v}" defer></script>`).join('\n');
-  const nav = NAV.map(([u, n]) => `<li><a href="${u}"${opts.path === u ? ' aria-current="page"' : ''}>${n}</a></li>`).join('');
+  const nav = NAV.map(([u, n]) => `<li><a href="${u}"${opts.path === u ? ' aria-current="page"' : (opts.path.startsWith(u) ? ' aria-current="true"' : '')}>${n}</a></li>`).join('');
   return `<!doctype html>
 <html lang="en" data-ads="${opts.ads === 'yes' ? 'yes' : 'no'}" data-stats="${opts.loader ? 'auto' : 'settings'}">
 <head>
@@ -106,7 +109,7 @@ ${scripts}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="mast">
-<div class="wrap mast-in"><a class="brand" href="/">${MARK}<span><b>Patch Play Guide</b><small>Patch notes → settings → a re-test</small></span></a>
+<div class="wrap mast-in"><a class="brand" href="/">${MARK}<span><b>Patch Play Guide</b><small>Settings, decoded and tested</small></span></a>
 <nav class="main-nav" aria-label="Main"><ul>${nav}</ul></nav></div>
 </header>
 <main id="main"><div class="wrap">
@@ -115,8 +118,8 @@ ${opts.body}
 </div></main>
 <footer class="foot"><div class="wrap">
 <div class="foot-grid">
-<div><p class="foot-brand">${MARK}<b>Patch Play Guide</b></p><p>What a game update changes on your screen – settings, console modes and a repeatable re-test. Published by AdStern, Vienna.</p></div>
-<div><h2>Tools</h2><ul><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/guides/">All guides</a></li></ul></div>
+<div><p class="foot-brand">${MARK}<b>Patch Play Guide</b></p><p>Calculators, a setting-name map and guides for game graphics settings, console modes and repeatable tests. Published by AdStern, Vienna.</p></div>
+<div><h2>Tools</h2><ul><li><a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a></li><li><a href="/tools/frame-time-calculator/">Frame Time Calculator</a></li><li><a href="/tools/settings-test-log/">Settings Test Log</a></li><li><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></li><li><a href="/tools/settings-translator/">Settings Translator</a></li><li><a href="/tools/patch-decoder/">Patch Decoder</a></li><li><a href="/reference/setting-names/">Setting-name map</a></li><li><a href="/guides/">All guides</a></li></ul></div>
 <div><h2>Site</h2><ul><li><a href="/about/">About &amp; method</a></li><li><a href="/contact/">Contact &amp; corrections</a></li><li><a href="/imprint/">Imprint</a></li><li><a href="/privacy/">Privacy policy</a></li><li><button type="button" class="linklike" data-privacy-settings>Privacy settings</button></li></ul></div>
 </div>
 <p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
@@ -133,8 +136,10 @@ export function faqHtml(faq) {
 export function faqLd(faq) {
   return { '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: strip(q), acceptedAnswer: { '@type': 'Answer', text: strip(a) } })) };
 }
-export function sourcesHtml(sources) {
-  return `<section id="sources" class="sources"><h2>Sources and further reading</h2><ul>${sources.map(([label, url, note]) => `<li>${url ? `<a href="${url}" rel="noopener">${label}</a>` : label}${note ? ` – ${note}` : ''}</li>`).join('')}</ul><p class="small">Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.</p></section>`;
+export function sourcesHtml(sources, noteText) {
+  // a label may start with its own anchor span (numbered sources of the name map); the link then wraps only the text
+  const item = ([label, url, note]) => { const m = /^(<span id="[^"]+">[^<]*<\/span> )([\s\S]*)$/.exec(label); const [pre, text] = m ? [m[1], m[2]] : ['', label]; return `<li>${pre}${url ? `<a href="${url}" rel="noopener">${text}</a>` : text}${note ? ` – ${note}` : ''}</li>`; };
+  return `<section id="sources" class="sources"><h2>Sources</h2><ul>${sources.map(item).join('')}</ul><p class="small">${noteText || 'Sources without a link are named so you can find the current version yourself; vendor pages move often. We summarize in our own words and never copy patch notes.'}</p></section>`;
 }
 function changelogHtml(log) {
   return `<section id="changelog" class="changelog"><h2>Change log</h2><ul>${log.map(([d, t]) => `<li><time datetime="${d}">${d}</time> ${t}</li>`).join('')}</ul></section>`;
@@ -143,12 +148,12 @@ function relatedHtml(related, lookup) {
   if (!related || !related.length) return '';
   return `<nav class="related" aria-labelledby="rel-h"><h2 id="rel-h">Read next</h2><ul>${related.map((r) => { const m = lookup(r); return `<li><a href="${m.path}"><span class="k">${esc(m.kicker)}</span>${esc(m.h1)}</a></li>`; }).join('')}</ul></nav>`;
 }
-const meta = (n, iso = SITE.reviewedIso) => `<p class="byline">Published by <a href="/about/">AdStern, Vienna</a></p><p class="meta"><span class="stamp">Reviewed ${DATE_TEXT[iso] || SITE.reviewedText}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
+const meta = (n, iso = SITE.reviewedIso) => `<p class="byline">Published by <a href="/about/">AdStern, Vienna</a></p><p class="meta"><span class="stamp">Reviewed ${dateText(iso)}</span><span>${Math.max(4, Math.round(n / 230))} min read</span><a href="/about/#checks">How we check pages</a></p>`;
 
 export function articleLd(g, path) {
   return {
     '@type': 'Article', headline: g.h1, description: g.description, inLanguage: 'en-US',
-    datePublished: SITE.reviewedIso, dateModified: modifiedIso(g),
+    datePublished: publishedIso(g), dateModified: modifiedIso(g),
     mainEntityOfPage: SITE.origin + path,
     author: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/about/' },
     publisher: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/imprint/' }
@@ -158,7 +163,10 @@ export function articleLd(g, path) {
 export function renderGuide(g, lookup) {
   const path = `/guides/${g.slug}/`;
   const secs = g.sections;
-  const mid = Math.floor(secs.length / 2);
+  // the mid ad never follows a section that ends with a “try it” button (ads keep their distance from controls)
+  let mid = Math.floor(secs.length / 2);
+  while (mid < secs.length - 1 && secs[mid - 1].slice(-400).includes('class="try"')) mid++;
+  while (mid > 1 && secs[mid - 1].slice(-400).includes('class="try"')) mid--;
   const body = secs.map((s, i) => (i === mid ? adSlot('mid') + '\n' : '') + `<section>${s}</section>`).join('\n');
   const toc = secs.map((s) => { const m = s.match(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/); return m ? `<li><a href="#${m[1]}">${m[2]}</a></li>` : ''; }).join('');
   const n = words(g.lede + secs.join(' ') + g.faq.flat().join(' '));
@@ -184,9 +192,9 @@ ${relatedHtml(g.related, lookup)}
 }
 
 export function renderTool(t, lookup) {
-  const path = `/tools/${t.slug}/`;
+  const path = `/${t.dir || 'tools'}/${t.slug}/`;
   const [first, ...rest] = t.sections;
-  const crumbs = [['Home', '/'], [t.short, path]];
+  const crumbs = t.dir ? [['Home', '/'], [t.short, path]] : [['Home', '/'], ['Tools', '/tools/'], [t.short, path]];
   const n = words(t.lede + t.sections.join(' ') + t.faq.flat().join(' '));
   const html = `<article class="doc doc-tool">
 <p class="kicker">${esc(t.kicker)}</p>
@@ -199,7 +207,7 @@ ${t.toolHtml}
 ${adSlot('tool')}
 ${rest.map((s) => `<section>${s}</section>`).join('\n')}
 ${faqHtml(t.faq)}
-${sourcesHtml(t.sources)}
+${sourcesHtml(t.sources, t.sourcesNote)}
 ${changelogHtml(logOf(t))}
 </div>
 ${relatedHtml(t.related, lookup)}
@@ -207,11 +215,11 @@ ${relatedHtml(t.related, lookup)}
   return page({
     path, title: t.title, description: t.description, body: html, crumbs, ads: 'yes', loader: true,
     scripts: t.scripts,
-    ld: [{
+    ld: [t.dir ? articleLd(t, path) : {
       '@type': 'WebApplication', name: t.short, description: t.description, url: SITE.origin + path,
       applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (runs in the web browser)', isAccessibleForFree: true,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, inLanguage: 'en-US',
-      datePublished: SITE.reviewedIso, dateModified: modifiedIso(t),
+      datePublished: publishedIso(t), dateModified: modifiedIso(t),
       publisher: { '@type': 'Organization', name: 'AdStern – Agentur für digitales Marketing', url: SITE.origin + '/imprint/' }
     }, faqLd(t.faq)]
   });

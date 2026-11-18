@@ -10,7 +10,7 @@ const toolHtml = `<section class="tool" id="decoder" aria-labelledby="dec-h">
 <div id="dec-paste" hidden>
 <label for="dec-input">Paste patch-note lines – one change per line</label>
 <textarea id="dec-input" rows="8" spellcheck="false" placeholder="+ Added a frame rate cap option&#10;Fixed a crash when changing resolution on PC&#10;Shader cache is rebuilt after this update&#10;Removed the low texture preset on Xbox Series S&#10;Known issue: stutter on Steam Deck in the hub"></textarea>
-<div class="row" style="margin-top:10px"><button type="button" id="dec-sort">Sort my lines</button><button type="button" id="dec-clear" class="ghost">Clear</button></div>
+<div class="row" style="margin-top:10px"><button type="button" id="dec-sort">Sort my lines</button><button type="button" id="dec-sample" class="ghost">Insert invented sample lines</button><button type="button" id="dec-clear" class="ghost">Clear</button></div>
 <p id="dec-stale" class="fict" role="status" hidden><b>NOT SORTED YET</b> – your text changed since the last sort. Press “Sort my lines” to update the list; Copy and Download sort the current text first.</p>
 <p class="tool-sub" style="margin-top:8px">Your text is kept only in this browser’s local storage so it is still here next time. “Clear” deletes it.</p>
 </div>
@@ -24,7 +24,7 @@ const toolHtml = `<section class="tool" id="decoder" aria-labelledby="dec-h">
 <div class="checklist">
 <h3>After-update checklist</h3>
 <ul id="dec-checks"></ul>
-<div class="row"><button type="button" id="dec-copy">Copy as text</button><button type="button" id="dec-download" class="ghost">Download .txt</button><span id="dec-copied" class="tool-sub" aria-live="polite"></span></div>
+<div class="row"><button type="button" id="dec-copy">Copy as text</button><button type="button" id="dec-download" class="ghost">Download .txt</button><button type="button" id="dec-print" class="ghost">Print</button><span id="dec-copied" class="tool-sub" aria-live="polite"></span></div>
 <label for="dec-export" class="sr">Checklist as text</label><textarea id="dec-export" readonly hidden></textarea>
 </div>
 </section>`;
@@ -61,7 +61,7 @@ const cats = tbl('Categories and what they usually mean for your settings', ['Ca
 
 export default {
   slug: 'patch-decoder',
-  changelog: [['2026-11-02', 'First published.'], ['2026-11-03', 'Export always matches the current text; lines beyond the 300-line limit are named on screen and in the export; copy reports when it fails.']],
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-03', 'Export always matches the current text; lines beyond the 300-line limit are named on screen and in the export; copy reports when it fails.'], ['2026-11-18', 'Invented sample lines can be inserted with one click to try the paste mode; the sorted list can be printed.']],
   short: 'Patch Decoder',
   title: 'Patch Decoder – sort patch notes into settings actions',
   description: 'Paste patch-note lines and sort them into improvements, changes and removals by category and platform, with a what-to-do note and an after-update checklist.',
@@ -91,7 +91,7 @@ ${cats}
 <p>Patch notes change weekly, and a decoder that shows outdated or invented changes for a real game would mislead you. The example “Saltmarsh Protocol 1.8.0” is therefore clearly invented. Its lines are realistic in form – they are the kinds of changes big games ship all the time – but they make no claim about any real product.</p>
 <p>Look at what the example teaches: a performance improvement for crowds (CPU work), a quietly heavier shadow preset, a removed texture option that matters for graphics cards with little video memory, a new 40 fps mode that only works with a 120 Hz display, a shader rebuild that will cause stutter on the first launch, and a gameplay tweak that needs no settings action at all. Most real updates contain a mix like this, and each line type is explained in depth in <a href="/guides/how-to-read-patch-notes/">How to read patch notes</a>.</p>`,
     `<h2 id="after">After decoding: test, don’t guess</h2>
-<p>The decoder tells you <i>what</i> to look at. Whether a change actually affects your system can only be answered with a short, repeatable test: same scene, same settings, a warm-up run, then a measured run. The <a href="/guides/after-update-retest-routine/">10-minute re-test routine</a> walks through it, and <a href="/guides/how-to-test-a-settings-change/">how to test a settings change properly</a> explains why a single number from one run is not enough.</p>
+<p>The decoder tells you <i>what</i> to look at. Whether a change actually affects your system can only be answered with a short, repeatable test: same scene, same settings, a warm-up run, then a measured run. The <a href="/guides/how-to-test-a-settings-change/#after-update">10-minute re-test routine</a> walks through it, and <a href="/guides/how-to-test-a-settings-change/">how to test a settings change properly</a> explains why a single number from one run is not enough.</p>
 <p>If the re-test shows lower performance, the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> helps you work out whether the CPU, the GPU or video memory is now the limit, and the <a href="/tools/settings-translator/">Settings Translator</a> shows which options usually relieve that resource with the least visible loss.</p>`
   ],
   faq: [
@@ -106,5 +106,5 @@ ${cats}
     ['PCGamingWiki', 'https://www.pcgamingwiki.com/', 'community documentation of PC settings and fixes per game'],
     ['Official patch notes of each game', null, 'publisher websites, the PlayStation Blog, Xbox Wire, Nintendo’s update history pages and Steam news are the primary sources to paste from']
   ],
-  related: ['how-to-read-patch-notes', 'after-update-retest-routine', 'shader-compilation-stutter-after-update']
+  related: ['how-to-read-patch-notes', 'setting-names', 'settings-test-log']
 };
