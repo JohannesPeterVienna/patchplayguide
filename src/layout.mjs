@@ -7,7 +7,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261118a'
+  v: '20261118b'
 };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 /** '2026-11-18' -> 'November 18, 2026' */
@@ -109,7 +109,7 @@ ${scripts}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="mast">
-<div class="wrap mast-in"><a class="brand" href="/">${MARK}<span><b>Patch Play Guide</b><small>Settings, decoded and tested</small></span></a>
+<div class="wrap mast-in"><a class="brand" href="/">${MARK}<span><b>Patch Play Guide</b><small>Settings, decoded and calculated</small></span></a>
 <nav class="main-nav" aria-label="Main"><ul>${nav}</ul></nav></div>
 </header>
 <main id="main"><div class="wrap">

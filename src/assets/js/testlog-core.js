@@ -47,7 +47,8 @@
   }
   function r1(x) { return Math.round(x * 10) / 10; }
   function csv(state) {
-    var q = function (s) { return '"' + String(s).replace(/"/g, '""') + '"'; };
+    // text cells that a spreadsheet would read as a formula (= + - @, also after leading blanks or tabs) get a leading apostrophe
+    var q = function (s) { s = String(s); if (/^[\s]*[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
     var lines = [['setup', 'metric', 'run', 'value'].join(',')];
     [['A', state.nameA, state.a, state.la], ['B', state.nameB, state.b, state.lb]].forEach(function (s) {
       (s[2] || []).forEach(function (v, i) { lines.push([q(s[1] || 'Setup ' + s[0]), q('average fps'), i + 1, v].join(',')); });

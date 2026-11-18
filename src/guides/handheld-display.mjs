@@ -20,14 +20,14 @@ ${tbl('Historical: Switch 2 display features by mode at launch in 2025 (Nintendo
   ['HDR', 'Supported', 'Supported with a compatible TV'],
   ['Variable refresh rate', 'Supported on the built-in screen', 'Not listed for TV output at launch'],
   ['Power', 'Battery (less performance budget)', 'Mains power (more performance budget)']
-], 'Historical table: specifications as published by Nintendo at launch in 2025. Since the system update of September 10, 2026, docked TV output also supports VRR with a compatible TV in games that support it.')}
-<p><b>Update since launch:</b> with a system update released on September 10, 2026, Nintendo enabled variable refresh rate for TV output in docked mode. It needs a TV that supports VRR over HDMI and a game that supports it; on the built-in screen, VRR was available from launch. Nintendo’s Switch 2 FAQ and feature pages list the current details.</p>`,
+], 'Historical table: specifications as published by Nintendo at launch in 2025. Since system update 23.0.0 (September 10, 2026), docked TV output also supports VRR; it needs the dock update, a compatible TV and game support.')}
+<p><b>Update since launch:</b> with system update 23.0.0 (September 10, 2026), Nintendo enabled variable refresh rate for TV output in docked mode. It needs the dock update (the dock has its own update in System Settings), a TV that supports VRR over HDMI and a game that supports it; on the built-in screen, VRR was available from launch. Nintendo’s Switch 2 FAQ and feature pages list the current details.</p>`,
     `<h2 id="typical">What typically changes</h2>
 <ul class="do">
 <li><b>Render resolution</b> – usually lower in handheld mode. Upscaling (including NVIDIA DLSS, which the Switch 2’s NVIDIA processor supports in games that use it) reconstructs a sharper image.</li>
 <li><b>Frame rate</b> – often the same target in both modes, sometimes lower in handheld; some games offer a performance option only docked.</li>
 <li><b>Effects</b> – shadows, view distance and ray-traced effects may be reduced in handheld mode.</li>
-<li><b>Smoothness</b> – VRR on the built-in screen can make frame-rate fluctuations less visible in handheld mode. Docked, the same is now possible on a compatible VRR TV in games that support it (since the September 10, 2026 system update); on a TV without VRR, fluctuations stay more visible.</li>
+<li><b>Smoothness</b> – VRR on the built-in screen can make frame-rate fluctuations less visible in handheld mode. Docked, the same is now possible on a compatible VRR TV in games that support it (since system update 23.0.0 (September 10, 2026), after the dock update); on a TV without VRR, fluctuations stay more visible.</li>
 </ul>
 ${fig('sw-fig', 'Switch 2 in two states: docked with mains power driving a TV, handheld on battery with its own 1080p 120 Hz screen',
 `<rect class="g-bg" width="640" height="220"/>
@@ -53,11 +53,11 @@ ${fig('sw-fig', 'Switch 2 in two states: docked with mains power driving a TV, h
   faq: [
     ['Do Switch 2 games run at lower resolution in handheld mode?', 'Usually yes, because handheld mode has less power and a 1080p screen. On the small screen the difference is often hard to see.'],
     ['Does the Switch 2 support 120 Hz?', 'Nintendo lists up to 120 Hz on the built-in screen and 120 Hz TV output at lower resolutions in supported games. Whether a game uses it is up to the developer.'],
-    ['Does the Switch 2 support VRR?', 'Yes. The built-in screen supports VRR in handheld mode since launch. TV output was not listed with VRR at launch in 2025, but a system update on September 10, 2026 enabled VRR on the TV in docked mode – with a compatible VRR TV and in games that support it.'],
+    ['Does the Switch 2 support VRR?', 'Yes. The built-in screen supports VRR in handheld mode since launch. TV output was not listed with VRR at launch in 2025, but system update 23.0.0 (September 10, 2026) enabled VRR on the TV in docked mode – it needs the dock update, a compatible VRR TV and game support.'],
     ['Is docked always better?', 'Docked usually means higher resolution and sometimes more effects. Smoothness can be equal or even better in handheld mode in games that use the 120 Hz screen and VRR.']
   ],
   sources: [
-    ['Nintendo', 'https://www.nintendo.com/', 'Nintendo Switch 2 specifications, FAQ and feature pages (including TV VRR since the September 10, 2026 system update)'],
+    ['Nintendo', 'https://www.nintendo.com/', 'Nintendo Switch 2 specifications, FAQ and feature pages (including TV VRR since system update 23.0.0 (September 10, 2026))'],
     ['Patch notes of individual Switch 2 games', null, 'Nintendo publishes update histories for its own games on its support site']
   ],
   related: ['vrr-120hz-console-setup', 'steam-deck-frame-cap-tdp-battery', 'how-to-test-a-settings-change']
@@ -172,7 +172,7 @@ ${tbl('Checklist for 120 Hz and VRR', ['Link', 'What it needs', 'Common pitfall'
     `<h2 id="consoles">Console settings</h2>
 <p><b>PS5:</b> Settings → Screen and Video → Video Output. Set “Enable 120 Hz Output” to Automatic and turn VRR on; the menu also offers applying VRR to games without official support, which helps some and causes flicker or other issues in others. The PS5 shows VRR options only when the connected display reports support.</p>
 <p><b>Xbox Series X|S:</b> Settings → General → TV &amp; display options. Choose 120 Hz as the refresh rate and, under Video modes, allow variable refresh rate and Auto Low-Latency Mode. The 4K TV details screen shows what the console detected.</p>
-<p><b>Switch 2:</b> According to Nintendo’s specifications, docked TV output reaches 120 Hz at lower resolutions in supported games. VRR was available on the built-in screen from launch; since the system update of September 10, 2026 it also works on the TV in docked mode, with a compatible VRR TV and in games that support it. See <a href="/guides/switch-2-docked-vs-handheld/">Switch 2 docked vs handheld</a>.</p>
+<p><b>Switch 2:</b> According to Nintendo’s specifications, docked TV output reaches 120 Hz at lower resolutions in supported games. VRR was available on the built-in screen from launch; since system update 23.0.0 (September 10, 2026) it also works on the TV in docked mode; it needs the dock update, a compatible VRR TV and game support. See <a href="/guides/switch-2-docked-vs-handheld/">Switch 2 docked vs handheld</a>.</p>
 <p>Menu names change with system updates; if an option has moved, the platform’s support site has the current path.</p>`,
     `<h2 id="range">VRR ranges and what VRR cannot fix</h2>
 <p>Every VRR display has a range – for TVs the lower limit is commonly somewhere around 40 to 48 Hz, the upper limit the panel’s maximum refresh rate. Within the range, VRR works as described. Below it, the display falls back to fixed refresh behavior, unless the system uses low framerate compensation (showing each frame twice to stay in range), which depends on the display and console.</p>

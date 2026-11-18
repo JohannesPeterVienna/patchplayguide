@@ -97,7 +97,7 @@ ${worksheet}`,
     ['Does the tool measure my frame rate?', 'No. It runs in the browser and cannot see your game. You measure with an overlay or capture tool and type the results in.']
   ],
   sources: [
-    src('Intel – PresentMon', 'https://github.com/GameTechDev/PresentMon', 'open-source capture tool whose per-frame data most overlays build on'),
+    src('Intel – PresentMon', 'https://github.com/GameTechDev/PresentMon', 'an open-source capture tool from Intel that several overlays use'),
     ['Counting argument for the verdict rule', null, 'the number of ways to split 2n runs into two groups of n is the binomial coefficient C(2n, n); the table on this page lists the values']
   ],
   related: ['how-to-test-a-settings-change', 'fps-frame-time-1-percent-lows', 'frame-time-calculator']

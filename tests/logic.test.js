@@ -442,6 +442,13 @@ test('test log: parsing, median, verdict rule and its error rate', () => {
   const st = { scene: 'x', nameA: 'High "A"', nameB: 'Med', a: [71, 73, 72], b: [75, 74, 77], la: [], lb: [] };
   assert.match(TL.summary(st), /Median difference B − A: \+3 fps \(\+4\.2%\)/);
   assert.match(TL.csv(st), /"High ""A""","average fps",1,71/);
+  // formula injection: = + - @ at the start (also after blanks or a tab) is neutralized, other text is untouched
+  const evil = TL.csv({ nameA: '=HYPERLINK("http://x")', nameB: ' \t@SUM(A1)', a: [1], b: [2], la: [3], lb: [] }).split('\n');
+  assert.equal(evil[1], '"\'=HYPERLINK(""http://x"")","average fps",1,1');
+  assert.equal(evil[2], '"\'=HYPERLINK(""http://x"")","1% low fps",1,3');
+  assert.equal(evil[3], '"\' \t@SUM(A1)","average fps",1,2');
+  for (const n of ['+1', '-1', '@x', '  -x']) assert.ok(TL.csv({ nameA: n, a: [1], b: [] }).includes('"\'' + n + '"'));
+  assert.ok(TL.csv({ nameA: 'DLSS - Quality', a: [1], b: [] }).includes('"DLSS - Quality"'));
 });
 test('name map: every row is complete, sourced and consistent with the calculator', () => {
   assert.ok(NM.ROWS.length >= 60);

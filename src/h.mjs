@@ -13,6 +13,8 @@ export function tryBox(text, href, label) {
 }
 // source entry with the date it was read (all sources added in the November 18, 2026 revision)
 export const src = (label, url, note) => [label, url, (note ? note + '; ' : '') + 'accessed November 18, 2026'];
+// official page that could not be opened from the build environment: the passage comes from a search-engine extract (same wording as the name map)
+export const srcX = (label, url, note) => [label, url, (note ? note + '; ' : '') + 'checked on November 18, 2026 via search excerpts of the official page; wording may differ'];
 // official documents used across several pages
 const GH = 'https://github.com/';
 export const SRC = {
@@ -28,26 +30,26 @@ export const SRC = {
   xessfg: src('Intel – XeSS Frame Generation Developer Guide', GH + 'intel/xess/blob/main/doc/xess_fg_developer_guide_english.md', 'input frame-rate targets, requirements'),
   xell: src('Intel – Xe Low Latency (XeLL) Developer Guide', GH + 'intel/xess/blob/main/doc/xell_developer_guide_english.md'),
   pm: src('Intel – PresentMon console application, CSV columns', GH + 'GameTechDev/PresentMon/blob/main/README-ConsoleApplication.md', 'definitions of MsBetweenPresents, MsGPUBusy and other columns'),
-  psres: src('PlayStation Support – How to change PS5 console resolution', 'https://www.playstation.com/en-us/support/hardware/ps5-4k-resolution-guide/', 'Video Output settings: 120 Hz Output, VRR'),
-  psvrr: src('PlayStation Blog – Variable Refresh Rate support for PS5', 'https://blog.playstation.com/2022/04/25/variable-refresh-rate-support-for-ps5-is-rolling-out-this-week/'),
-  pspresets: src('PlayStation Support – How to customize game presets on PS5 consoles', 'https://www.playstation.com/en-us/support/games/how-to-customize-game-presets-on-ps5-consoles/'),
-  pssr: src('PlayStation Blog – Upgraded PSSR upscaler is coming to PS5 Pro', 'https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/'),
-  xb120: src('Xbox Support – Set up 4K gaming at 120 Hz on Xbox Series X', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/4k-gaming-at-120hz'),
-  xbtv: src('Xbox Support – How to change the TV display settings on your Xbox', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/change-tv-display-resolution'),
-  ninspecs: src('Nintendo – Nintendo Switch 2 tech specs', 'https://www.nintendo.com/us/gaming-systems/switch-2/tech-specs/'),
-  ninset: src('Nintendo Support – Nintendo Switch 2 System Settings overview', 'https://www.nintendo.com/en-gb/Support/Nintendo-Switch-2/Nintendo-Switch-2-System-Settings-Overview-2892722.html'),
-  deck: src('Valve – Steam Deck tech specs', 'https://www.steamdeck.com/en/tech', 'screen, refresh rate and battery capacity of both models'),
-  freesync: src('AMD – AMD FreeSync Technology', 'https://www.amd.com/en/products/graphics/technologies/freesync.html', 'tier requirements'),
-  msrefresh: src('Microsoft Support – Change the refresh rate on your monitor in Windows', 'https://support.microsoft.com/en-us/windows/hardware/display-graphics/change-the-refresh-rate-on-your-monitor-in-windows')
+  psres: srcX('PlayStation Support – How to change PS5 console resolution', 'https://www.playstation.com/en-us/support/hardware/ps5-4k-resolution-guide/', 'Video Output settings: 120 Hz output, VRR'),
+  psvrr: srcX('PlayStation Blog – Variable Refresh Rate support for PS5', 'https://blog.playstation.com/2022/04/25/variable-refresh-rate-support-for-ps5-is-rolling-out-this-week/'),
+  pspresets: srcX('PlayStation Support – How to customize game presets on PS5 consoles', 'https://www.playstation.com/en-us/support/games/how-to-customize-game-presets-on-ps5-consoles/'),
+  pssr: srcX('PlayStation Blog – Upgraded PSSR upscaler is coming to PS5 Pro', 'https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/'),
+  xb120: srcX('Xbox Support – Set up 4K gaming at 120 Hz on Xbox Series X', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/4k-gaming-at-120hz'),
+  xbtv: srcX('Xbox Support – How to change the TV display settings on your Xbox', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/change-tv-display-resolution'),
+  ninspecs: srcX('Nintendo – Nintendo Switch 2 tech specs', 'https://www.nintendo.com/us/gaming-systems/switch-2/tech-specs/'),
+  ninset: srcX('Nintendo Support – Nintendo Switch 2 System Settings overview', 'https://www.nintendo.com/en-gb/Support/Nintendo-Switch-2/Nintendo-Switch-2-System-Settings-Overview-2892722.html'),
+  deck: srcX('Valve – Steam Deck tech specs', 'https://www.steamdeck.com/en/tech', 'screen, refresh rate and battery capacity of both models'),
+  freesync: srcX('AMD – AMD FreeSync Technology', 'https://www.amd.com/en/products/graphics/technologies/freesync.html', 'tier requirements'),
+  msrefresh: srcX('Microsoft Support – Change the refresh rate on your monitor in Windows', 'https://support.microsoft.com/en-us/windows/hardware/display-graphics/change-the-refresh-rate-on-your-monitor-in-windows')
 };
-SRC.bc = src('Microsoft Learn – Texture block compression in Direct3D 11', 'https://learn.microsoft.com/en-us/windows/win32/direct3d11/texture-block-compression-in-direct3d-11', 'bytes per 4×4 pixel block for BC1 to BC7');
-SRC.afmf = src('AMD – AMD Fluid Motion Frames', 'https://www.amd.com/en/products/software/adrenalin/afmf.html', 'requirements of the driver-level feature');
-SRC.smooth = src('NVIDIA – NVIDIA app update: Smooth Motion for GeForce RTX 40 Series', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-global-dlss-overrides-rtx-40-series-smooth-motion/');
+SRC.bc = srcX('Microsoft Learn – Texture block compression in Direct3D 11', 'https://learn.microsoft.com/en-us/windows/win32/direct3d11/texture-block-compression-in-direct3d-11', 'bytes per 4×4 pixel block for BC1 to BC7');
+SRC.afmf = srcX('AMD – AMD Fluid Motion Frames', 'https://www.amd.com/en/products/software/adrenalin/afmf.html', 'requirements of the driver-level feature');
+SRC.smooth = srcX('NVIDIA – NVIDIA app update: Smooth Motion for GeForce RTX 40 Series', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-global-dlss-overrides-rtx-40-series-smooth-motion/');
 SRC.fsrfg4 = src('AMD – FSR Frame Generation 4.0.2 documentation', 'https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/main/Kits/FidelityFX/docs/techniques/frame-interpolation-ml.md', 'memory use per output resolution');
 SRC.fsrsdk = src('AMD – FSR SDK 2.4.0 (README)', 'https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK', 'list of techniques, including FSR Ray Regeneration');
 SRC.dlssrr = src('NVIDIA – Streamline programming guide for DLSS Ray Reconstruction', 'https://github.com/NVIDIA-RTX/Streamline/blob/main/docs/ProgrammingGuideDLSS_RR.md');
-SRC.ninfeat = src('Nintendo – Nintendo Switch 2 system features and play modes', 'https://www.nintendo.com/us/gaming-systems/switch-2/features/');
-SRC.xbwire = src('Xbox Wire – You’re Ready to Power Your Dreams – Is Your TV?', 'https://news.xbox.com/en-us/2020/11/06/is-your-tv-ready-to-power-your-dreams/', 'Video modes, variable refresh rate');
+SRC.ninfeat = srcX('Nintendo – Nintendo Switch 2 system features and play modes', 'https://www.nintendo.com/us/gaming-systems/switch-2/features/');
+SRC.xbwire = srcX('Xbox Wire – You’re Ready to Power Your Dreams – Is Your TV?', 'https://news.xbox.com/en-us/2020/11/06/is-your-tv-ready-to-power-your-dreams/', 'Video modes, variable refresh rate');
 
 // ---- helpers for dated revisions of an existing guide ----
 /** Insert a section after the section whose h2 has the given id. */

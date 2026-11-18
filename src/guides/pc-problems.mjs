@@ -235,7 +235,7 @@ ${tbl('Reading the two passes', ['What you see', 'Most likely cause', 'What to d
   ['Hitches at random places in both passes', 'Background tasks or uneven frame pacing', 'Close overlays and recorders one at a time; try a frame cap'],
   ['Hitches return after every restart of the game', 'The cache is not kept, or it is rebuilt every time', 'Check free space on the drive and whether the driver’s shader cache is enabled']
 ])}
-<p>If you record the passes with a capture tool, the 1% low is the number that shows the pattern: it is dragged down by the long frames of pass 1 and recovers in pass 2, while the average barely moves. PresentMon, the open-source tool most overlays build on, writes the time between two frames as <code>MsBetweenPresents</code> – a compilation hitch is a single very large value in that column. Note the 1% low of two or three first passes and of the repeat passes and compare them.</p>
+<p>If you record the passes with a capture tool, the 1% low is the number that shows the pattern: it is dragged down by the long frames of pass 1 and recovers in pass 2, while the average barely moves. PresentMon, an open-source capture tool from Intel that several overlays use, writes the time between two frames as <code>MsBetweenPresents</code> – a compilation hitch is a single very large value in that column. Note the 1% low of two or three first passes and of the repeat passes and compare them.</p>
 ${tryBox('Enter the first passes as setup A and the repeat passes as setup B; the log shows whether the 1% lows really separate.', '/tools/settings-test-log/', 'Open the Settings Test Log')}`);
 revise(shaderStutter, '2026-11-18', 'Two-pass test with a decision table added; link to the Settings Test Log.', [SRC.pm]);
 
@@ -272,8 +272,8 @@ ${tbl('One 4096×4096 texture in memory', ['Format', 'Bytes per pixel', 'Top lev
 ${tbl('Video memory allocated by the feature itself, by output resolution (vendor figures)', ['Feature', '1080p', '1440p', '4K', 'Source and conditions'], [
   ['DLSS Super Resolution, preset K (default for Quality, Balanced, DLAA)', '86 MB', '144 MB', '307 MB', 'NVIDIA DLSS Programming Guide'],
   ['DLSS Super Resolution, preset M (default for Performance)', '116 MB', '204 MB', '456 MB', 'NVIDIA, RTX 40/50 series'],
-  ['FSR 3.1.6 upscaler, Quality', '61 MB', '106 MB', '218 MB', 'AMD, Radeon RX 6700 XT, DirectX 12'],
-  ['FSR 3.1.6 upscaler, Performance', '40 MB', '61 MB', '133 MB', 'AMD, same conditions'],
+  ['FSR 3.1.6 upscaler, Quality', '75 MB', '134 MB', '292 MB', 'AMD, Radeon RX 9070 XT, DirectX 12'],
+  ['FSR 3.1.6 upscaler, Performance', '61 MB', '101 MB', '226 MB', 'AMD, same conditions'],
   ['FSR Upscaling 4.1.2', '81 MB', 'not listed', '318 MB', 'AMD, Radeon RX 9070 XT'],
   ['DLSS Frame Generation', '272 MB', '489 MB', '725 MB', 'NVIDIA Streamline guide (estimate)'],
   ['FSR Frame Generation 3.1.6', '124 MB', '214 MB', '457 MB', 'AMD, DirectX 12'],
