@@ -151,6 +151,20 @@ for (const p of pages) {
     if (!hasAds) fail(url, 'content page should have ad containers');
     if (/class="ad"[^>]*>(?!<span class="ad-label">Advertisement<\/span>)/.test(html)) fail(url, 'ad container without Advertisement label');
     if (!/class="ad" data-slot="[^"]+" hidden>/.test(html)) fail(url, 'ad containers must start hidden');
+    // exact sizes of the guide slots: one inline <style> (AdSense help 9183363) on guides only; flat formats for the slot after the lede
+    const sizes = html.match(/<style>\.ppg_top\{[^<]*<\/style>/g) || [];
+    if (isGuide(url)) {
+      if (sizes.length !== 1 || html.indexOf(sizes[0]) > html.indexOf('</head>')) fail(url, 'inline size rules of the guide slots missing or not in head');
+      else {
+        const top = [...sizes[0].matchAll(/\.ppg_top\{width:(\d+)px;height:(\d+)px\}/g)].map((m) => m[1] + 'x' + m[2]).sort().join(' ');
+        if (top !== '300x50 320x100 468x60 728x90' || !sizes[0].includes('.ppg_side{width:300px;height:600px}')) fail(url, 'unexpected slot sizes: ' + top);
+      }
+      if (!/<p class="lede">[\s\S]*?<\/p>\s*<div class="ad" data-slot="lede"/.test(article)) fail(url, 'first ad slot must follow the lede, never the heading');
+      if ((html.match(/class="ad"/g) || []).length !== 3) fail(url, 'guides carry exactly three ad slots (lede, mid, side)');
+    } else {
+      if (sizes.length) fail(url, 'slot size rules only on guides');
+      if ((html.match(/class="ad"/g) || []).length !== 1) fail(url, 'tool pages carry exactly one ad slot');
+    }
     // ads must not sit directly next to buttons/forms in the markup
     for (const m of html.matchAll(/<div class="ad"[\s\S]{0,400}/g)) if (/<(button|input|select|textarea|form)\b/.test(m[0].slice(0, 400).replace(/^[\s\S]*?<\/div>/, ''))) {
       const after = m[0].replace(/^[\s\S]*?<\/div>/, '');

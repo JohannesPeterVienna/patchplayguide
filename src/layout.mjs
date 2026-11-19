@@ -7,7 +7,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261118b'
+  v: '20261119a'
 };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 /** '2026-11-18' -> 'November 18, 2026' */
@@ -47,6 +47,11 @@ const GUARD = `<script>window.PPG_NO_GOOGLE=(function(l){var h=l.hostname,q=/[?&
 const ADS_SRC = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.client}`;
 const ADSENSE = `<script data-ads-loader>if(!window.PPG_NO_GOOGLE){(function(){var s=document.createElement('script');s.async=true;s.src='${ADS_SRC}';s.crossOrigin='anonymous';document.head.appendChild(s);})();}</script>`;
 
+// Exact sizes of the two guide slots that can show in the first screen, set per screen width in an inline <style>
+// in the way AdSense help 9183363 describes ("Exact ad unit size per screen width"; sizes in external style sheets
+// are "not officially supported"). Guides only. The flat format keeps heading and lede above the ad on every width.
+const AD_SIZES = `<style>.ppg_top{width:320px;height:100px}@media(max-width:359px){.ppg_top{width:300px;height:50px}}@media(min-width:500px){.ppg_top{width:468px;height:60px}}@media(min-width:850px){.ppg_top{width:728px;height:90px}}.ppg_side{width:300px;height:600px}</style>`;
+
 export function adSlot(name) {
   return `<div class="ad" data-slot="${name}" hidden><span class="ad-label">Advertisement</span></div>`;
 }
@@ -62,7 +67,7 @@ function breadcrumbLd(crumbs) {
 
 /**
  * opts: path, title, description, body, crumbs, ads ('yes'|'no'), loader (bool: AdSense script in head),
- * noindex (bool), canonical (override), ld (array of extra JSON-LD nodes), scripts (extra js files), refresh (url)
+ * adSizes (bool: inline size rules of the guide slots), noindex (bool), canonical (override), ld (array of extra JSON-LD nodes), scripts (extra js files), refresh (url)
  */
 export function page(opts) {
   const url = SITE.origin + opts.path;
@@ -103,6 +108,7 @@ ${opts.refresh ? `<meta http-equiv="refresh" content="0; url=${esc(opts.refresh)
 <link rel="stylesheet" href="/assets/css/ppg.css?v=${SITE.v}">
 ${CONSENT_DEFAULTS}
 ${opts.loader ? ADSENSE : ''}
+${opts.adSizes ? AD_SIZES : ''}
 ${ldTag}
 ${scripts}
 </head>
@@ -186,7 +192,7 @@ ${relatedHtml(g.related, lookup)}
 </article>
 <aside class="side" aria-label="On this page"><nav class="toc"><h2>On this page</h2><ol>${toc}<li><a href="#faq">FAQ</a></li><li><a href="#sources">Sources</a></li></ol></nav>${adSlot('side')}</aside></div>`;
   return page({
-    path, title: g.title, description: g.description, body: html, crumbs, ads: 'yes', loader: true, ogType: 'article',
+    path, title: g.title, description: g.description, body: html, crumbs, ads: 'yes', loader: true, adSizes: true, ogType: 'article',
     ld: [articleLd(g, path), faqLd(g.faq)]
   });
 }

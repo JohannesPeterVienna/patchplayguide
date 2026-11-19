@@ -8,11 +8,14 @@
   var CLIENT = 'ca-pub-7811071715414905';
   var AD_SLOTS = {
     // Shared responsive AdSense units “Themen-Websites – …” (account pub-7811071715414905)
-    lede: '7497607759',   // guides: after the lede (responsive; 728×90 / 300×250)
+    lede: '7497607759',   // guides: after the lede, flat: 728×90 from 850 px, 468×60 from 500 px, 320×100 below (300×50 under 360 px)
     mid: '1292301217',    // guides: mid-article (300×250 / responsive)
     side: '1292301217',   // guides: sidebar from 1200 px (300×600), not sticky, never on tool pages
     tool: '1292301217'    // tool pages: after the first explanatory section below the tool
   };
+  // Slots with an exact size per screen width: the size comes from the inline <style> of the guide pages (.ppg_top,
+  // .ppg_side; AdSense help 9183363), so these units carry neither data-ad-format nor data-full-width-responsive.
+  var AD_SIZED = { lede: 'ppg_top', side: 'ppg_side' };
   var GA_ID = 'G-T00HRG2YVF';
   var root = document.documentElement;
   var adsAllowed = root.getAttribute('data-ads') === 'yes';
@@ -43,11 +46,11 @@
       if (!id) continue;
       if (name === 'side' && !wide) continue;
       var ins = document.createElement('ins');
-      ins.className = 'adsbygoogle';
+      ins.className = AD_SIZED[name] ? 'adsbygoogle ' + AD_SIZED[name] : 'adsbygoogle';
       ins.style.display = 'block';
       ins.setAttribute('data-ad-client', CLIENT);
       ins.setAttribute('data-ad-slot', id);
-      if (name !== 'side') { ins.setAttribute('data-ad-format', 'auto'); ins.setAttribute('data-full-width-responsive', 'true'); }
+      if (!AD_SIZED[name]) { ins.setAttribute('data-ad-format', 'auto'); ins.setAttribute('data-full-width-responsive', 'true'); }
       box.appendChild(ins);
       box.hidden = false;
       revealOnFill(box, ins);

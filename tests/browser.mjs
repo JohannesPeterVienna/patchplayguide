@@ -1,5 +1,6 @@
 // Browser checks with Playwright over every sitemap page at 390 and 1366 px:
-// JS errors, horizontal overflow, working tools, and ad containers (forced visible) ≥150 px from controls.
+// JS errors, horizontal overflow, working tools, ad containers (forced visible) ≥150 px from controls,
+// and the first screen at 1366×768 and 390×844 (position and size of the guide slots, no ad above a tool).
 // Usage: node tests/browser.mjs [screenshot-dir]
 import http from 'node:http';
 import fs from 'node:fs';
@@ -67,9 +68,11 @@ for (const width of [390, 1366]) {
     const dist = await page.evaluate(() => {
       const ads = [...document.querySelectorAll('.ad')];
       ads.forEach((a) => {
-        a.hidden = false; a.style.minHeight = a.dataset.slot === 'side' ? '600px' : '250px';
+        a.hidden = false;
         let ins = a.querySelector('ins.adsbygoogle');
         if (!ins) { ins = document.createElement('ins'); ins.className = 'adsbygoogle'; a.appendChild(ins); }
+        // slots with an exact size (.ppg_top, .ppg_side) are measured at that size, responsive ones at 250 px
+        if (!/ppg_/.test(ins.className)) a.style.minHeight = a.dataset.slot === 'side' ? '600px' : '250px';
         ins.setAttribute('data-ad-status', 'filled');   // measure as if Google had delivered an ad
       });
       const vis = ads.filter((a) => { const r = a.getBoundingClientRect(); return r.width > 0 && r.height > 0; });
@@ -392,6 +395,94 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
 
   if (errs.length) bad('interactive errors:\n   ' + errs.join('\n   '));
   await ctx.close();
+}
+
+// ---- first screen (1366×768 and 390×844), every sitemap page, ads measured as delivered ----
+// Guides: the flat slot after the lede lies in the first screen below heading and lede (728×90 / 320×100), the sidebar
+// slot (300×600, from 1200 px) starts in it; ads take a small share of that screen. Tool pages: the tool starts in the
+// first screen and no ad is in it. Every other page has no ad box. Also: ≥150 px to controls, no overflow, small shift.
+{
+  const GUIDE = /^\/guides\/[^/]+\/$/, TOOL = /^\/(tools|reference)\/[^/]+\/$/;
+  const worst = { share: 0, shift: 0, dist: Infinity, full: 0, guides: 0 };
+  for (const [width, height] of [[1366, 768], [390, 844]]) {
+    const ctx = await browser.newContext({ viewport: { width, height } });
+    await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, (r) => r.abort());
+    for (const u of urls) {
+      const page = await ctx.newPage();
+      const errs = []; watch(page, errs);
+      await page.addInitScript(() => {
+        window.__shift = 0;
+        try { new PerformanceObserver((l) => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__shift += e.value; }).observe({ type: 'layout-shift', buffered: true }); } catch (e) { window.__shift = -1; }
+      });
+      await page.goto(base + u, { waitUntil: 'load' });
+      await page.waitForTimeout(250);
+      const m = await page.evaluate(async (vh) => {
+        const before = window.__shift;
+        const boxes = [...document.querySelectorAll('.ad')];
+        const sized = [];
+        for (const a of boxes) {
+          const ins = a.querySelector('ins.adsbygoogle'); if (!ins) continue;
+          const r0 = ins.getBoundingClientRect();
+          sized.push({ slot: a.dataset.slot, cls: ins.className, fmt: ins.getAttribute('data-ad-format'), fw: ins.getAttribute('data-full-width-responsive'), w0: Math.round(r0.width), h0: Math.round(r0.height), display: getComputedStyle(ins).display });
+          if (!/ppg_/.test(ins.className)) ins.style.height = '250px';   // responsive units: a 250 px ad
+        }
+        await new Promise((ok) => setTimeout(ok, 150));
+        const base0 = window.__shift;
+        boxes.forEach((a) => { const ins = a.querySelector('ins.adsbygoogle'); if (ins) ins.setAttribute('data-ad-status', 'filled'); });
+        await new Promise((ok) => setTimeout(ok, 400));
+        const rect = (e) => { const r = e.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, w: r.width, h: r.height }; };
+        const ads = boxes.filter((a) => a.querySelector('ins.adsbygoogle') && a.getBoundingClientRect().height > 0).map((a) => ({ slot: a.dataset.slot, box: rect(a), ins: rect(a.querySelector('ins.adsbygoogle')) }));
+        const controls = [...document.querySelectorAll('button, input, select, textarea, summary, [role="button"], .tool, a.btn, .foot, .main-nav a, .crumbs a')]
+          .filter((c) => { const r = c.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !c.closest('.ad'); });
+        let dist = Infinity, what = '';
+        for (const a of ads) for (const c of controls) {
+          const A = a.box, B = c.getBoundingClientRect();
+          const d = Math.hypot(Math.max(0, B.left - A.right, A.left - B.right), Math.max(0, B.top - A.bottom, A.top - B.bottom));
+          if (d < dist) { dist = d; what = a.slot + ' ↔ ' + (c.id || c.className || c.tagName); }
+        }
+        let area = 0;
+        for (const a of ads) area += Math.max(0, Math.min(a.ins.right, window.innerWidth) - Math.max(a.ins.left, 0)) * Math.max(0, Math.min(a.ins.bottom, vh) - Math.max(a.ins.top, 0));
+        const q = (sel) => { const e = document.querySelector(sel); return e ? rect(e) : null; };
+        return { sized, ads, dist, what, share: area / (window.innerWidth * vh), shift: window.__shift < 0 ? -1 : window.__shift - base0, loadShift: before,
+          h1: q('h1'), lede: q('.lede'), tool: q('section.tool'), overflow: document.documentElement.scrollWidth - window.innerWidth, boxes: boxes.length };
+      }, height);
+      const slot = (n) => m.ads.find((a) => a.slot === n);
+      if (m.overflow > 1) errs.push('horizontal overflow with delivered ads ' + m.overflow + 'px');
+      if (!m.h1 || m.h1.top < 0 || m.h1.bottom > height) errs.push('heading not in the first screen');
+      if (m.ads.length && m.dist < 150) errs.push(`ad ${m.what} only ${Math.round(m.dist)}px from a control or navigation link`);
+      if (m.shift < 0) errs.push('layout-shift measurement not available');
+      if (m.shift > 0.05) errs.push('layout shift when the ads arrive: ' + m.shift.toFixed(3));
+      if (m.share > 0.2) errs.push('ads take ' + Math.round(m.share * 100) + '% of the first screen');
+      if (GUIDE.test(u)) {
+        const top = slot('lede'), side = slot('side'), want = width >= 850 ? [728, 90] : [320, 100];
+        const s = m.sized.find((x) => x.slot === 'lede');
+        if (!top || !s) errs.push('guide without the slot after the lede');
+        else {
+          if (!/\bppg_top\b/.test(s.cls) || s.fmt !== null || s.fw !== null) errs.push('sized slot must not carry data-ad-format / data-full-width-responsive');
+          if (s.w0 !== want[0] || s.h0 !== want[1] || s.display === 'none') errs.push(`slot after the lede is ${s.w0}×${s.h0} before Google answers, expected ${want.join('×')}`);
+          if (Math.round(top.ins.w) !== want[0] || Math.round(top.ins.h) !== want[1]) errs.push(`slot after the lede is ${Math.round(top.ins.w)}×${Math.round(top.ins.h)}`);
+          if (top.ins.top >= height) errs.push('slot after the lede starts below the first screen: ' + Math.round(top.ins.top));
+          if (width >= 850 && top.ins.bottom > height) errs.push('leaderboard not completely in the first screen: bottom ' + Math.round(top.ins.bottom));
+          if (!m.lede || top.box.top < m.lede.bottom || m.lede.top < m.h1.bottom) errs.push('order heading → lede → ad broken');
+          if (m.lede && m.lede.top > height * 0.6) errs.push('lede starts too low: ' + Math.round(m.lede.top));
+          worst.guides++; if (top.ins.bottom <= height) worst.full++;
+        }
+        if (width >= 1200) {
+          if (!side) errs.push('sidebar slot missing');
+          else if (Math.round(side.ins.w) !== 300 || Math.round(side.ins.h) !== 600 || side.ins.top >= height) errs.push(`sidebar slot ${Math.round(side.ins.w)}×${Math.round(side.ins.h)} at ${Math.round(side.ins.top)}`);
+        } else if (side) errs.push('sidebar slot below 1200 px');
+      } else if (TOOL.test(u)) {
+        if (!m.tool || m.tool.top >= height) errs.push('tool does not start in the first screen');
+        if (m.share > 0) errs.push('ad in the first screen of a tool page');
+        if (m.ads.some((a) => m.tool && a.box.top < m.tool.bottom)) errs.push('ad above or beside the tool');
+      } else if (m.boxes) errs.push('ad box on a page that carries no advertising');
+      if (m.ads.length) { worst.share = Math.max(worst.share, m.share); worst.shift = Math.max(worst.shift, m.shift); worst.dist = Math.min(worst.dist, m.dist); }
+      if (errs.length) bad(`first screen ${width}×${height} ${u}\n   ${errs.join('\n   ')}`);
+      await page.close();
+    }
+    await ctx.close();
+  }
+  console.log(`First screen checked on ${urls.length} pages at 1366×768 and 390×844: slot after the lede completely visible on ${worst.full} of ${worst.guides} guide views, largest ad share ${Math.round(worst.share * 100)}%, largest layout shift on delivery ${worst.shift.toFixed(3)}, nearest control ${Math.round(worst.dist)}px`);
 }
 
 // ---- screenshots ----
