@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+
+const shopLink = readFileSync(new URL('./shop-link.html', import.meta.url), 'utf8');
 // Page shell for patchplayguide.com – head, header, footer, guide/tool article layout and JSON-LD.
 export const SITE = {
   name: 'Patch Play Guide',
@@ -124,7 +127,7 @@ ${opts.body}
 </div>
 <p class="tm">Game titles, platform names and technology names (such as PlayStation, PS5, Xbox, Nintendo Switch 2, Steam Deck, DLSS, FSR and XeSS) are trademarks of their respective owners and are used here only to describe compatibility and settings. Patch Play Guide is independent and not affiliated with, endorsed or sponsored by any game publisher, platform holder or hardware manufacturer. We show no game logos, key art or screenshots.</p>
 <p class="tm">© 2026 AdStern · <a href="/imprint/">Imprint</a> · <a href="/privacy/">Privacy</a></p>
-</div></footer>
+${shopLink}</div></footer>
 </body>
 </html>
 `;
