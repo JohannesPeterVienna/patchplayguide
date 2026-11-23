@@ -213,19 +213,27 @@ export const STATIC_PAGES = [
     description: 'Legal notice for patchplayguide.com under the Austrian E-Commerce Act and Media Act: media owner, business details, trade authority and chamber membership.',
     crumbs: [['Home', '/'], ['Imprint', '/imprint/']],
     body: legal('Legal notice', 'Imprint', `<p>Disclosures pursuant to § 5 of the Austrian E-Commerce Act (E-Commerce-Gesetz, ECG) and § 25 of the Austrian Media Act (Mediengesetz, MedienG).</p>
-<h2 id="owner">Media owner and publisher</h2>
-<p>AdStern – Agentur für digitales Marketing<br>Seilerstätte 8<br>1010 Wien<br>Österreich</p>
-<p>Email: <a href="mailto:office@adstern.com">office@adstern.com</a></p>
-<h2 id="business">Business information</h2>
-<ul>
-<li>Business purpose: advertising agency (Werbeagentur)</li>
-<li>VAT ID: ATU54682507</li>
-<li>Competent trade authority: Magistratisches Bezirksamt für den 1./8. Bezirk, Vienna</li>
-<li>Member of: Vienna Chamber of Commerce (WKO Wien), Fachgruppe Werbung und Marktkommunikation</li>
-<li>Applicable trade law: Gewerbeordnung 1994, available in the <a href="${RIS}" rel="noopener">Austrian Legal Information System (RIS)</a></li>
-</ul>
-<h2 id="line">Editorial line (§ 25 MedienG)</h2>
-<p>Patch Play Guide publishes guides and free browser tools about game updates, graphics settings, console modes and display setup. The content is general information for players. It is independent of game publishers, platform holders and hardware manufacturers.</p>
+<h2 id="owner">Media owner and service provider</h2>
+<p><strong>AdStern – Agentur für digitales Marketing</strong><br>Johannes Peter<br>Seilerstätte 8<br>1010 Wien<br>Austria</p>
+<p><a href="mailto:office@adstern.com">office@adstern.com</a></p>
+<h2 id="business">Business details</h2><dl><dt><strong>Business activity</strong></dt><dd>Advertising agency</dd>
+<dt><strong>VAT identification number</strong></dt><dd>ATU54682507</dd>
+<dt><strong>Austrian trade register number (GISA)</strong></dt><dd>31741743</dd>
+<dt><strong>Registered trade location</strong></dt><dd>Seilerstätte 8, 1010 Wien</dd>
+<dt><strong>Membership</strong></dt><dd>Member of the Fachgruppe Werbung und Marktkommunikation (Advertising and Market Communication trade group)</dd>
+<dt><strong>Supervisory and trade authority</strong></dt><dd><a href="https://www.wien.gv.at/kontakt/mba0108">Magistratisches Bezirksamt für den 1. und 8. Bezirk, Wien</a></dd>
+<dt><strong>Applicable trade regulation</strong></dt><dd><a href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=10007517">Austrian Trade Regulation Act (Gewerbeordnung 1994, RIS)</a></dd></dl>
+<h2 id="line">Editorial policy (§ 25 Austrian Media Act, Mediengesetz)</h2><p>Patch Play Guide explains graphics options, frame rates and display technology in video games and offers tools for comparing settings.</p>
+<h2>Contact form</h2>
+<form action="https://www.viennabyalocal.com/kontakt.php" method="post" accept-charset="UTF-8" aria-label="Contact form" style="display:grid;gap:.85rem;max-width:34rem">
+ <input type="hidden" name="site" value="patchplayguide.com"><input type="hidden" name="language" value="en">
+ <div hidden aria-hidden="true"><label>Website URL <input name="company_url" tabindex="-1" autocomplete="off"></label></div>
+ <label style="display:grid;gap:.25rem">Name (optional)<input name="sender_name" autocomplete="name" type="text" maxlength="120" style="font:inherit;width:100%;box-sizing:border-box;padding:.55em"></label>
+ <label style="display:grid;gap:.25rem">Your email address (required)<input name="email" autocomplete="email" type="email" required maxlength="254" style="font:inherit;width:100%;box-sizing:border-box;padding:.55em"></label>
+ <label style="display:grid;gap:.25rem">Your message (required)<textarea name="message" rows="5" required maxlength="6000" style="font:inherit;width:100%;box-sizing:border-box;padding:.55em"></textarea></label>
+ <p>AdStern uses your details to respond to your enquiry. <a href="/privacy/">Privacy policy</a></p>
+ <button type="submit" style="justify-self:start;padding:.65em 1.2em;font:inherit">Send message</button>
+</form>
 <h2 id="links">External links</h2>
 <p>Links to other websites were checked when the linking page was published or last reviewed. We have no influence on the content of external sites and accept no responsibility for it.</p>
 <h2 id="trademarks">Trademarks</h2>
@@ -238,7 +246,8 @@ export const STATIC_PAGES = [
     crumbs: [['Home', '/'], ['Privacy', '/privacy/']],
     body: legal('Privacy', 'Privacy policy', `<p>This policy explains which personal data is processed when you visit patchplayguide.com, why, on which legal basis, and which rights you have.</p>
 <h2 id="controller">Controller</h2>
-<p>AdStern – Agentur für digitales Marketing, Seilerstätte 8/8, 1010 Wien, Österreich, email <a href="mailto:office@adstern.com">office@adstern.com</a>. Further details are in the <a href="/imprint/">imprint</a>.</p>
+<p>AdStern – Agentur für digitales Marketing, Seilerstätte 8, 1010 Wien, Österreich, email <a href="mailto:office@adstern.com">office@adstern.com</a>. Further details are in the <a href="/imprint/">imprint</a>.</p>
+<h3>Contact form</h3><p>When you submit the form in the legal notice, your email address, message, optional name and the name of the referring website are sent to office@adstern.com through AdStern’s World4You hosting. AdStern uses these details to answer your enquiry. To limit automated submissions, the server counts requests per pseudonymous IP identifier over a 15-minute window.</p>
 <h2 id="hosting">Hosting on GitHub Pages</h2>
 <p>This website consists of static files served by GitHub Pages, a service of GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. To deliver a page, your browser sends technical data to GitHub’s servers – your IP address, the requested address, date and time, browser and operating system, and the referring page. GitHub uses this data to deliver the site and to keep the service secure and may store it in server logs for a limited time. Legal basis: our legitimate interest in providing a secure, working website (Art. 6(1)(f) GDPR). Transfers to the USA are based on the EU–U.S. Data Privacy Framework or on standard contractual clauses. More information: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub General Privacy Statement</a>.</p>
 <h2 id="local">Tool inputs and “My setup” (local storage)</h2>
@@ -265,7 +274,7 @@ export const STATIC_PAGES = [
 <h2 id="email">Email</h2>
 <p>If you email us, we use your email address and message only to answer you and delete them once they are no longer needed for that purpose, unless statutory retention obligations apply (Art. 6(1)(b) and (f) GDPR).</p>
 <h2 id="rights">Your rights</h2>
-<p>You have the right of access (Art. 15 GDPR), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and the right to object to processing based on legitimate interests (Art. 21). You can withdraw consent at any time with effect for the future. Because we do not store personal data about visitors ourselves, most requests concern Google; Google’s own controls are available at <a href="https://myaccount.google.com/data-and-privacy" rel="noopener">myaccount.google.com</a>.</p>
+<p>You have the right of access (Art. 15 GDPR), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and the right to object to processing based on legitimate interests (Art. 21). You can withdraw consent at any time with effect for the future. For requests about Google services, you can also contact Google; Google’s own controls are available at <a href="https://myaccount.google.com/data-and-privacy" rel="noopener">myaccount.google.com</a>.</p>
 <p>You have the right to lodge a complaint with a supervisory authority. In Austria this is the Datenschutzbehörde (Austrian Data Protection Authority), Barichgasse 40–42, 1030 Vienna, <a href="mailto:dsb@dsb.gv.at">dsb@dsb.gv.at</a>, <a href="https://www.dsb.gv.at/" rel="noopener">www.dsb.gv.at</a>. You can also contact the authority in your country of residence.</p>
 <h2 id="us">Notice for residents of U.S. states</h2>
 <p>Some U.S. state privacy laws, such as the California Consumer Privacy Act as amended by the California Privacy Rights Act, may treat the use of advertising cookies for cross-context behavioral advertising as a “sale” or “sharing” of personal information. Where such laws apply, Google’s consent platform offers an option to opt out (“Do Not Sell or Share My Personal Information”), which you can reopen at any time via “Privacy settings”. We do not sell personal information in any other way and do not knowingly collect personal information from children under 16.</p>
