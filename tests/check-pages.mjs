@@ -135,8 +135,8 @@ for (const p of pages) {
     // the "Reviewed" stamp is the last content review and can be older, never newer
     const logDates = [...article.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/g)].map((m) => m[1]).sort();
     const newest = logDates[logDates.length - 1];
-    // first publication = oldest change-log entry: 2026-11-02 for the original pages, 2026-11-18 for the pages added then
-    if (main && (main.datePublished !== logDates[0] || !['2026-11-02', '2026-11-18'].includes(main.datePublished) || main.dateModified !== newest || `2026-11-${String(rev).padStart(2, '0')}` !== newest)) fail(url, 'datePublished/dateModified/Reviewed wrong or not matching the change log');
+    // first publication = oldest change-log entry: 2026-11-02 for the original pages, 2026-11-18 or 2026-11-24 for the pages added then
+    if (main && (main.datePublished !== logDates[0] || !['2026-11-02', '2026-11-18', '2026-11-24'].includes(main.datePublished) || main.dateModified !== newest || `2026-11-${String(rev).padStart(2, '0')}` !== newest)) fail(url, 'datePublished/dateModified/Reviewed wrong or not matching the change log');
     if (newest < '2026-11-18') fail(url, 'page was not part of the 2026-11-18 revision');
     if (isGuide(url) && !/<aside class="try">[\s\S]*?href="\/(tools|reference)\//.test(article)) fail(url, 'guide has no “try it with your values” link to a tool');
     // every source link is https, and every page names at least one linked official source

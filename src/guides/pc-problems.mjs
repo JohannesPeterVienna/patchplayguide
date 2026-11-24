@@ -238,6 +238,18 @@ ${tbl('Reading the two passes', ['What you see', 'Most likely cause', 'What to d
 <p>If you record the passes with a capture tool, the 1% low is the number that shows the pattern: it is dragged down by the long frames of pass 1 and recovers in pass 2, while the average barely moves. PresentMon, an open-source capture tool from Intel that several overlays use, writes the time between two frames as <code>MsBetweenPresents</code> – a compilation hitch is a single very large value in that column. Note the 1% low of two or three first passes and of the repeat passes and compare them.</p>
 ${tryBox('Enter the first passes as setup A and the repeat passes as setup B; the log shows whether the 1% lows really separate.', '/tools/settings-test-log/', 'Open the Settings Test Log')}`);
 revise(shaderStutter, '2026-11-18', 'Two-pass test with a decision table added; link to the Settings Test Log.', [SRC.pm]);
+// 2026-11-24: NVIDIA Auto Shader Compilation (NVIDIA app, beta since March 31, 2026), from NVIDIA's announcement read in full
+addAfter(shaderStutter, 'fix', `<h2 id="asc">New in 2026: NVIDIA Auto Shader Compilation</h2>
+<p>Since March 31, 2026 the NVIDIA app offers a beta feature aimed at the driver-update half of the problem. NVIDIA describes <b>Auto Shader Compilation</b> as rebuilding DirectX 12 shaders while the system is idle, “reducing the frequency of game runtime compilation after driver updates”. It is off by default; you switch it on in the NVIDIA app under Graphics → Global Settings → Shader Cache, where “Compile Now” (behind the three dots) starts the rebuild immediately instead of waiting for idle time. NVIDIA names GeForce Game Ready Driver 595.97 WHQL or newer as a requirement.</p>
+${tbl('What Auto Shader Compilation covers, according to NVIDIA', ['Situation', 'Covered?', 'NVIDIA’s wording or the consequence'], [
+  ['Shaders of a game you have played, after a driver update', 'Yes', 'Rebuilt while the system is idle, or on demand with “Compile Now”'],
+  ['A game downloaded for the first time', 'No', '“You must still generate shaders in-game”'],
+  ['A game update that changes its shaders', 'Not described', 'NVIDIA describes the feature for driver updates only'],
+  ['DirectX 11 or Vulkan games', 'Not described', 'NVIDIA names DirectX 12 shaders'],
+  ['AMD or Intel graphics, consoles', 'No', 'A feature of the NVIDIA app']
+])}
+<p>So the feature shortens the stuttery first session after a <i>driver</i> update; after a <i>game</i> update, the advice above still applies. Because it is a beta, check NVIDIA’s release notes for changes before relying on it.</p>`);
+revise(shaderStutter, '2026-11-24', 'Section added on NVIDIA Auto Shader Compilation (NVIDIA app beta since March 31, 2026): what it covers and what not, from NVIDIA’s announcement.', [SRC.nvasc]);
 
 // --- CPU or GPU bottleneck ---
 addAfter(bottleneck, 'check', `<h2 id="numbers">Worked example: reading the check in numbers</h2>
@@ -280,5 +292,6 @@ ${tbl('Video memory allocated by the feature itself, by output resolution (vendo
   ['FSR Frame Generation 4.0.2', '111 MB', '313 MB', '410 MB', 'AMD, Radeon RX 9070 XT, DirectX 12']
 ], 'Rounded from the vendors’ developer documentation; the vendors call them approximations. They are not measurements of ours and exclude everything the game itself allocates.')}
 <p>Added up for a 4K output: DLSS Quality with the default preset (307 MB) plus DLSS Frame Generation (725 MB) comes to roughly 1 GB by NVIDIA’s own estimates – about an eighth of an 8 GB card before the game has loaded a single texture. At 1440p the same pair needs about 630 MB. If memory is the problem, switching frame generation off frees more than most single quality options.</p>
-${tryBox('The Settings Translator sorts all options by their typical load on video memory and shows what to lower first.', '/tools/settings-translator/?b=vram', 'Open the Settings Translator for a VRAM limit')}`);
+${tryBox('The Settings Translator sorts all options by their estimated load on video memory (an editorial estimate) and shows what to test lowering first.', '/tools/settings-translator/?b=vram', 'Open the Settings Translator for a VRAM limit')}`);
 revise(vram, '2026-11-18', 'VRAM arithmetic added: size of screen buffers and block-compressed textures, and the memory NVIDIA and AMD document for upscaling and frame generation.', [SRC.dlss, SRC.dlssg, SRC.fsr, SRC.fsr4, SRC.fsrfg, SRC.fsrfg4, SRC.bc]);
+revise(vram, '2026-11-24', 'Microsoft’s block-compression page read in full: the bytes per block (BC1 8, BC3 and BC7 16) are confirmed. The Settings Translator link now says that its levels are an editorial estimate.');

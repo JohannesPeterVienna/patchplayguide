@@ -13,8 +13,9 @@ export function tryBox(text, href, label) {
 }
 // source entry with the date it was read (all sources added in the November 18, 2026 revision)
 export const src = (label, url, note) => [label, url, (note ? note + '; ' : '') + 'accessed November 18, 2026'];
-// official page that could not be opened from the build environment: the passage comes from a search-engine extract (same wording as the name map)
-export const srcX = (label, url, note) => [label, url, (note ? note + '; ' : '') + 'checked on November 18, 2026 via search excerpts of the official page; wording may differ'];
+// official page read in full on November 24, 2026 (until then several of these were known only from search-engine
+// extracts; on that day every one of them was opened and its wording checked against our text)
+export const read24 = (label, url, note) => [label, url, (note ? note + '; ' : '') + 'read in full on November 24, 2026'];
 // official documents used across several pages
 const GH = 'https://github.com/';
 export const SRC = {
@@ -30,26 +31,37 @@ export const SRC = {
   xessfg: src('Intel – XeSS Frame Generation Developer Guide', GH + 'intel/xess/blob/main/doc/xess_fg_developer_guide_english.md', 'input frame-rate targets, requirements'),
   xell: src('Intel – Xe Low Latency (XeLL) Developer Guide', GH + 'intel/xess/blob/main/doc/xell_developer_guide_english.md'),
   pm: src('Intel – PresentMon console application, CSV columns', GH + 'GameTechDev/PresentMon/blob/main/README-ConsoleApplication.md', 'definitions of MsBetweenPresents, MsGPUBusy and other columns'),
-  psres: srcX('PlayStation Support – How to change PS5 console resolution', 'https://www.playstation.com/en-us/support/hardware/ps5-4k-resolution-guide/', 'Video Output settings: 120 Hz output, VRR'),
-  psvrr: srcX('PlayStation Blog – Variable Refresh Rate support for PS5', 'https://blog.playstation.com/2022/04/25/variable-refresh-rate-support-for-ps5-is-rolling-out-this-week/'),
-  pspresets: srcX('PlayStation Support – How to customize game presets on PS5 consoles', 'https://www.playstation.com/en-us/support/games/how-to-customize-game-presets-on-ps5-consoles/'),
-  pssr: srcX('PlayStation Blog – Upgraded PSSR upscaler is coming to PS5 Pro', 'https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/'),
-  xb120: srcX('Xbox Support – Set up 4K gaming at 120 Hz on Xbox Series X', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/4k-gaming-at-120hz'),
-  xbtv: srcX('Xbox Support – How to change the TV display settings on your Xbox', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/change-tv-display-resolution'),
-  ninspecs: srcX('Nintendo – Nintendo Switch 2 tech specs', 'https://www.nintendo.com/us/gaming-systems/switch-2/tech-specs/'),
-  ninset: srcX('Nintendo Support – Nintendo Switch 2 System Settings overview', 'https://www.nintendo.com/en-gb/Support/Nintendo-Switch-2/Nintendo-Switch-2-System-Settings-Overview-2892722.html'),
-  deck: srcX('Valve – Steam Deck tech specs', 'https://www.steamdeck.com/en/tech', 'screen, refresh rate and battery capacity of both models'),
-  freesync: srcX('AMD – AMD FreeSync Technology', 'https://www.amd.com/en/products/graphics/technologies/freesync.html', 'tier requirements'),
-  msrefresh: srcX('Microsoft Support – Change the refresh rate on your monitor in Windows', 'https://support.microsoft.com/en-us/windows/hardware/display-graphics/change-the-refresh-rate-on-your-monitor-in-windows')
+  psres: read24('PlayStation Support – How to change PS5 console resolution', 'https://www.playstation.com/en-us/support/hardware/ps5-4k-resolution-guide/', 'Video Output settings: 120 Hz output, VRR'),
+  psvrr: read24('PlayStation Blog – Variable Refresh Rate support for PS5', 'https://blog.playstation.com/2022/04/25/variable-refresh-rate-support-for-ps5-is-rolling-out-this-week/'),
+  pspresets: read24('PlayStation Support – How to customize game presets on PS5 consoles', 'https://www.playstation.com/en-us/support/games/how-to-customize-game-presets-on-ps5-consoles/'),
+  pssr: read24('PlayStation Blog – Upgraded PSSR upscaler is coming to PS5 Pro (February 27, 2026)', 'https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/'),
+  pssr2: read24('PlayStation Blog – Upgraded PSSR rolling out to Silent Hill f, Monster Hunter Wilds, Final Fantasy VII Rebirth, Crimson Desert, and more (March 16, 2026)', 'https://blog.playstation.com/2026/03/16/upgraded-pssr-rolling-out-to-silent-hill-f-monster-hunter-wilds-final-fantasy-vii-rebirth-crimson-desert-and-more/', 'system update with the upgraded PSSR'),
+  qssr: read24('PlayStation Blog – AI upscaling is coming to PS5 (October 1, 2026)', 'https://blog.playstation.com/2026/10/01/ai-upscaling-is-coming-to-ps5/', 'introduction of QSSR on the standard PS5'),
+  qssr2: read24('PlayStation Blog – QSSR arrives in Marvel’s Spider-Man 2, Control Resonant, The Finals, Arc Raiders, No Man’s Sky, and Hell Let Loose: Vietnam (November 13, 2026)', 'https://blog.playstation.com/2026/11/13/qssr-arrives-in-marvels-spider-man-2-control-resonant-the-finals-arc-raiders-and-hell-let-loose-vietnam/'),
+  xb120: read24('Xbox Support – Set up 4K gaming at 120 Hz on Xbox Series X', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/4k-gaming-at-120hz'),
+  xbtv: read24('Xbox Support – How to change the TV display settings on your Xbox', 'https://support.xbox.com/en-US/help/hardware-network/display-sound/change-tv-display-resolution'),
+  ninspecs: read24('Nintendo – Nintendo Switch 2 tech specs', 'https://www.nintendo.com/us/gaming-systems/switch-2/tech-specs/', 'screen, video output, battery life'),
+  ninset: read24('Nintendo Support – Nintendo Switch 2 System Settings overview', 'https://www.nintendo.com/en-gb/Support/Nintendo-Switch-2/Nintendo-Switch-2-System-Settings-Overview-2892722.html'),
+  deck: read24('Valve – Steam Deck OLED tech specs', 'https://www.steamdeck.com/en/tech', 'screen, refresh rate, APU power and battery of the OLED model'),
+  decklcd: read24('Valve – Steam Deck LCD tech specs', 'https://www.steamdeck.com/en/tech/deck', 'screen, refresh rate, APU power and battery of the LCD model'),
+  freesync: read24('AMD – AMD FreeSync Technology', 'https://www.amd.com/en/products/graphics/technologies/freesync.html', 'tier table and the FAQ on low framerate compensation'),
+  msrefresh: read24('Microsoft Support – Change the refresh rate on your monitor in Windows', 'https://support.microsoft.com/en-us/windows/hardware/display-graphics/change-the-refresh-rate-on-your-monitor-in-windows')
 };
-SRC.bc = srcX('Microsoft Learn – Texture block compression in Direct3D 11', 'https://learn.microsoft.com/en-us/windows/win32/direct3d11/texture-block-compression-in-direct3d-11', 'bytes per 4×4 pixel block for BC1 to BC7');
-SRC.afmf = srcX('AMD – AMD Fluid Motion Frames', 'https://www.amd.com/en/products/software/adrenalin/afmf.html', 'requirements of the driver-level feature');
-SRC.smooth = srcX('NVIDIA – NVIDIA app update: Smooth Motion for GeForce RTX 40 Series', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-global-dlss-overrides-rtx-40-series-smooth-motion/');
+SRC.bc = read24('Microsoft Learn – Texture block compression in Direct3D 11', 'https://learn.microsoft.com/en-us/windows/win32/direct3d11/texture-block-compression-in-direct3d-11', 'bytes per 4×4 pixel block for BC1 to BC7');
+SRC.afmf = read24('AMD – AMD Fluid Motion Frames', 'https://www.amd.com/en/products/software/adrenalin/afmf.html', 'requirements of the driver-level feature');
+SRC.smooth = read24('NVIDIA – NVIDIA app update: Smooth Motion for GeForce RTX 40 Series', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-global-dlss-overrides-rtx-40-series-smooth-motion/');
 SRC.fsrfg4 = src('AMD – FSR Frame Generation 4.0.2 documentation', 'https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/main/Kits/FidelityFX/docs/techniques/frame-interpolation-ml.md', 'memory use per output resolution');
 SRC.fsrsdk = src('AMD – FSR SDK 2.4.0 (README)', 'https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK', 'list of techniques, including FSR Ray Regeneration');
 SRC.dlssrr = src('NVIDIA – Streamline programming guide for DLSS Ray Reconstruction', 'https://github.com/NVIDIA-RTX/Streamline/blob/main/docs/ProgrammingGuideDLSS_RR.md');
-SRC.ninfeat = srcX('Nintendo – Nintendo Switch 2 system features and play modes', 'https://www.nintendo.com/us/gaming-systems/switch-2/features/');
-SRC.xbwire = srcX('Xbox Wire – You’re Ready to Power Your Dreams – Is Your TV?', 'https://news.xbox.com/en-us/2020/11/06/is-your-tv-ready-to-power-your-dreams/', 'Video modes, variable refresh rate');
+SRC.ninfeat = read24('Nintendo – Nintendo Switch 2 system features and play modes', 'https://www.nintendo.com/us/gaming-systems/switch-2/features/', 'note on 4K, HDR and VRR in TV mode');
+SRC.ninhist = read24('Nintendo Support – System Update History for Nintendo Switch 2', 'https://en-americas-support.nintendo.com/app/answers/detail/a_id/68526/', 'versions 22.0.0 (Handheld Mode Boost) and 23.0.0 (VRR in TV mode)');
+SRC.ninboost = read24('Nintendo Support – How to Use Handheld Mode Boost on Nintendo Switch 2', 'https://en-americas-support.nintendo.com/app/answers/detail/a_id/68475/');
+SRC.nindock = read24('Nintendo Support – How to Update the Nintendo Switch 2 Dock Firmware', 'https://en-americas-support.nintendo.com/app/answers/detail/a_id/68354/');
+SRC.steamos32 = read24('Valve – The SteamOS 3.2 Update (May 26, 2022)', 'https://store.steampowered.com/news/app/1675200/view/3297210455204349335', 'refresh-rate slider from 40 to 60 Hz and the matching frame limits');
+SRC.deckfps = read24('Valve – Average framerate data is now available for games on Steam Deck (November 10, 2026)', 'https://store.steampowered.com/news/app/593110/view/685269801333948419');
+SRC.nvasc = read24('NVIDIA – NVIDIA app update adds DLSS 4.5 Dynamic Multi Frame Generation (March 31, 2026)', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-dlss-4-5-dynamic-multi-frame-generation-available-now/', 'Auto Shader Compilation beta, Multi Frame Generation up to 6×');
+SRC.msgfx = read24('Microsoft DirectX Developer Blog – Navigating the redesigned Graphics settings page', 'https://devblogs.microsoft.com/directx/navigating-the-redesigned-graphics-settings-page/');
+SRC.xbwire = read24('Xbox Wire – You’re Ready to Power Your Dreams – Is Your TV?', 'https://news.xbox.com/en-us/2020/11/06/is-your-tv-ready-to-power-your-dreams/', 'Video modes, variable refresh rate');
 
 // ---- helpers for dated revisions of an existing guide ----
 /** Insert a section after the section whose h2 has the given id. */

@@ -10,7 +10,7 @@ export const SITE = {
   ga: 'G-T00HRG2YVF',
   reviewedIso: '2026-11-02',
   reviewedText: 'November 2, 2026',
-  v: '20261118b'
+  v: '20261124a'
 };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 /** '2026-11-18' -> 'November 18, 2026' */

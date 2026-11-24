@@ -257,6 +257,7 @@ ${tbl('DLSS Frame Generation: cost per frame and memory, as published by NVIDIA'
 ${tryBox('Enter your rendered frame rate, the multiplier and your display’s refresh rate to see shown versus rendered frame times.', '/tools/frame-time-calculator/?fps=60&hz=120&fg=2', 'Open the Frame Time Calculator with this example')}`);
 swap(frameGen, 'Thresholds are broad, commonly cited guidance – not measurements. Vendors themselves recommend a solid base frame rate.', 'Thresholds are broad guidance – not measurements. Intel’s documentation names 40 fps as the minimum and 60 fps as the recommended input frame rate for XeSS Frame Generation.');
 revise(frameGen, '2026-11-18', 'Version list replaced by a sourced table of in-game and driver-level frame generation; worked example with NVIDIA’s published cost and memory figures and AMD’s and Intel’s base-frame-rate guidance added.', [SRC.dlssg, SRC.fsrfg, SRC.fsrfg4, SRC.fsrsc, SRC.xessfg, SRC.afmf, SRC.smooth]);
+revise(frameGen, '2026-11-24', 'AMD’s and NVIDIA’s product pages for the driver-level features read in full (wording confirmed); the name table now includes NVIDIA’s 5× and 6× Multi Frame Generation modes for RTX 50 Series cards (March 31, 2026).', [SRC.nvasc]);
 
 // --- DLSS vs FSR vs XeSS ---
 const modeRow = (fam, name) => { const m = R.FAMILIES[fam].modes.find((x) => x[0] === name); if (!m) return '–'; const a = R.internal(3840, 2160, m[1]), b = R.internal(2560, 1440, m[1]); return `${m[1]}× · ${a.w}×${a.h} · ${b.w}×${b.h}`; };

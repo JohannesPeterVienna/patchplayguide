@@ -13,6 +13,7 @@ Each old file below exists in `docs/` as a small `noindex` page with `canonical`
 | /verify-steam-files.html | /guides/shader-compilation-stutter-after-update/ (Steam files and caches after an update) |
 | /settings-test-sheet.html | /tools/settings-test-log/ (test log with printable worksheet; since 2026-11-18) |
 | /guides/after-update-retest-routine/ | /guides/how-to-test-a-settings-change/ (guide merged on 2026-11-18; the routine is the section `#after-update`) |
+| /guides/ps5-pro-enhanced-games/ | /reference/console-upgrades/ (guide replaced on 2026-11-24 by the reference with per-game statements from official sources; its explanations moved there) |
 
 The old in-page tools are replaced by: Patch Desk → /tools/patch-decoder/, Frame Lab / Test Queue → /tools/settings-translator/, /tools/bottleneck-finder/ and /guides/how-to-test-a-settings-change/.
 

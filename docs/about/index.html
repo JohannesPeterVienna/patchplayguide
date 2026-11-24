@@ -25,13 +25,13 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/ppg.css?v=20261118b">
+<link rel="stylesheet" href="/assets/css/ppg.css?v=20261124a">
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',false);window['ga-disable-G-T00HRG2YVF']=true;</script>
 <script data-ads-loader>if(!window.PPG_NO_GOOGLE){(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7811071715414905';s.crossOrigin='anonymous';document.head.appendChild(s);})();}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patchplayguide.com/"},{"@type":"ListItem","position":2,"name":"About","item":"https://patchplayguide.com/about/"}]}]}</script>
-<script src="/assets/js/consent.js?v=20261118b" defer></script>
-<script src="/assets/js/stats-window.js?v=20261118b" defer></script>
-<script src="/assets/js/site.js?v=20261118b" defer></script>
+<script src="/assets/js/consent.js?v=20261124a" defer></script>
+<script src="/assets/js/stats-window.js?v=20261124a" defer></script>
+<script src="/assets/js/site.js?v=20261124a" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -43,9 +43,9 @@
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">About</li></ol></nav>
 <article class="doc legal"><p class="kicker">About &amp; method</p><h1>About Patch Play Guide</h1><p class="lede">Patch Play Guide is a set of free calculators, a sourced map of setting names and guides about game graphics settings, console modes and display setup – for PC, PS5, Xbox, Switch 2 and handheld PCs. It is built for players who want to understand what a setting does and check it on their own system rather than copy a list.</p>
 <h2 id="who">Who publishes the site</h2>
-<p>The site is published by AdStern, an advertising agency based in Vienna, Austria; the full details are in the <a href="/imprint/">imprint</a>. AdStern decides what is published and is responsible for it. Patch Play Guide is financed by advertising on the guide, tool and overview pages; the imprint, privacy policy and contact page carry no advertising. No game publisher, platform holder or hardware manufacturer pays for coverage, and the pages contain no affiliate links. We are not affiliated with any company whose products we mention.</p>
+<p>The site is published by AdStern, an advertising agency based in Vienna, Austria; the full details are in the <a href="/imprint/">imprint</a>. AdStern decides what is published and is responsible for it. Patch Play Guide is financed by advertising on the guide, tool and reference pages. The home page, the two overview pages (all guides, all tools), this page, the imprint, the privacy policy and the contact page have no ad placements. No game publisher, platform holder or hardware manufacturer pays for coverage, and the pages contain no affiliate links. We are not affiliated with any company whose products we mention.</p>
 <h2 id="method">How pages and tools are made</h2>
-<p>There is no editorial team and no test lab behind this site, and we do not pretend otherwise. Pages and tools are written for this site with the help of AI tools. Each factual statement is then checked against a source, and what cannot be tied to a source is rewritten more cautiously or removed. The steps are:</p>
+<p>There is no editorial team and no test lab behind this site, and we do not pretend otherwise. Pages and tools are written for this site with the help of AI tools. Each factual statement is then checked against a source, and what cannot be tied to a source is removed or clearly marked as our own judgment – the load levels in the <a href="/tools/settings-translator/">Settings Translator</a> are labeled as an editorial estimate, and advice in the guides is worded as our suggestion. The steps are:</p>
 <ol>
 <li><b>One question per page.</b> A page starts from something a player actually asks – “what does Balanced mode render on my monitor?” – not from a product announcement.</li>
 <li><b>Sources first.</b> Facts are taken from documents published by the companies that make the products: developer guides from NVIDIA, AMD and Intel, support and specification pages from Microsoft, Sony, Nintendo and Valve. Each page lists its sources with the date they were read.</li>
@@ -58,20 +58,21 @@
 <li><b>Vendor figures</b> are published by a manufacturer – for example the scale factor of an upscaler preset or the memory a feature allocates. They are labeled with the vendor’s name and linked.</li>
 <li><b>Invented examples</b> show how a method works. They are always labeled as invented or constructed.</li>
 </ul>
-<p>We do not publish frame rates, percentages or comparisons measured by us, because we have no test hardware. Where the Settings Translator and some guides describe what an option costs, they use qualitative levels – minimal, low, moderate, high – and call them typical. If we ever publish measurements, each will state the exact hardware, software versions, scene and method.</p>
+<p>We do not publish frame rates, percentages or comparisons measured by us, because we have no test hardware. Where the Settings Translator describes what an option costs, it uses qualitative levels – minimal, low, moderate, high – and labels them as an editorial estimate: our judgment, not a measurement and not taken from a source. If we ever publish measurements, each will state the exact hardware, software versions, scene and method.</p>
 <h2 id="sources">How sources are handled</h2>
-<p>Developer documentation that vendors publish in their public repositories was read in full. Some official support and product pages could not be opened directly from our build environment; for those, the relevant passage was taken from a search-engine extract of the official page, and the entry is worded more cautiously. The <a href="/reference/setting-names/#sources">setting-name map</a> marks for every source which of the two applies. Menu paths and requirements change with system and driver updates, so every source carries the date it was read.</p>
+<p>Every source is read in full before a page relies on it. Developer documentation that vendors publish in their public repositories was read on November 18, 2026. Some official support, product and news pages could at first not be opened from our build environment and were known to us only from search-engine extracts; those pages said so. On November 24, 2026 all of them were opened and read in full, the statements that rested on them were matched to the official wording, and outdated or wrong ones were corrected – for example AMD’s FreeSync tier requirements and the CPU listed for the Xbox Series S. Menu paths and requirements change with system and driver updates, so every source carries the date it was read.</p>
 <h2 id="patches">How we handle patch notes</h2>
-<p>Patch notes belong to their publishers. We never copy them. The <a href="/tools/patch-decoder/">Patch Decoder</a> works with a clearly <b>fictional</b> example game and with lines you paste yourself from the official source; the sorting happens in your browser. We do not publish summaries of specific real-world patches, because each would have to be verified line by line against the official notes and kept up to date with hotfixes. The guides instead teach how to read any patch note and how to <a href="/guides/how-to-test-a-settings-change/#after-update">re-test after an update</a>.</p>
+<p>Patch notes belong to their publishers. We never copy them. The <a href="/tools/patch-decoder/">Patch Decoder</a> works with a clearly <b>fictional</b> example game and with lines you paste yourself from the official source; the sorting happens in your browser. We do not summarize individual patch notes line by line. One page comes close, and it works differently: the <a href="/reference/console-upgrades/">console upgrade reference</a> summarizes, game by game, what developers and platform holders have officially stated about PS5 Pro, QSSR and Nintendo Switch 2 upgrades – in our own words, with the date and a link for every entry, and marked when a statement was made before the release. These are the makers’ claims, not our tests. The guides teach how to read any patch note and how to <a href="/guides/how-to-test-a-settings-change/#after-update">re-test after an update</a>.</p>
 <h2 id="tools">How the tools work</h2>
 <ul>
 <li><b>Upscaler Resolution Calculator</b> divides your output resolution by the per-axis factors that NVIDIA, AMD and Intel document for each preset.</li>
 <li><b>Frame Time Calculator</b> is pure arithmetic: frame time, refreshes per frame, position in a VRR window, shown versus rendered frames.</li>
-<li><b>Settings Test Log</b> summarizes runs you type in and calls a difference clear only when the runs of the two setups do not overlap; the page explains how often that happens by chance.</li>
+<li><b>Settings Test Log</b> summarizes runs you type in and calls two setups separated only when their runs do not overlap; overlapping runs are reported as inconclusive, not as equal. The page explains how often a separation happens by chance.</li>
 <li><b>Bottleneck Finder</b> is a decision tree; the complete tree is printed on its page, and each result links to the guide that explains it.</li>
-<li><b>Settings Translator</b> rates twenty-five common options with qualitative GPU, CPU and VRAM levels and ranks them with a simple published formula for your bottleneck.</li>
+<li><b>Settings Translator</b> rates twenty-five common options with qualitative GPU, CPU and VRAM levels – an editorial estimate – and ranks them with a simple published formula for your bottleneck.</li>
 <li><b>Patch Decoder</b> sorts lines with a published set of word rules, in a fixed order, into a change type (+, ~, −), a category and platforms.</li>
 <li><b>Setting-name map</b> lists names with one sentence each and a numbered source.</li>
+<li><b>Console upgrades by game</b> lists official statements about PS5 Pro, QSSR and Switch 2 upgrades, one entry per game and console, each with date and source.</li>
 </ul>
 <p>The logic of all tools is covered by automated tests: for example, that every answer in the finder leads somewhere, that the calculators reproduce the vendors’ own example resolutions, and that the decoder sorts reference lines correctly.</p>
 <h2 id="checks">How pages are checked – and corrected</h2>
@@ -80,6 +81,7 @@
 <p>Corrections that concern the site as a whole are listed here once instead of on every page.</p>
 <ul>
 <li><time datetime="2026-11-04">2026-11-04</time> Author line corrected on all guide and tool pages: they now name the publisher, AdStern. There is no separate editorial team.</li>
+<li><time datetime="2026-11-24">2026-11-24</time> This page said that advertising runs on the overview pages; the home page and the two overview pages have no ad placements. Corrected.</li>
 </ul>
 <h2 id="limits">What the site cannot do</h2>
 <p>We cannot see your system. A calculator can tell you what a mode renders and a guide what usually helps; only a test on your hardware tells you what helps you. We do not give advice on hardware purchases, modding, cheating or circumventing platform rules.</p>
@@ -88,7 +90,7 @@
 <h2 id="data">Your data</h2>
 <p>Everything you enter in the tools, including “My setup”, stays in your browser. There is no account. Advertising and analytics are described in the <a href="/privacy/">privacy policy</a>.</p>
 <h2 id="history">History</h2>
-<p>Patch Play Guide started as a single page with local tools for organizing patch notes and comparing frame rates. In November 2026 it was rebuilt with guides and three tools. On November 18, 2026 the calculators, the test log and the setting-name map were added, every guide received a worked example with sources, and two overlapping guides on testing were merged into one.</p><p class="small">Last updated: November 18, 2026</p></article>
+<p>Patch Play Guide started as a single page with local tools for organizing patch notes and comparing frame rates. In November 2026 it was rebuilt with guides and three tools. On November 18, 2026 the calculators, the test log and the setting-name map were added, every guide received a worked example with sources, and two overlapping guides on testing were merged into one. On November 24, 2026 all official pages that had only been known from search extracts were read in full, the console guides were rewritten around what the makers state, and the guide on PS5 Pro enhanced games became the console upgrade reference.</p><p class="small">Last updated: November 24, 2026</p></article>
 </div></main>
 <footer class="foot"><div class="wrap">
 <div class="foot-grid">

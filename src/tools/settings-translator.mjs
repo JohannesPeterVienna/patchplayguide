@@ -1,10 +1,10 @@
 import { createRequire } from 'node:module';
-import { tbl, fig } from '../h.mjs';
+import { tbl, fig, SRC } from '../h.mjs';
 const require = createRequire(import.meta.url);
 const T = require('../assets/js/translator-core.js');
 
 const toolHtml = `<section class="tool" id="translator" aria-labelledby="tr-h">
-<div class="tool-head"><h2 id="tr-h">Settings Translator</h2><p class="tool-sub">Typical, qualitative load · not benchmark numbers</p></div>
+<div class="tool-head"><h2 id="tr-h">Settings Translator</h2><p class="tool-sub">Editorial estimate · qualitative load levels, not measured and not from a source</p></div>
 <p id="tr-setup" class="tool-setup"></p>
 <fieldset class="bneck"><legend>My bottleneck is…</legend><div class="seg">
 <label><input type="radio" name="tr-b" value="gpu"><span>GPU</span></label>
@@ -26,9 +26,9 @@ const lists = tbl('Lower-first lists generated from the matrix', ['Bottleneck', 
     T.lowerFirst(b, 5).map((o) => o.name).join(' → '),
     T.OPTIONS.filter((o) => !o.special && o[b] === 0).map((o) => o.name).slice(0, 4).join(', ') || '–'
   ]),
-  'This table is built from the same data as the tool above, so the two can never disagree.');
+  'Built from the same editorial estimate as the tool above, so the two can never disagree.');
 
-const levels = tbl('What the load levels mean', ['Level', 'Meaning', 'Example'], [
+const levels = tbl('What the load levels mean (editorial estimate)', ['Level', 'Meaning', 'Example'], [
   ['minimal', 'Usually no measurable relief when lowered on current hardware', 'Anisotropic filtering on GPU time'],
   ['low', 'Small relief; worth it only when you need the last few frames', 'Post-processing effects'],
   ['moderate', 'Clear relief in many games, especially at the top preset', 'Shadow quality, ambient occlusion'],
@@ -53,17 +53,17 @@ export default {
   slug: 'settings-translator',
   short: 'Settings Translator',
   title: 'Settings Translator – which graphics option to lower first',
-  description: 'An interactive matrix of 20 common graphics options with their typical GPU, CPU and VRAM load. Pick your bottleneck to see which settings to lower first.',
+  description: 'A matrix of 25 graphics options with our editorial estimate of their GPU, CPU and VRAM load. Pick your bottleneck to see what to test lowering first.',
   kicker: 'Tool · graphics settings',
   h1: 'Settings Translator: what each option costs, and what to lower first',
-  lede: 'Graphics menus use different names for the same ideas, and rarely say what an option costs. The Settings Translator lists twenty-five common options with the typical load they put on the graphics card (GPU), the processor (CPU) and video memory (VRAM). Choose what limits your system and the options that usually help most with the least visible loss move to the top.',
+  lede: 'Graphics menus use different names for the same ideas, and rarely say what an option costs. The Settings Translator lists twenty-five common options with our editorial estimate of the load they put on the graphics card (GPU), the processor (CPU) and video memory (VRAM). The estimate is a judgment, not a measurement and not taken from a source. Choose what limits your system, and the options worth testing first move to the top.',
   scripts: ['toolkit.js', 'translator-core.js', 'translator.js'],
   toolHtml,
   sections: [
     `<h2 id="read">How to read the matrix</h2>
-<p>Every card shows one option and three meters: <b>GPU</b>, <b>CPU</b> and <b>VRAM</b>. Each meter has four steps – minimal, low, moderate, high – and describes the <i>typical extra load of the higher setting</i> compared with a lower one in current PC games. “Visible loss” estimates how noticeable a one- or two-step reduction usually is: subtle, noticeable or obvious.</p>
+<p>Every card shows one option and three meters: <b>GPU</b>, <b>CPU</b> and <b>VRAM</b>. Each meter has four steps – minimal, low, moderate, high – and states our estimate of the <i>extra load of the higher setting</i> compared with a lower one in current PC games. “Visible loss” estimates how noticeable a one- or two-step reduction usually is: subtle, noticeable or obvious.</p>
 ${levels}
-<p>These are deliberately qualitative, conservative ratings. They summarize long-standing, widely documented behavior – for example that render resolution is the strongest GPU lever and that texture quality mostly fills video memory – rather than measurements from one game on one PC. Real costs differ between engines, and one game’s “High” shadows can be another game’s “Ultra”. Use the matrix to decide <i>what to test first</i>, then confirm the effect in your own game with a short before-and-after test.</p>`,
+<p><b>These levels are an editorial estimate.</b> They are the publisher’s judgment of how options behave in current PC games – for example that render resolution is the strongest GPU lever and that texture quality mostly fills video memory. They are not measurements, and no vendor publishes such a table, so they have no source. Where a vendor documents a fact that touches an option – the scale factor of an upscaler preset, the memory that frame generation allocates – the linked guide and the <a href="/reference/setting-names/">setting-name map</a> cite it, but the levels themselves are not derived from those documents. Real costs differ between engines, and one game’s “High” shadows can be another game’s “Ultra”. Use the matrix to decide <i>what to test first</i>, then measure the effect in your own game with a short before-and-after test.</p>`,
     `<h2 id="first">How the lower-first list is chosen</h2>
 <p>When you pick a bottleneck, every option gets a simple score: three times its load on that resource, minus its visible loss. Options that put a moderate or high load on the bottleneck and do not have an obvious visual cost are marked <b>Lower first</b>, up to five of them. Frame generation is excluded on purpose – it is not something you lower to gain performance, and it has its own <a href="/guides/frame-generation-explained/">guide</a>.</p>
 ${lists}
@@ -79,18 +79,16 @@ ${pipe}
 <p>Handheld PCs such as the Steam Deck share one small power budget between CPU and GPU. Render resolution, an upscaler mode and a frame cap matter more there than any single effect, as explained in <a href="/guides/steam-deck-frame-cap-tdp-battery/">Steam Deck: frame cap, TDP and battery basics</a>. If you save your platform under <a href="/#my-setup">My setup</a>, the translator shows a matching note above the matrix. Your choice stays in your browser.</p>`
   ],
   faq: [
-    ['Are the load levels measured?', 'No. They are qualitative ratings of typical behavior in current PC games, chosen conservatively. They tell you which options are worth testing first, not how many frames you will gain.'],
+    ['Are the load levels measured?', 'No. They are an editorial estimate – our qualitative judgment of how options behave in current PC games, not measured and not taken from a source. They suggest which options to test first, not how many frames you will gain.'],
     ['Why is texture quality not on the GPU lower-first list?', 'As long as textures fit into video memory, higher texture quality costs little GPU time. It becomes the first lever only when VRAM is full.'],
     ['Why is frame generation marked as a special case?', 'Frame generation increases the displayed frame rate, but input still follows the rendered frames and latency rises slightly. It is not an option you lower to relieve a bottleneck.'],
     ['What if my game uses different names?', 'The “also called” line under each option lists common alternatives, and the search field matches them. If an option is missing, look for the closest description of what it does.'],
     ['Is my bottleneck choice stored?', 'Only in your browser’s local storage, so the page remembers it next time. Nothing is sent to us.']
   ],
-  sources: [
-    ['NVIDIA DLSS technology overview', 'https://www.nvidia.com/en-us/geforce/technologies/dlss/', 'what the upscaler and frame generation do'],
-    ['AMD GPUOpen', 'https://gpuopen.com/', 'documentation of FidelityFX techniques such as FSR and ambient occlusion'],
-    ['PCGamingWiki', 'https://www.pcgamingwiki.com/', 'which settings individual PC games expose'],
-    ['Game developers’ own PC settings descriptions', null, 'many games describe the cost of each option in the menu; trust those over general tables']
+  sources: [SRC.dlss, SRC.fsr, SRC.dlssg,
+    ['Game developers’ own PC settings descriptions', null, 'many games describe the cost of each option in the menu; trust those over this estimate']
   ],
-  changelog: [['2026-11-02', 'First published.'], ['2026-11-18', 'Five options added (native-resolution anti-aliasing, global illumination, ray-traced shadows, texture streaming budget, hair and cloth); views can be linked, the list can be copied and printed.']],
+  sourcesNote: 'The vendor documents back the factual descriptions of upscaling, native-resolution anti-aliasing and frame generation (scale factors, memory use). The load levels and visible-loss ratings in the matrix are an editorial estimate and have no source.',
+  changelog: [['2026-11-02', 'First published.'], ['2026-11-18', 'Five options added (native-resolution anti-aliasing, global illumination, ray-traced shadows, texture streaming budget, hair and cloth); views can be linked, the list can be copied and printed.'], ['2026-11-24', 'Load levels labeled as an editorial estimate throughout – in the tool, the explanation and the FAQ – because they are our judgment and have no source; sources narrowed to the vendor documents behind the factual descriptions; option count in the description corrected to 25.']],
   related: ['bottleneck-finder', 'setting-names', 'graphics-settings-explained']
 };

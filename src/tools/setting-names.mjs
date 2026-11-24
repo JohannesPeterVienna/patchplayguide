@@ -10,7 +10,7 @@ const opts = (map) => Object.keys(map).map((k) => `<option value="${k}">${esc(ma
 const item = (r) => `<li id="${r.id}" class="nm" data-c="${r.c}" data-v="${r.v}"><p class="nm-h"><b>${esc(r.n)}</b><span class="tag">${esc(N.VENDORS[r.v])}</span></p><p class="nm-g">${esc(r.g)} · ${esc(N.CATS[r.c].replace(/ \(.*/, ''))}</p><p>${esc(r.d)}</p><p class="nm-s">Source: ${r.s.map((id) => `<a href="#src-${id}">[${srcNo(id)}]</a>`).join(' ')}</p></li>`;
 
 const toolHtml = `<section class="tool" id="names" aria-labelledby="nm-h">
-<div class="tool-head"><h2 id="nm-h">Setting-name map</h2><p class="tool-sub">${N.ROWS.length} names · ${srcIds.length} official sources · compiled November 18, 2026</p></div>
+<div class="tool-head"><h2 id="nm-h">Setting-name map</h2><p class="tool-sub">${N.ROWS.length} names · ${srcIds.length} official sources · compiled November 18, 2026, checked November 24, 2026</p></div>
 <label for="nm-q">Search a name you see in a menu (for example “Balanced”, “Anti-Lag”, “120 Hz”)<input type="search" id="nm-q" autocomplete="off"></label>
 <div class="filters">
 <label for="nm-cat">Topic<select id="nm-cat"><option value="all">All topics</option>${opts(N.CATS)}</select></label>
@@ -39,7 +39,7 @@ const presets = tbl('Upscaler preset names and what they render per axis', ['Nam
 ], 'Factors as documented by NVIDIA, AMD and Intel for developers. The percentage is the internal resolution per axis; the share of pixels is its square.');
 
 const families = tbl('One job, several names', ['What it does', 'NVIDIA', 'AMD', 'Intel', 'Consoles and Windows'], [
-  ['Upscaling', 'DLSS Super Resolution', 'FSR upscaling (3.1, 4)', 'XeSS-SR', 'PSSR on PS5 Pro'],
+  ['Upscaling', 'DLSS Super Resolution', 'FSR upscaling (3.1, 4)', 'XeSS-SR', 'PSSR on PS5 Pro, QSSR on PS5'],
   ['Frame generation in the game', 'DLSS Frame Generation, Multi Frame Generation', 'FSR Frame Generation', 'XeSS-FG', '–'],
   ['Frame generation in the driver', 'Smooth Motion', 'AMD Fluid Motion Frames', '–', '–'],
   ['Latency reduction in the game', 'Reflex', 'Anti-Lag 2', 'XeLL', '–'],
@@ -58,12 +58,13 @@ ${bar(68, 'DLSS 1.724×', 134, 'g-plus', '33.6%')}${bar(96, 'FSR 1.7×', 138, 'g
 ${bar(182, 'DLSS / FSR 1.5×', 178, 'g-plus', '44.4%')}${bar(210, 'XeSS 1.7×', 138, 'g-minus', '34.6%')}`,
 'Calculated from the documented scale factors (share of pixels = 1 ÷ factor²). XeSS Quality renders the same share as FSR Balanced; XeSS Balanced renders what DLSS and FSR call Performance.', '0 0 640 250');
 
-const sourcesList = srcIds.map((id) => { const [label, url, via] = N.SOURCES[id]; return [`<span id="src-${id}">[${srcNo(id)}]</span> ${label}`, url, via === 'doc' ? 'read in full' : 'official page; relevant passage taken from a search-engine extract']; });
+const sourcesList = srcIds.map((id) => { const [label, url, via] = N.SOURCES[id]; return [`<span id="src-${id}">[${srcNo(id)}]</span> ${label}`, url, via === 'doc' ? 'developer document, read in full on November 18, 2026' : 'official page, read in full on November 24, 2026']; });
 
 export default {
   slug: 'setting-names',
   dir: 'reference',
   published: '2026-11-18',
+  changelog: [['2026-11-18', 'First published.'], ['2026-11-24', 'All official pages that had been used through search-engine extracts were read in full and the entries matched to their wording. Corrected: FreeSync tier requirements (AMD’s current tier table), Switch 2 VRR in TV mode (update 23.0.0, dock firmware), PS5 and Xbox 120 Hz entries. Added: QSSR, Handheld Mode Boost, Multi Frame Generation up to 6×.']],
   short: 'Setting-name map',
   title: 'Setting-name map: DLSS, FSR, XeSS, VRR and console terms',
   description: 'Searchable map of graphics and display setting names: what each DLSS, FSR and XeSS preset renders, frame generation, latency, VRR and console terms, sourced.',
@@ -75,7 +76,7 @@ export default {
   sections: [
     `<h2 id="how">How the map was compiled</h2>
 <p>Every entry comes from a document published by the company that makes the product: developer guides in the vendors’ public repositories, platform support pages and official announcements. Nothing in the map is our own measurement or opinion about quality. Where a vendor publishes a number – a scale factor, a minimum frame rate, a requirement – the entry repeats that number and names the source in square brackets; the numbered list is under <a href="#sources">Sources</a>, with the date the sources were read.</p>
-<p>Two kinds of sources were used, and the list says which is which. Developer documents from NVIDIA, AMD and Intel were read in full. For support pages of Sony, Microsoft, Nintendo, Valve and for two AMD and NVIDIA product pages, the relevant passage was taken from a search-engine extract of the official page; these entries are worded more cautiously. Names we could not tie to an official source are left out instead of guessed – that is why, for example, NVIDIA’s G-SYNC display tiers are missing.</p>`,
+<p>Two kinds of sources were used, and the list says which is which. Developer documents from NVIDIA, AMD and Intel were read in full on November 18, 2026. Support, product and news pages of Sony, Microsoft, Nintendo, Valve, AMD and NVIDIA were at first only available to us as search-engine extracts; on November 24, 2026 every one of them was opened and read in full, the entries were matched to the official wording, and outdated ones were corrected – AMD’s FreeSync tier requirements, for example, and the Switch 2 VRR entries. Names we could not tie to an official source are left out instead of guessed – that is why, for example, NVIDIA’s G-SYNC display tiers are missing.</p>`,
     `<h2 id="jobs">One job, several names</h2>
 <p>Most of the names fall into seven jobs. If you know the job, the brand name stops being a puzzle:</p>
 ${families}
@@ -83,7 +84,7 @@ ${families}
     `<h2 id="presets">One name, several meanings</h2>
 ${chart}
 ${presets}
-<p>The preset names are the most common trap. “Quality” means 66.7% of the output resolution per axis with DLSS and FSR but 58.8% with XeSS 1.3 and newer. “Balanced” means 58% with DLSS, 58.8% with FSR and 50% with XeSS. So a like-for-like comparison of two upscalers at “the same” preset compares different pixel counts. The <a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a> turns the factors into the exact internal resolution for your display.</p>
+<p>The table is the reference; what it means for choosing and comparing upscalers is explained in <a href="/guides/dlss-vs-fsr-vs-xess/#modes">DLSS vs FSR vs XeSS</a>, and the <a href="/tools/upscaler-resolution-calculator/">Upscaler Resolution Calculator</a> turns the factors into the internal resolution for your display.</p>
 <p>A second trap is the word “VRR” on Windows. <b>Variable refresh rate</b> on the Graphics settings page is the game feature; <b>Dynamic refresh rate</b> on the Advanced display page lets Windows change the desktop refresh rate on its own. The names differ by one word and do different things.</p>`,
     `<h2 id="use">How to use it after a patch</h2>
 <p>Patch notes mention these names constantly: “updated to FSR 4”, “added XeSS-FG”, “Reflex support”. Search the name here to see which job it does, then decide what to re-test. An upscaler update can change image quality at the same preset; a new frame-generation option needs a look at the rendered frame rate first (the <a href="/tools/frame-time-calculator/">Frame Time Calculator</a> shows shown versus rendered frames); a new latency option is worth switching on and comparing. The <a href="/tools/patch-decoder/">Patch Decoder</a> sorts such lines, and <a href="/guides/how-to-read-patch-notes/">how to read patch notes</a> explains the wording.</p>
@@ -96,6 +97,6 @@ ${presets}
     ['Are FreeSync, G-SYNC and VRR the same thing?', 'They are names for variable refresh rate: the display waits for the next frame instead of refreshing at fixed intervals. AMD’s documentation lists AMD FreeSync, NVIDIA G-SYNC and VESA AdaptiveSync as VRR technologies; consoles call the HDMI version simply VRR.']
   ],
   sources: sourcesList,
-  sourcesNote: `All sources were read on November 18, 2026. “Read in full” means the document itself was read; for the other pages the passage was taken from a search-engine extract of the official page, because the pages could not be opened directly from our build environment.`,
+  sourcesNote: `Developer documents were read in full on November 18, 2026; official support, product and news pages were read in full on November 24, 2026. Until that day several of these pages were known to us only from search-engine extracts; the entries that depended on them were checked against the full pages and corrected where needed.`,
   related: ['upscaler-resolution-calculator', 'dlss-vs-fsr-vs-xess', 'frame-generation-explained']
 };

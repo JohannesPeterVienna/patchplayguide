@@ -32,8 +32,8 @@ REFERENCES.forEach((t) => { META[t.slug] = { path: `/reference/${t.slug}/`, kick
 const lookup = (slug) => { if (!META[slug]) throw new Error('unknown related slug ' + slug); return META[slug]; };
 
 const sitemap = [];
-const REVISED = '2026-11-18';
-const lastmod = { '/': REVISED, '/guides/': REVISED, '/tools/': REVISED, '/privacy/': REVISED, '/about/': REVISED, '/contact/': REVISED }; // path -> date of last change
+// path -> date of the last content change (guides, tools and references take it from their change log)
+const lastmod = { '/': '2026-11-24', '/guides/': '2026-11-24', '/tools/': '2026-11-24', '/privacy/': '2026-11-24', '/about/': '2026-11-24', '/contact/': '2026-11-18', '/imprint/': '2026-11-23' };
 const report = [];
 
 // home (AdSense loader so the CMP appears, but no ad slots)

@@ -2,13 +2,15 @@
 import { esc, SITE } from './layout.mjs';
 
 const RIS = 'https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10007517';
-const UPDATED = { 'Privacy policy': 'November 18, 2026', 'About Patch Play Guide': 'November 18, 2026', 'Contact &amp; corrections': 'November 4, 2026' }; // legal pages changed after first publication
+// date of the last change of each page's content (from the git history of its text; 2026-11-24: imprint and contact
+// showed older dates than their real last change)
+const UPDATED = { 'Privacy policy': 'November 24, 2026', 'About Patch Play Guide': 'November 24, 2026', 'Contact &amp; corrections': 'November 18, 2026', 'Imprint': 'November 23, 2026' };
 const legal = (kicker, h1, inner) => `<article class="doc legal"><p class="kicker">${kicker}</p><h1>${h1}</h1>${inner}<p class="small">Last updated: ${UPDATED[h1] || SITE.reviewedText}</p></article>`;
 
 export const GROUPS = [
   { key: 'pc', name: 'PC settings and performance', intro: 'What each option costs, how upscalers and frame generation work, and how to find and fix your bottleneck.' },
   { key: 'testing', name: 'Patches and testing', intro: 'How to read patch notes, and how to test a change – or an update – so that the result means something.' },
-  { key: 'console', name: 'Consoles, handhelds and displays', intro: 'Performance and fidelity modes, PS5 Pro, Xbox Series S and X, Switch 2, Steam Deck and 120 Hz/VRR setup.' }
+  { key: 'console', name: 'Consoles, handhelds and displays', intro: 'Performance and fidelity modes, Xbox Series S and X, Switch 2, Steam Deck and 120 Hz/VRR setup. What PS5 Pro and Switch 2 versions change per game is in the <a href="/reference/console-upgrades/">console upgrade reference</a>.' }
 ];
 
 const TOOL_ICONS = {
@@ -22,7 +24,8 @@ Object.assign(TOOL_ICONS, {
   resolution: ICON('<rect x="9" y="10" width="26" height="18" fill="none" stroke="#A5B5C4" stroke-width="2"/><rect x="9" y="10" width="15" height="10" fill="#47D98A"/><path d="M9 34h26" stroke="#3A5267" stroke-width="3"/><path d="M9 34h11" stroke="#7CC4FF" stroke-width="3"/>'),
   frametime: ICON('<path d="M8 30h28" stroke="#A5B5C4" stroke-width="2"/><path d="M10 26v8M18 26v8M26 26v8M34 26v8" stroke="#A5B5C4" stroke-width="1.6"/><rect x="10" y="12" width="16" height="8" fill="#47D98A"/><rect x="26" y="12" width="8" height="8" fill="#FFC531"/>'),
   testlog: ICON('<path d="M9 14h26M9 30h26" stroke="#3A5267" stroke-width="2"/><circle cx="13" cy="14" r="3" fill="#FFC531"/><circle cx="19" cy="14" r="3" fill="#FFC531"/><circle cx="16" cy="14" r="3" fill="#FFC531"/><circle cx="27" cy="30" r="3" fill="#47D98A"/><circle cx="33" cy="30" r="3" fill="#47D98A"/><circle cx="30" cy="30" r="3" fill="#47D98A"/>'),
-  names: ICON('<path d="M9 13h10M9 22h10M9 31h10" stroke="#A5B5C4" stroke-width="2.4"/><path d="M19 13c8 0 8 9 16 9M19 31c8 0 8-9 16-9M19 22h16" stroke="#FFC531" stroke-width="2" fill="none"/>')
+  names: ICON('<path d="M9 13h10M9 22h10M9 31h10" stroke="#A5B5C4" stroke-width="2.4"/><path d="M19 13c8 0 8 9 16 9M19 31c8 0 8-9 16-9M19 22h16" stroke="#FFC531" stroke-width="2" fill="none"/>'),
+  upgrades: ICON('<rect x="9" y="11" width="26" height="16" rx="3" fill="none" stroke="#A5B5C4" stroke-width="2"/><path d="M14 33h16" stroke="#A5B5C4" stroke-width="2"/><path d="M15 22l5-5 4 4 6-6" stroke="#47D98A" stroke-width="2.4" fill="none"/>')
 });
 // tools and reference in the order shown on the home page and on the tools hub
 export const TOOL_CARDS = [
@@ -30,9 +33,10 @@ export const TOOL_CARDS = [
   ['/tools/frame-time-calculator/', 'frametime', 'Frame Time Calculator', 'Frames per second in milliseconds: does a frame rate divide your refresh rate, fit your VRR window, and what does frame generation show versus render?', 'Calculate'],
   ['/tools/settings-test-log/', 'testlog', 'Settings Test Log', 'Type in your own test runs before and after a change. The log shows medians and spread and says whether the difference is real – with a printable worksheet.', 'Open the log'],
   ['/tools/bottleneck-finder/', 'finder', 'Bottleneck Finder', 'Low FPS, stutter, tearing or input lag? A few questions lead to the likely cause – GPU, CPU, VRAM, shaders, a limiter or the display chain – and the next steps.', 'Start the finder'],
-  ['/tools/settings-translator/', 'translator', 'Settings Translator', 'Twenty-five common graphics options with their typical GPU, CPU and VRAM load. Pick your bottleneck to see what to lower first.', 'Open translator'],
+  ['/tools/settings-translator/', 'translator', 'Settings Translator', 'Twenty-five common graphics options with our editorial estimate of their GPU, CPU and VRAM load. Pick your bottleneck to see what to test first.', 'Open translator'],
   ['/tools/patch-decoder/', 'decoder', 'Patch Decoder', 'Paste patch notes and sort every line into + improvement, ~ change or − removal, by category and platform, with a checklist to tick off.', 'Open decoder'],
-  ['/reference/setting-names/', 'names', 'Setting-name map', 'The same setting under different names: every DLSS, FSR and XeSS preset, frame generation, latency features, VRR and console terms, each with its official source.', 'Search the map']
+  ['/reference/setting-names/', 'names', 'Setting-name map', 'The same setting under different names: every DLSS, FSR and XeSS preset, frame generation, latency features, VRR and console terms, each with its official source.', 'Search the map'],
+  ['/reference/console-upgrades/', 'upgrades', 'Console upgrades by game', 'What PS5 Pro, QSSR and Nintendo Switch 2 upgrades change in each game, as the developers and platform holders state it – with date and source per entry.', 'Search the list']
 ];
 const tcard = ([href, icon, name, text, go]) => `<a class="tcard" href="${href}">${TOOL_ICONS[icon]}<h3>${name}</h3><p>${text}</p><span class="go">${go} →</span></a>`;
 
@@ -100,10 +104,10 @@ export function toolsIndex() {
   return {
     path: '/tools/',
     title: 'Tools – calculators, finder and test log for game settings',
-    description: 'All Patch Play Guide tools: Upscaler Resolution Calculator, Frame Time Calculator, Settings Test Log, Bottleneck Finder, Settings Translator and Patch Decoder.',
+    description: 'All Patch Play Guide tools: resolution and frame-time calculators, test log, Bottleneck Finder, Settings Translator, Patch Decoder and two references.',
     crumbs: [['Home', '/'], ['Tools', '/tools/']],
     body: `<p class="kicker">Tools</p><h1>Tools for graphics settings and testing</h1>
-<p class="lede" style="max-width:72ch">Six tools and one reference. The calculators work only with documented factors and arithmetic; the finder and the translator give typical, qualitative guidance; the test log works only with numbers you measure yourself. All of them run in your browser, can be used with the keyboard, and let you copy, link or print the result.</p>
+<p class="lede" style="max-width:72ch">Six tools and two references. The calculators work only with documented factors and arithmetic; the finder gives rule-of-thumb guidance and the translator an editorial estimate; the test log works only with numbers you measure yourself. All of them run in your browser, can be used with the keyboard, and let you copy, link or print the result.</p>
 <div class="tools3">
 ${TOOL_CARDS.map(tcard).join('\n')}
 </div>
@@ -113,9 +117,10 @@ ${TOOL_CARDS.map(tcard).join('\n')}
 <tr><th scope="row">Why does 40 fps judder on my TV? Does my frame rate fit my VRR range?</th><td><a href="/tools/frame-time-calculator/">Frame Time Calculator</a></td><td>Arithmetic: 1000 ÷ fps, refresh rate ÷ frame rate</td></tr>
 <tr><th scope="row">Did my settings change really gain anything?</th><td><a href="/tools/settings-test-log/">Settings Test Log</a></td><td>Your own runs; a counting rule for chance results</td></tr>
 <tr><th scope="row">Why is my game slow, stuttering or tearing?</th><td><a href="/tools/bottleneck-finder/">Bottleneck Finder</a></td><td>A published decision tree of symptoms and quick tests</td></tr>
-<tr><th scope="row">Which options should I lower first?</th><td><a href="/tools/settings-translator/">Settings Translator</a></td><td>Typical, qualitative load levels – not benchmarks</td></tr>
+<tr><th scope="row">Which options should I lower first?</th><td><a href="/tools/settings-translator/">Settings Translator</a></td><td>An editorial estimate of qualitative load levels – not measured, no source</td></tr>
 <tr><th scope="row">What in these patch notes matters for me?</th><td><a href="/tools/patch-decoder/">Patch Decoder</a></td><td>Published word rules, applied in your browser</td></tr>
 <tr><th scope="row">What does this name in the menu mean?</th><td><a href="/reference/setting-names/">Setting-name map</a></td><td>Vendor and platform documentation, linked per entry</td></tr>
+<tr><th scope="row">What does the PS5 Pro or Switch 2 version of my game change?</th><td><a href="/reference/console-upgrades/">Console upgrades by game</a></td><td>PlayStation Blog and Nintendo statements, linked and dated per entry</td></tr>
 </tbody></table></div></section>`
   };
 }
@@ -128,7 +133,7 @@ export function guidesIndex({ GUIDES }) {
     description: 'All Patch Play Guide guides in one place: PC graphics settings, upscaling, stutter and bottlenecks, patch notes and re-tests, console modes, Steam Deck and VRR.',
     crumbs: [['Home', '/'], ['Guides', '/guides/']],
     body: `<p class="kicker">Library</p><h1>All guides</h1>
-<p class="lede" style="max-width:72ch">${GUIDES.length} guides in three groups. Each explains one topic, works through an example with arithmetic or vendor-documented numbers, links the tool that repeats it with your values, and lists its sources. All guides were revised on November 18, 2026; the change log at the end of each page records what changed.</p>
+<p class="lede" style="max-width:72ch">${GUIDES.length} guides in three groups. Each explains one topic, works through an example with arithmetic or vendor-documented numbers, links the tool that repeats it with your values, and lists its sources. Every guide was revised on November 18, 2026, the console and handheld guides again on November 24, 2026; the change log at the end of each page records what changed.</p>
 <p style="max-width:72ch">Not sure where to start? If something feels wrong, the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> points you to the right guide in about a minute. If a new update just arrived, start with <a href="/guides/how-to-read-patch-notes/">how to read patch notes</a> and the <a href="/guides/how-to-test-a-settings-change/#after-update">re-test routine</a>. If a name in a menu puzzles you, the <a href="/reference/setting-names/">setting-name map</a> has it. If you want to understand your graphics menu once and for all, begin with <a href="/guides/graphics-settings-explained/">graphics settings explained</a>.</p>
 ${groups}`
   };
@@ -142,9 +147,9 @@ export const STATIC_PAGES = [
     crumbs: [['Home', '/'], ['About', '/about/']],
     body: legal('About &amp; method', 'About Patch Play Guide', `<p class="lede">Patch Play Guide is a set of free calculators, a sourced map of setting names and guides about game graphics settings, console modes and display setup – for PC, PS5, Xbox, Switch 2 and handheld PCs. It is built for players who want to understand what a setting does and check it on their own system rather than copy a list.</p>
 <h2 id="who">Who publishes the site</h2>
-<p>The site is published by AdStern, an advertising agency based in Vienna, Austria; the full details are in the <a href="/imprint/">imprint</a>. AdStern decides what is published and is responsible for it. Patch Play Guide is financed by advertising on the guide, tool and overview pages; the imprint, privacy policy and contact page carry no advertising. No game publisher, platform holder or hardware manufacturer pays for coverage, and the pages contain no affiliate links. We are not affiliated with any company whose products we mention.</p>
+<p>The site is published by AdStern, an advertising agency based in Vienna, Austria; the full details are in the <a href="/imprint/">imprint</a>. AdStern decides what is published and is responsible for it. Patch Play Guide is financed by advertising on the guide, tool and reference pages. The home page, the two overview pages (all guides, all tools), this page, the imprint, the privacy policy and the contact page have no ad placements. No game publisher, platform holder or hardware manufacturer pays for coverage, and the pages contain no affiliate links. We are not affiliated with any company whose products we mention.</p>
 <h2 id="method">How pages and tools are made</h2>
-<p>There is no editorial team and no test lab behind this site, and we do not pretend otherwise. Pages and tools are written for this site with the help of AI tools. Each factual statement is then checked against a source, and what cannot be tied to a source is rewritten more cautiously or removed. The steps are:</p>
+<p>There is no editorial team and no test lab behind this site, and we do not pretend otherwise. Pages and tools are written for this site with the help of AI tools. Each factual statement is then checked against a source, and what cannot be tied to a source is removed or clearly marked as our own judgment – the load levels in the <a href="/tools/settings-translator/">Settings Translator</a> are labeled as an editorial estimate, and advice in the guides is worded as our suggestion. The steps are:</p>
 <ol>
 <li><b>One question per page.</b> A page starts from something a player actually asks – “what does Balanced mode render on my monitor?” – not from a product announcement.</li>
 <li><b>Sources first.</b> Facts are taken from documents published by the companies that make the products: developer guides from NVIDIA, AMD and Intel, support and specification pages from Microsoft, Sony, Nintendo and Valve. Each page lists its sources with the date they were read.</li>
@@ -157,20 +162,21 @@ export const STATIC_PAGES = [
 <li><b>Vendor figures</b> are published by a manufacturer – for example the scale factor of an upscaler preset or the memory a feature allocates. They are labeled with the vendor’s name and linked.</li>
 <li><b>Invented examples</b> show how a method works. They are always labeled as invented or constructed.</li>
 </ul>
-<p>We do not publish frame rates, percentages or comparisons measured by us, because we have no test hardware. Where the Settings Translator and some guides describe what an option costs, they use qualitative levels – minimal, low, moderate, high – and call them typical. If we ever publish measurements, each will state the exact hardware, software versions, scene and method.</p>
+<p>We do not publish frame rates, percentages or comparisons measured by us, because we have no test hardware. Where the Settings Translator describes what an option costs, it uses qualitative levels – minimal, low, moderate, high – and labels them as an editorial estimate: our judgment, not a measurement and not taken from a source. If we ever publish measurements, each will state the exact hardware, software versions, scene and method.</p>
 <h2 id="sources">How sources are handled</h2>
-<p>Developer documentation that vendors publish in their public repositories was read in full. Some official support and product pages could not be opened directly from our build environment; for those, the relevant passage was taken from a search-engine extract of the official page, and the entry is worded more cautiously. The <a href="/reference/setting-names/#sources">setting-name map</a> marks for every source which of the two applies. Menu paths and requirements change with system and driver updates, so every source carries the date it was read.</p>
+<p>Every source is read in full before a page relies on it. Developer documentation that vendors publish in their public repositories was read on November 18, 2026. Some official support, product and news pages could at first not be opened from our build environment and were known to us only from search-engine extracts; those pages said so. On November 24, 2026 all of them were opened and read in full, the statements that rested on them were matched to the official wording, and outdated or wrong ones were corrected – for example AMD’s FreeSync tier requirements and the CPU listed for the Xbox Series S. Menu paths and requirements change with system and driver updates, so every source carries the date it was read.</p>
 <h2 id="patches">How we handle patch notes</h2>
-<p>Patch notes belong to their publishers. We never copy them. The <a href="/tools/patch-decoder/">Patch Decoder</a> works with a clearly <b>fictional</b> example game and with lines you paste yourself from the official source; the sorting happens in your browser. We do not publish summaries of specific real-world patches, because each would have to be verified line by line against the official notes and kept up to date with hotfixes. The guides instead teach how to read any patch note and how to <a href="/guides/how-to-test-a-settings-change/#after-update">re-test after an update</a>.</p>
+<p>Patch notes belong to their publishers. We never copy them. The <a href="/tools/patch-decoder/">Patch Decoder</a> works with a clearly <b>fictional</b> example game and with lines you paste yourself from the official source; the sorting happens in your browser. We do not summarize individual patch notes line by line. One page comes close, and it works differently: the <a href="/reference/console-upgrades/">console upgrade reference</a> summarizes, game by game, what developers and platform holders have officially stated about PS5 Pro, QSSR and Nintendo Switch 2 upgrades – in our own words, with the date and a link for every entry, and marked when a statement was made before the release. These are the makers’ claims, not our tests. The guides teach how to read any patch note and how to <a href="/guides/how-to-test-a-settings-change/#after-update">re-test after an update</a>.</p>
 <h2 id="tools">How the tools work</h2>
 <ul>
 <li><b>Upscaler Resolution Calculator</b> divides your output resolution by the per-axis factors that NVIDIA, AMD and Intel document for each preset.</li>
 <li><b>Frame Time Calculator</b> is pure arithmetic: frame time, refreshes per frame, position in a VRR window, shown versus rendered frames.</li>
-<li><b>Settings Test Log</b> summarizes runs you type in and calls a difference clear only when the runs of the two setups do not overlap; the page explains how often that happens by chance.</li>
+<li><b>Settings Test Log</b> summarizes runs you type in and calls two setups separated only when their runs do not overlap; overlapping runs are reported as inconclusive, not as equal. The page explains how often a separation happens by chance.</li>
 <li><b>Bottleneck Finder</b> is a decision tree; the complete tree is printed on its page, and each result links to the guide that explains it.</li>
-<li><b>Settings Translator</b> rates twenty-five common options with qualitative GPU, CPU and VRAM levels and ranks them with a simple published formula for your bottleneck.</li>
+<li><b>Settings Translator</b> rates twenty-five common options with qualitative GPU, CPU and VRAM levels – an editorial estimate – and ranks them with a simple published formula for your bottleneck.</li>
 <li><b>Patch Decoder</b> sorts lines with a published set of word rules, in a fixed order, into a change type (+, ~, −), a category and platforms.</li>
 <li><b>Setting-name map</b> lists names with one sentence each and a numbered source.</li>
+<li><b>Console upgrades by game</b> lists official statements about PS5 Pro, QSSR and Switch 2 upgrades, one entry per game and console, each with date and source.</li>
 </ul>
 <p>The logic of all tools is covered by automated tests: for example, that every answer in the finder leads somewhere, that the calculators reproduce the vendors’ own example resolutions, and that the decoder sorts reference lines correctly.</p>
 <h2 id="checks">How pages are checked – and corrected</h2>
@@ -179,6 +185,7 @@ export const STATIC_PAGES = [
 <p>Corrections that concern the site as a whole are listed here once instead of on every page.</p>
 <ul>
 <li><time datetime="2026-11-04">2026-11-04</time> Author line corrected on all guide and tool pages: they now name the publisher, AdStern. There is no separate editorial team.</li>
+<li><time datetime="2026-11-24">2026-11-24</time> This page said that advertising runs on the overview pages; the home page and the two overview pages have no ad placements. Corrected.</li>
 </ul>
 <h2 id="limits">What the site cannot do</h2>
 <p>We cannot see your system. A calculator can tell you what a mode renders and a guide what usually helps; only a test on your hardware tells you what helps you. We do not give advice on hardware purchases, modding, cheating or circumventing platform rules.</p>
@@ -187,7 +194,7 @@ export const STATIC_PAGES = [
 <h2 id="data">Your data</h2>
 <p>Everything you enter in the tools, including “My setup”, stays in your browser. There is no account. Advertising and analytics are described in the <a href="/privacy/">privacy policy</a>.</p>
 <h2 id="history">History</h2>
-<p>Patch Play Guide started as a single page with local tools for organizing patch notes and comparing frame rates. In November 2026 it was rebuilt with guides and three tools. On November 18, 2026 the calculators, the test log and the setting-name map were added, every guide received a worked example with sources, and two overlapping guides on testing were merged into one.</p>`)
+<p>Patch Play Guide started as a single page with local tools for organizing patch notes and comparing frame rates. In November 2026 it was rebuilt with guides and three tools. On November 18, 2026 the calculators, the test log and the setting-name map were added, every guide received a worked example with sources, and two overlapping guides on testing were merged into one. On November 24, 2026 all official pages that had only been known from search extracts were read in full, the console guides were rewritten around what the makers state, and the guide on PS5 Pro enhanced games became the console upgrade reference.</p>`)
   },
   {
     path: '/contact/',
@@ -247,7 +254,7 @@ export const STATIC_PAGES = [
     body: legal('Privacy', 'Privacy policy', `<p>This policy explains which personal data is processed when you visit patchplayguide.com, why, on which legal basis, and which rights you have.</p>
 <h2 id="controller">Controller</h2>
 <p>AdStern – Agentur für digitales Marketing, Seilerstätte 8, 1010 Wien, Österreich, email <a href="mailto:office@adstern.com">office@adstern.com</a>. Further details are in the <a href="/imprint/">imprint</a>.</p>
-<h3>Contact form</h3><p>When you submit the form in the legal notice, your email address, message, optional name and the name of the referring website are sent to office@adstern.com through AdStern’s World4You hosting. AdStern uses these details to answer your enquiry. To limit automated submissions, the server counts requests per pseudonymous IP identifier over a 15-minute window.</p>
+<h3>Contact form</h3><p>The contact form in the <a href="/imprint/">imprint</a> does not send your message to GitHub Pages, which hosts this site. When you submit it, your browser sends your email address, your message, your optional name, the name of this website (patchplayguide.com) and the page language directly to a form script at <b>https://www.viennabyalocal.com/kontakt.php</b>. viennabyalocal.com is another website of AdStern, hosted by AdStern with World4You; the script passes your details on to office@adstern.com. Like every web request, the submission also transmits your IP address to that server. AdStern uses these details to answer your enquiry. To limit automated submissions, the server counts requests per pseudonymous IP identifier over a 15-minute window.</p>
 <h2 id="hosting">Hosting on GitHub Pages</h2>
 <p>This website consists of static files served by GitHub Pages, a service of GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. To deliver a page, your browser sends technical data to GitHub’s servers – your IP address, the requested address, date and time, browser and operating system, and the referring page. GitHub uses this data to deliver the site and to keep the service secure and may store it in server logs for a limited time. Legal basis: our legitimate interest in providing a secure, working website (Art. 6(1)(f) GDPR). Transfers to the USA are based on the EU–U.S. Data Privacy Framework or on standard contractual clauses. More information: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub General Privacy Statement</a>.</p>
 <h2 id="local">Tool inputs and “My setup” (local storage)</h2>
@@ -303,5 +310,7 @@ export const OLD_URLS = [
   ['/verify-steam-files.html', '/guides/shader-compilation-stutter-after-update/'],
   ['/settings-test-sheet.html', '/tools/settings-test-log/'],
   // guide merged into the testing guide on 2026-11-18
-  ['/guides/after-update-retest-routine/', '/guides/how-to-test-a-settings-change/']
+  ['/guides/after-update-retest-routine/', '/guides/how-to-test-a-settings-change/'],
+  // guide replaced on 2026-11-24 by the reference with per-game data from official sources
+  ['/guides/ps5-pro-enhanced-games/', '/reference/console-upgrades/']
 ];

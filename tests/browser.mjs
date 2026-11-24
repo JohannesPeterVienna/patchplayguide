@@ -291,7 +291,7 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
     await page.click('#ftcalc button.chip >> nth=3');
     const ft6 = await page.innerText('#ft-out');
     await over('frame time calculator');
-    ok(/Uneven pacing/.test(ft1) && /16\.67 ms or 33\.33 ms/.test(ft1) && /Even pacing/.test(ft2) && /exactly 3 refreshes/.test(ft2) && /whole multiple fits/.test(ft3) && /80 Hz/.test(ft3) && /160 fps on screen/.test(ft4) && /8\.33 ms less per frame/.test(ft4) && /Enter a frame rate/.test(ft5) && /140 fps on screen/.test(ft6) && /fg=2/.test(page.url()),
+    ok(/Uneven pacing/.test(ft1) && /16\.67 ms or 33\.33 ms/.test(ft1) && /Even pacing/.test(ft2) && /exactly 3 refreshes/.test(ft2) && /whole multiple fits/.test(ft3) && /80 Hz/.test(ft3) && /generated output rate of 160 fps/.test(ft4) && /at most 120 of these 160 images/.test(ft4) && !/on screen/.test(ft4) && /8\.33 ms less per frame/.test(ft4) && /Enter a frame rate/.test(ft5) && /generated output rate of 140 fps/.test(ft6) && /fg=2/.test(page.url()),
       'frame time calculator: 40 fps is uneven on 60 Hz and even on 120 Hz, fits a 48–120 Hz window doubled, 4× generation and comparison shown, empty input explained',
       `frame time calculator: ${[ft1, ft2, ft3, ft4, ft5, ft6].map((t) => t.replace(/\s+/g, ' ').slice(0, 70)).join(' | ')}`);
 
@@ -308,14 +308,51 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
     const csv = fs.readFileSync(await dl.path(), 'utf8');
     await page.click('#tl-clear');
     const tl4 = await page.innerText('#tl-out');
-    await page.goto(base + '/tools/settings-test-log/?a=60,61,62,63,64&b=70%2071%2072%2073%2074&nb=%3Cscript%3Ewindow.__x%3D1%3C%2Fscript%3E');
+    await page.goto(base + '/tools/settings-test-log/?a=60%2061%2062%2063%2064&b=70%2071%2072%2073%2074&nb=%3Cscript%3Ewindow.__x%3D1%3C%2Fscript%3E');
     const tl5 = await page.innerText('#tl-out');
     const xss = await page.evaluate(() => window.__x);
     await page.click('#tl-clear');
     await over('test log');
-    ok(/every run of setup B is faster/.test(tl1) && /1 of 10 cases/.test(tl1) && demo && /No clear difference/.test(tl2) && !demo2 && tl3 === '71 75 72' && !/<img/.test(tlName) && /"average fps",1,71/.test(csv) && /Type the average FPS/.test(tl4) && /1 of 126 cases/.test(tl5) && xss === undefined,
-      'test log: invented example is labeled and gives “clear” (1 in 10), overlap gives “no clear difference”, entries survive a reload, 5+5 runs from a link give 1 in 126, hostile input stays text, CSV exported',
+    ok(/every run of setup B is faster/.test(tl1) && /1 of 10 cases/.test(tl1) && demo && /Inconclusive/.test(tl2) && !/perform the same|not notice/i.test(tl2) && !demo2 && tl3 === '71 75 72' && !/<img/.test(tlName) && /"average fps",1,71/.test(csv) && /Type the average FPS/.test(tl4) && /1 of 126 cases/.test(tl5) && xss === undefined,
+      'test log: invented example is labeled and gives “separated” (1 in 10), overlap gives “inconclusive” (never “same”), entries survive a reload, 5+5 runs from a link give 1 in 126, hostile input stays text, CSV exported',
       `test log: ${[tl1, tl2, tl4, tl5].map((t) => t.replace(/\s+/g, ' ').slice(0, 80)).join(' | ')} demo=${demo}/${demo2} restored=${tl3} xss=${xss}`);
+    // 2026-11-24: overlap counter-example and the unambiguous input format
+    await page.goto(base + '/tools/settings-test-log/');
+    await page.fill('#tl-a', '60 60 70'); await page.fill('#tl-b', '69 80 80');
+    const ce = await page.innerText('#tl-out'), ceSum = await page.textContent('#tl-summary');
+    await page.fill('#tl-a', '71,50 72,50 73,50'); await page.fill('#tl-b', '74,5; 75,5; 76,5');
+    const dec = await page.innerText('#tl-out'), decErr = await page.isVisible('#tl-err');
+    await page.fill('#tl-a', '71,73,72');
+    const amb = await page.textContent('#tl-err'), ambShown = await page.isVisible('#tl-err'), ambInvalid = await page.getAttribute('#tl-a', 'aria-invalid');
+    await page.fill('#tl-a', '71.5 72,5');
+    const mixed = await page.textContent('#tl-err');
+    await page.click('#tl-clear');
+    const errAfterClear = await page.isVisible('#tl-err');
+    await over('test log input');
+    ok(/Inconclusive/.test(ce) && /\+20 fps \(\+33\.3%\)/.test(ce) && /Largest run-to-run spread: 11 fps/.test(ce) && !/\bsame\b|not notice/i.test(ce + ceSum) && /Undecided, not shown to be equal/.test(ce) &&
+      /72\.5/.test(dec) && /Separated/.test(dec) && !decErr && ambShown && /ambiguous/.test(amb) && ambInvalid === 'true' && /one decimal mark/.test(mixed) && !errAfterClear,
+      'test log: 60 60 70 vs 69 80 80 is inconclusive (+20 fps, never “same”); “71,50 72,50 73,50” reads as three decimal runs; “71,73,72” and mixed decimal marks are rejected visibly',
+      `test log input: ce=${ce.replace(/\s+/g, ' ').slice(0, 160)} | dec=${dec.replace(/\s+/g, ' ').slice(0, 80)} err=${decErr} | amb=${amb} ${ambShown}/${ambInvalid} | mixed=${mixed} | clear=${errAfterClear}`);
+
+    // Console upgrade reference: list readable, filters, link state, every source number resolves
+    await page.goto(base + '/reference/console-upgrades/');
+    const upAll = await page.locator('#up-list > li').count();
+    await page.selectOption('#up-p', 'ps5');
+    const upPs5 = await page.locator('#up-list > li:visible').allInnerTexts();
+    await page.selectOption('#up-p', 'all'); await page.fill('#up-q', 'metroid');
+    const upMet = await page.locator('#up-list > li:visible').allInnerTexts();
+    await page.fill('#up-q', 'zzzz');
+    const upNone = await page.isVisible('#up-none');
+    await page.click('#up-reset');
+    const upReset = await page.locator('#up-list > li:visible').count();
+    await page.goto(base + '/reference/console-upgrades/?on=switch2&kind=edition');
+    const upLink = await page.locator('#up-list > li:visible').count();
+    const upSrc = await page.evaluate(() => [...document.querySelectorAll('#up-list .nm-s a')].every((a) => document.getElementById(a.getAttribute('href').slice(1))));
+    await over('console upgrades');
+    ok(upAll >= 60 && upPs5.length === 8 && upPs5.every((t) => /QSSR/.test(t)) && upMet.length === 1 && /720p/.test(upMet[0]) && upNone && upReset === upAll && upLink === 6 && upSrc,
+      `console upgrades: ${upAll} entries, PS5 filter → ${upPs5.length} QSSR entries, “metroid” → 1, no-match hint, reset, link ?on=switch2&kind=edition → ${upLink}, every source number resolves`,
+      `console upgrades: all=${upAll} ps5=${upPs5.length} metroid=${upMet.length} none=${upNone} reset=${upReset} link=${upLink} src=${upSrc}`);
+
     // blank worksheet: in print mode only the worksheet stays visible
     await page.goto(base + '/tools/settings-test-log/');
     await page.emulateMedia({ media: 'print' });
@@ -389,6 +426,8 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
   // merged guide: the old address is a redirect page to the testing guide
   const red = fs.readFileSync(path.join(DOCS, 'guides/after-update-retest-routine/index.html'), 'utf8');
   if (!/http-equiv="refresh" content="0; url=\/guides\/how-to-test-a-settings-change\/"/.test(red)) bad('redirect for the merged guide missing'); else console.log('✓ /guides/after-update-retest-routine/ redirects to the testing guide');
+  const red2 = fs.readFileSync(path.join(DOCS, 'guides/ps5-pro-enhanced-games/index.html'), 'utf8');
+  if (!/http-equiv="refresh" content="0; url=\/reference\/console-upgrades\/"/.test(red2) || !/noindex/.test(red2) || !/rel="canonical" href="https:\/\/patchplayguide\.com\/reference\/console-upgrades\/"/.test(red2)) bad('redirect for the PS5 Pro guide missing'); else console.log('✓ /guides/ps5-pro-enhanced-games/ redirects to the console upgrade reference (noindex, canonical)');
 
   if (errs.length) bad('interactive errors:\n   ' + errs.join('\n   '));
   await ctx.close();

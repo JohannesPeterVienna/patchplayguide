@@ -19,7 +19,8 @@ const toolHtml = `<section class="tool" id="testlog" aria-labelledby="tl-h">
 <label for="tl-lb">1% low of each run (optional)<input type="text" id="tl-lb" inputmode="decimal" autocomplete="off" placeholder="53 56 52"></label>
 </fieldset>
 </div>
-<p class="tool-sub">Separate runs with spaces or commas. Three to seven runs per setup.</p>
+<p class="tool-sub">Separate runs with spaces, line breaks or semicolons; a comma inside a number is a decimal mark (71,5 = 71.5). Three to seven runs per setup.</p>
+<p id="tl-err" class="tool-err" role="alert" hidden></p>
 <p id="tl-demo" class="fict" hidden><b>INVENTED EXAMPLE</b> – these numbers are made up to show how the log works. They are not measurements of any game or hardware.</p>
 <p id="tl-summary" class="sum" tabindex="-1" aria-live="polite"></p>
 <div id="tl-out" class="results tool-table"></div>
@@ -34,13 +35,13 @@ const dots = (xs, y, cls) => xs.map((x) => `<circle class="${cls}" cx="${x}" cy=
 const overlap = fig('tl-fig', 'Two dot plots: on the left the runs of setup A and B overlap, on the right every run of B lies above every run of A',
 `<rect class="g-bg" width="640" height="220"/>
 <rect class="g-panel" x="16" y="40" width="296" height="150" rx="8"/><rect class="g-panel" x="328" y="40" width="296" height="150" rx="8"/>
-<text class="g-tb" x="30" y="66">Overlap: not clear</text><text class="g-tb" x="342" y="66">Clean split: clear</text>
+<text class="g-tb" x="30" y="66">Overlap: undecided</text><text class="g-tb" x="342" y="66">Clean split: separated</text>
 <text class="g-tm" x="30" y="104">A</text><text class="g-tm" x="30" y="144">B</text><text class="g-tm" x="342" y="104">A</text><text class="g-tm" x="342" y="144">B</text>
 ${dots([90, 150, 200], 100, 'g-acc')}${dots([130, 180, 250], 140, 'g-plus')}
 ${dots([400, 430, 460], 100, 'g-acc')}${dots([520, 550, 590], 140, 'g-plus')}
 <path class="g-grid" d="M50 170h250M362 170h250"/><text class="g-tm" x="50" y="184">lower fps</text><text class="g-tm" x="300" y="184" text-anchor="end">higher fps</text><text class="g-tm" x="362" y="184">lower fps</text><text class="g-tm" x="612" y="184" text-anchor="end">higher fps</text>
 <text class="g-tm" x="16" y="26">ILLUSTRATION OF THE RULE – invented positions, not measured data</text>`,
-'The rule the log applies. Left: the fastest run of A is faster than the slowest run of B, so the difference between the medians could be run-to-run noise. Right: every B run beats every A run – the kind of result that rarely happens by chance.', '0 0 640 220');
+'The rule the log applies. Left: the fastest run of A is faster than the slowest run of B, so the rule cannot separate the medians from run-to-run noise – undecided, not equal. Right: every B run beats every A run – the kind of result that rarely happens by chance.', '0 0 640 220');
 
 const blank = (n) => Array.from({ length: n }, () => '<td></td>').join('');
 const worksheet = `<div class="worksheet" id="worksheet"><h3>Settings test worksheet</h3>
@@ -49,7 +50,7 @@ const worksheet = `<div class="worksheet" id="worksheet"><h3>Settings test works
 <div class="tbl"><table><caption>One change at a time: setup B differs from setup A in exactly one setting</caption><thead><tr><th scope="col">Setup</th><th scope="col">What is set</th><th scope="col">Run 1</th><th scope="col">Run 2</th><th scope="col">Run 3</th><th scope="col">Run 4</th><th scope="col">Run 5</th><th scope="col">Median</th><th scope="col">Lowest–highest</th></tr></thead><tbody>
 <tr><th scope="row">A · average fps</th>${blank(8)}</tr><tr><th scope="row">A · 1% low</th>${blank(8)}</tr>
 <tr><th scope="row">B · average fps</th>${blank(8)}</tr><tr><th scope="row">B · 1% low</th>${blank(8)}</tr></tbody></table></div>
-<p class="ws-line">Do the lowest–highest ranges of A and B overlap?  ☐ yes → no clear difference  ☐ no → clear difference</p>
+<p class="ws-line">Do the lowest–highest ranges of A and B overlap?  ☐ yes → inconclusive  ☐ no → ranges separated</p>
 <p class="ws-line">What I saw (stutter, blur, artifacts): _______________________________________________________</p>
 <p class="ws-line">Decision: ☐ keep A  ☐ keep B  ☐ test again with a longer route</p>
 <p class="small">patchplayguide.com/tools/settings-test-log/ – median: sort the runs and take the middle one.</p></div>`;
@@ -57,33 +58,26 @@ const worksheet = `<div class="worksheet" id="worksheet"><h3>Settings test works
 export default {
   slug: 'settings-test-log',
   published: '2026-11-18',
+  changelog: [['2026-11-18', 'First published.'], ['2026-11-24', 'Verdicts corrected: overlapping runs are reported as inconclusive – never as “the same” or “not noticeable” – and separated runs as separated, without a claim about the cause. Input format made unambiguous: runs are separated by spaces, line breaks or semicolons, a comma inside a number is a decimal mark, and ambiguous input such as “71,73,72” is rejected with a message. The six-step protocol, which repeated the testing guide, shortened to a link.']],
   short: 'Settings Test Log',
   title: 'Settings Test Log: is your FPS difference real or noise?',
-  description: 'Type in the frame rates of your own test runs before and after a settings change. The log shows medians, run-to-run spread and whether the difference is clear.',
+  description: 'Type in the frame rates of your own test runs before and after a settings change. The log shows medians, run-to-run spread and whether the ranges separate.',
   kicker: 'Tool · test protocol',
   h1: 'Settings Test Log: is the difference real, or just noise?',
-  lede: 'You changed one setting and the counter shows three more frames per second. Is that the setting, or would the next run have shown the same without it? Type in the results of a few runs before and after the change. The log calculates the median and the run-to-run spread of each setup and tells you whether the difference stands clear of that spread. There is also a blank worksheet to print and fill in by hand.',
+  lede: 'You changed one setting and the counter shows three more frames per second. Is that the setting, or would the next run have shown the same without it? Type in the results of a few runs before and after the change. The log calculates the median and the run-to-run spread of each setup and tells you whether the two ranges separate – or whether the result is undecided. There is also a blank worksheet to print and fill in by hand.',
   scripts: ['toolkit.js', 'testlog-core.js', 'testlog.js'],
   toolHtml,
   sections: [
     `<h2 id="how">What the log calculates</h2>
 <p>For each setup the log takes your runs and shows three things. The <b>median</b> is the middle run when they are sorted; unlike the mean, one odd run – a background download, a loading hitch – does not drag it. The <b>lowest–highest range</b> shows how far your runs scatter when nothing changes; this is your noise. The <b>spread</b> is that range in fps and as a percentage of the median.</p>
-<p>Then it compares the two setups: the difference of the medians in fps and percent, and the same difference in milliseconds per frame, because that is the unit you feel (see the <a href="/tools/frame-time-calculator/">Frame Time Calculator</a>). Finally it gives a verdict with one deliberately strict rule: the difference is called <b>clear</b> only if every run of one setup is faster than every run of the other. If the ranges overlap, the log says so and does not declare a winner.</p>`,
+<p>Then it compares the two setups: the difference of the medians in fps and percent, and the same difference in milliseconds per frame, because that is the unit you feel (see the <a href="/tools/frame-time-calculator/">Frame Time Calculator</a>). Finally it gives a verdict with one deliberately strict rule: the two setups count as <b>separated</b> only if every run of one setup is faster than every run of the other. If the ranges overlap, the log calls the result inconclusive and declares no winner – and no tie either.</p>`,
     `<h2 id="rule">Why the rule is “no overlap”</h2>
 ${overlap}
 <p>The rule needs no assumptions about your hardware and no statistics software, and its error rate can be counted. Suppose a setting changes nothing at all. Then your six runs are six draws from the same pot, and every ordering of them is equally likely. With three runs per setup there are 20 ways to split six runs into two groups of three, and only two of them place all runs of one group above all runs of the other. A clean split therefore appears by luck in 1 of 10 tests. More runs make the rule much stricter:</p>
 ${luck}
-<p>This is why the testing guide recommends at least three runs and suggests five when a decision matters: with five runs per setup, a clean split that is pure luck happens once in 126 tests. The price of the strict rule is that small real differences can hide in the overlap. That is acceptable for the purpose – a difference you cannot separate from your own noise is also one you will not notice while playing.</p>`,
-    `<h2 id="protocol">The test protocol in six steps</h2>
-<ol>
-<li><b>Fix the scene.</b> A built-in benchmark, or a route of 30 to 60 seconds you can repeat exactly. Write it into the first field.</li>
-<li><b>Warm up.</b> Play the route once without recording, so shaders and assets are loaded. After a game or driver update this run matters most – see <a href="/guides/shader-compilation-stutter-after-update/">shader compilation stutter</a>.</li>
-<li><b>Record setup A</b> at least three times. Note the average FPS and, if your overlay shows it, the 1% low of each run.</li>
-<li><b>Change exactly one setting</b> and restart the game if it asks for it.</li>
-<li><b>Record setup B</b> the same number of times, on the same route.</li>
-<li><b>Read the verdict</b>, and add what you saw: a number does not show shimmer, blur or pop-in.</li>
-</ol>
-<p>The full reasoning behind each step – why one change at a time, how to pick a scene, what to measure with – is in <a href="/guides/how-to-test-a-settings-change/">how to test a settings change properly</a>. For what the numbers mean, read <a href="/guides/fps-frame-time-1-percent-lows/">FPS, frame time and 1% lows</a>.</p>`,
+<p>This is why the testing guide recommends at least three runs and suggests five when a decision matters: with five runs per setup, a clean split that is pure luck happens once in 126 tests. The price of the strict rule is that real differences can hide in the overlap: invented runs of 60, 60 and 70 fps against 69, 80 and 80 fps overlap, although the median rises by 20 fps (33%). An overlap therefore means <b>undecided, not demonstrated</b> – it does not show that the setups perform the same or that the difference is unnoticeable. Look at the medians and the spread, and if the decision matters, repeat a controlled comparison with more runs or a more repeatable route.</p>`,
+    `<h2 id="protocol">Where the test routine is explained</h2>
+<p>The log only summarizes runs; how to produce comparable runs – one change at a time, a fixed route of 30 to 60 seconds, a warm-up pass, at least three runs per setup – is the subject of <a href="/guides/how-to-test-a-settings-change/#routine">how to test a settings change</a>. After a game or driver update, the warm-up matters most, because the first pass often measures <a href="/guides/shader-compilation-stutter-after-update/">shader compilation</a> rather than the setting. For what the numbers themselves mean, read <a href="/guides/fps-frame-time-1-percent-lows/">FPS, frame time and 1% lows</a>.</p>`,
     `<h2 id="sheet">Printable worksheet</h2>
 <p>If you would rather write with a pen next to the console or the handheld, print this sheet. “Print blank worksheet” in the tool prints only the sheet below, without the rest of the page.</p>
 ${worksheet}`,
@@ -93,7 +87,7 @@ ${worksheet}`,
   faq: [
     ['How many test runs do I need to compare two settings?', 'At least three per setup. With three runs each, a clean split still appears by chance in 1 of 10 tests where nothing differs; with five runs each, in 1 of 126.'],
     ['Why does the log use the median and not the average of my runs?', 'The median is the middle run and ignores a single outlier, such as a run disturbed by a background task. With three runs, one bad run shifts the mean but not the median.'],
-    ['My runs overlap – does that mean the setting does nothing?', 'It means your test cannot separate the effect from the normal run-to-run spread. Add runs or use a longer, more repeatable route. If the ranges still overlap, the two setups perform the same in that scene for practical purposes.'],
+    ['My runs overlap – does that mean the setting does nothing?', 'No. Overlapping ranges mean the strict rule cannot separate the two setups – the result is undecided, not proven equal. The medians can still differ a lot. Add runs or use a longer, more repeatable route if the decision matters.'],
     ['Does the tool measure my frame rate?', 'No. It runs in the browser and cannot see your game. You measure with an overlay or capture tool and type the results in.']
   ],
   sources: [

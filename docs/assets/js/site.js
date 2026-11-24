@@ -277,10 +277,10 @@
   var PLATFORMS = {
     pc: ['Desktop or laptop PC', [['cpu-or-gpu-bottleneck', 'CPU or GPU bottleneck? A 5-minute check'], ['graphics-settings-explained', 'Graphics settings explained'], ['frame-cap-vsync-latency-pc', 'Frame caps, V-Sync and latency on PC']]],
     handheld: ['Steam Deck or handheld PC', [['steam-deck-frame-cap-tdp-battery', 'Steam Deck: frame cap, TDP and battery'], ['dlss-vs-fsr-vs-xess', 'DLSS vs FSR vs XeSS'], ['shader-compilation-stutter-after-update', 'Shader stutter after an update']]],
-    ps5: ['PS5', [['ps5-performance-vs-fidelity-mode', 'PS5 performance vs fidelity modes'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]],
-    ps5pro: ['PS5 Pro', [['ps5-pro-enhanced-games', 'PS5 Pro enhanced games: what changes'], ['ps5-performance-vs-fidelity-mode', 'PS5 performance vs fidelity modes'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]],
+    ps5: ['PS5', [['ps5-performance-vs-fidelity-mode', 'PS5 performance vs fidelity modes'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles'], ['/reference/console-upgrades/?kind=qssr', 'Games with QSSR on PS5']]],
+    ps5pro: ['PS5 Pro', [['/reference/console-upgrades/?on=ps5pro', 'PS5 Pro upgrades by game'], ['ps5-performance-vs-fidelity-mode', 'PS5 performance vs fidelity modes'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]],
     xbox: ['Xbox Series X or S', [['xbox-series-s-vs-x-modes', 'Xbox Series S vs X: why modes differ'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]],
-    switch2: ['Nintendo Switch 2', [['switch-2-docked-vs-handheld', 'Switch 2 docked vs handheld'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles']]]
+    switch2: ['Nintendo Switch 2', [['switch-2-docked-vs-handheld', 'Switch 2 docked vs handheld'], ['vrr-120hz-console-setup', 'VRR and 120 Hz on consoles'], ['/reference/console-upgrades/?on=switch2', 'Switch 2 upgrades by game']]]
   };
   var GPU = { entry: 'entry-level GPU', mid: 'midrange GPU', high: 'high-end GPU' };
   var VRAM = { '6': '6 GB or less', '8': '8 GB', '12': '10–12 GB', '16': '16 GB or more' };
@@ -306,11 +306,11 @@
     return p[0] + gpu + vram;
   }
   function linksFor(s, exclude) {
-    return PLATFORMS[s.platform][1].filter(function (l) { return location.pathname.indexOf(l[0]) === -1 && l[0] !== exclude; });
+    return PLATFORMS[s.platform][1].filter(function (l) { return location.pathname.indexOf(l[0].split('?')[0]) === -1 && l[0] !== exclude; });
   }
   // DOM helpers: text only via textContent
   function el(tag, text, cls) { var n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
-  function guideLink(l) { var a = el('a', l[1]); a.href = '/guides/' + l[0] + '/'; return a; }
+  function guideLink(l) { var a = el('a', l[1]); a.href = l[0].charAt(0) === '/' ? l[0] : '/guides/' + l[0] + '/'; return a; }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
   function showSetupNote() {
     var box = document.getElementById('setup-note');

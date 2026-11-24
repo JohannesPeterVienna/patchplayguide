@@ -36,8 +36,8 @@
     var list = T.search(q, T.rank(b));
     $('tr-first').innerHTML = first.length
       ? '<h3>Lower these first when the ' + LABEL[b] + ' is the limit</h3><ol>' + first.map(function (o) { return '<li><a href="#opt-' + o.id + '">' + o.name + '</a></li>'; }).join('') + '</ol>' + (b === 'vram' ? '<p class="tool-sub" style="margin-top:8px">Note: frame generation also needs video memory. It is not a quality option you lower first, but switching it off frees VRAM too – see the <a href="/guides/vram-full-what-to-lower/">VRAM guide</a>.</p>' : '')
-      : '<h3>Not sure what limits you?</h3><p>Run the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> first. Below, options are sorted by their combined typical load.</p>';
-    $('tr-summary').textContent = list.length + ' of ' + T.OPTIONS.length + ' options' + (q ? ' match “' + q + '”' : '') + ' · sorted for: ' + (LABEL[b] ? LABEL[b] + ' bottleneck' : 'combined load');
+      : '<h3>Not sure what limits you?</h3><p>Run the <a href="/tools/bottleneck-finder/">Bottleneck Finder</a> first. Below, options are sorted by their combined load in our editorial estimate.</p>';
+    $('tr-summary').textContent = list.length + ' of ' + T.OPTIONS.length + ' options' + (q ? ' match “' + q + '”' : '') + ' · sorted for: ' + (LABEL[b] ? LABEL[b] + ' bottleneck' : 'combined load') + ' · load levels are an editorial estimate, not measured';
     $('tr-grid').innerHTML = list.map(function (o) {
       var rank = firstIds.indexOf(o.id);
       return '<article class="opt' + (rank !== -1 ? ' hot' : '') + (o.special ? ' special' : '') + '" id="opt-' + o.id + '">' +
@@ -52,7 +52,7 @@
   function current() { return (tool.querySelector('input[name="tr-b"]:checked') || {}).value || 'unsure'; }
   function listText() {
     var b = current(), first = T.lowerFirst(b, 5);
-    var head = LABEL[b] ? 'Lower first when the ' + LABEL[b] + ' is the limit:' : 'Options by combined typical load:';
+    var head = LABEL[b] ? 'Lower first when the ' + LABEL[b] + ' is the limit:' : 'Options by combined load (editorial estimate):';
     var list = (first.length ? first : T.search($('tr-q').value, T.rank(b)).slice(0, 8));
     return [head].concat(list.map(function (o, i) { return (i + 1) + '. ' + o.name + ' – ' + o.tip; }), ['Typical, qualitative guidance – test in your own scene.', 'https://patchplayguide.com/tools/settings-translator/' + (LABEL[b] ? '?b=' + b : '')]).join('\n');
   }

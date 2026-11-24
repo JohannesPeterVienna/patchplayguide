@@ -38,6 +38,16 @@
     return { base: base, mult: mult, shown: shown, renderedMs: ms(base), shownMs: ms(shown),
       generatedShare: (mult - 1) / mult, overRefresh: hz ? shown > hz + 1e-9 : false, baseForRefresh: hz ? hz / mult : null };
   }
+  // the frame-generation result in words (plain text; the UI wraps each sentence in a paragraph).
+  // The multiplied rate is the rate the generator outputs – what reaches the screen is capped by the refresh rate.
+  function describeGeneration(base, mult, hz) {
+    var g = generate(base, mult, hz), f = function (x) { return round(x, 2).toFixed(2).replace(/\.?0+$/, ''); };
+    var out = [f(base) + ' rendered fps × ' + mult + ' = generated output rate of ' + f(g.shown) + ' fps, one image every ' + f(g.shownMs) + ' ms. ' + Math.round(g.generatedShare * 100) + '% of these images are generated. The game still reads your input and updates the world once per rendered frame – every ' + f(g.renderedMs) + ' ms.'];
+    if (hz) out.push(g.overRefresh
+      ? 'The display refreshes at most ' + f(hz) + ' times per second, so it can show at most ' + f(hz) + ' of these ' + f(g.shown) + ' images per second; the rest are never displayed in full, or the game is held back by V-Sync or a cap. To land exactly on the refresh rate at ' + mult + '×, the rendered rate would be ' + f(g.baseForRefresh) + ' fps.'
+      : 'That fits a ' + f(hz) + ' Hz display (' + f(g.baseForRefresh) + ' rendered fps would fill it completely at ' + mult + '×).');
+    return out;
+  }
   function compare(a, b) { return { msA: ms(a), msB: ms(b), savedMs: ms(a) - ms(b), fpsPct: (b - a) / a * 100, timePct: (ms(b) - ms(a)) / ms(a) * 100 }; }
   // average FPS of a list of frame times (ms): frames ÷ total time – not the mean of the per-frame FPS values
   function averageFps(times) {
@@ -55,7 +65,7 @@
     return { frames: n, lowFps: 1000 * n / sum, percentileMs: t[n - 1], worstMs: t[0] };
   }
 
-  var api = { num: num, ms: ms, round: round, evenRates: evenRates, fit: fit, vrr: vrr, generate: generate, compare: compare, averageFps: averageFps, lows: lows };
+  var api = { num: num, ms: ms, round: round, evenRates: evenRates, fit: fit, vrr: vrr, generate: generate, describeGeneration: describeGeneration, compare: compare, averageFps: averageFps, lows: lows };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PPGFrameTime = api;
 })(this);

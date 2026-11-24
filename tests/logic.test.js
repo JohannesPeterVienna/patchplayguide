@@ -426,15 +426,43 @@ test('frame time: average FPS and both 1% low readings (worked example of the gu
   assert.equal(FTM.round(b.lowFps, 1), 20.3); assert.equal(b.percentileMs, 16);
   assert.equal(FTM.lows([], 0.01), null);
 });
+test('frame time: frame generation above the refresh rate is an output rate, not what the screen shows', () => {
+  const t = FTM.describeGeneration(70, 2, 120).join(' ');
+  assert.match(t, /generated output rate of 140 fps/);
+  assert.match(t, /at most 120 of these 140 images per second/);
+  assert.match(t, /rendered rate would be 60 fps/);
+  assert.doesNotMatch(t, /on screen/);
+  assert.match(FTM.describeGeneration(60, 2, 120).join(' '), /That fits a 120 Hz display/);
+  assert.equal(FTM.describeGeneration(60, 2).length, 1);
+});
 test('test log: parsing, median, verdict rule and its error rate', () => {
-  assert.deepEqual(TL.parse('71, 73 72;74,5'), [71, 73, 72, 74.5]);
-  assert.deepEqual(TL.parse('71,73,72'), [71, 73, 72]);
-  assert.deepEqual(TL.parse('abc -5 0 <b> 1e9 60'), [60]);
-  assert.equal(TL.parse('1 2 3 4 5 6 7 8 9').length, TL.MAX_RUNS);
+  // 2026-11-24: one unambiguous format – runs separated by spaces, line breaks or semicolons; comma or point = decimal mark
+  assert.deepEqual(TL.parse('71 73 72;74'), [71, 73, 72, 74]);
+  assert.deepEqual(TL.parse('71\n73\n72'), [71, 73, 72]);
+  assert.deepEqual(TL.parse('71,5 72,5 73,5'), [71.5, 72.5, 73.5]);
+  assert.deepEqual(TL.parse('71,50 72,50 73,50'), [71.5, 72.5, 73.5]);
+  assert.deepEqual(TL.parse('71.50; 72.50; 73.50'), [71.5, 72.5, 73.5]);
+  for (const bad of ['71,73,72', '71, 73, 72', '60,61,62,63,64', '71.5 72,5', '71..5', '71,', ',5', 'abc', '-5 60', '0 60', '1e9', '<b>', '71.5.3']) {
+    const r = TL.read(bad);
+    assert.ok(r.error && r.values.length === 0, 'rejected: ' + bad);
+    assert.match(r.error, /spaces, line breaks or semicolons/);
+    assert.deepEqual(TL.parse(bad), []);
+  }
+  assert.match(TL.read('71,73,72').error, /ambiguous/);
+  assert.match(TL.read('71.5 72,5').error, /one decimal mark/);
+  assert.equal(TL.read('').error, null); assert.deepEqual(TL.parse(''), []);
+  const many = TL.read('1 2 3 4 5 6 7 8 9');
+  assert.equal(many.values.length, TL.MAX_RUNS); assert.equal(many.dropped, 2);
   assert.equal(TL.median([3, 1, 2]), 2); assert.equal(TL.median([4, 1, 2, 3]), 2.5); assert.equal(TL.median([]), null);
   const c = TL.compare([71, 73, 72], [75, 74, 77]);
   assert.equal(c.verdict, 'b-clear'); assert.equal(c.diff, 3); assert.equal(c.luck, 10);
   assert.equal(TL.compare([71, 75, 72], [75, 74, 77]).verdict, 'overlap');
+  // overlap is "inconclusive", never "same" or "not noticeable": A=[60,60,70], B=[69,80,80] overlap although the median rises by 20 fps
+  const ov = TL.compare([60, 60, 70], [69, 80, 80]);
+  assert.equal(ov.verdict, 'overlap'); assert.equal(ov.diff, 20); assert.equal(TL.r1(ov.pct), 33.3); assert.equal(ov.noise, 11);
+  const ovText = TL.summary({ a: [60, 60, 70], b: [69, 80, 80], la: [], lb: [] });
+  assert.match(ovText, /\+20 fps \(\+33\.3%\)/); assert.match(ovText, /Inconclusive/); assert.match(ovText, /does not establish equal performance/);
+  for (const w of Object.values(TL.WORDS)) assert.doesNotMatch(w, /\bsame\b|not notice|unnoticeable|within your run-to-run spread|\bis real\b/i);
   assert.equal(TL.compare([80, 81, 82], [70, 71, 72]).verdict, 'a-clear');
   assert.equal(TL.compare([71, 73], [75, 74, 77]).verdict, 'few');
   assert.equal(TL.compare([], [75]).verdict, 'empty');

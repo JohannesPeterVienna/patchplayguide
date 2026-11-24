@@ -1,26 +1,36 @@
 /*
  * Settings Test Log – pure logic (no DOM). Unit-tested in tests/logic.test.js.
  * The tool never supplies numbers of its own: it only summarizes the runs a player types in.
- * Verdict rule: a difference counts as "clear" only when every run of one setup beats every run of the other
- * (the two ranges do not overlap). With n runs per setup, pure chance produces such a clean split in
+ * Verdict rule: a difference counts as "separated" only when every run of one setup beats every run of the other
+ * (the two ranges do not overlap). Overlap means "inconclusive" – it never means "equal" or "not noticeable". With n runs per setup, pure chance produces such a clean split in
  * 2 of C(2n, n) orderings: 3+3 runs → 2/20, 4+4 → 2/70, 5+5 → 2/252.
  */
 (function (root) {
   'use strict';
   var MAX_RUNS = 7;
-  // accepts "71 73 72", "71, 73, 72", "71;73;72", "71,73,72" and a decimal comma with one digit ("74,5")
-  function parse(text) {
-    var out = [];
-    String(text == null ? '' : text).split(/[\s;|]+/).forEach(function (tok) {
-      if (!tok) return;
-      (/^\d+,\d$/.test(tok) ? [tok.replace(',', '.')] : tok.split(',')).forEach(function (s) {
-        if (!/^\d+(\.\d+)?$/.test(s)) return;
-        var n = Number(s);
-        if (n > 0 && n < 100000) out.push(n);
-      });
-    });
-    return out.slice(0, MAX_RUNS);
+  // Input format (one rule, no guessing): runs are separated by spaces, line breaks or semicolons; a comma or a point
+  // inside a number is its decimal mark ("71,5" = "71.5"), and one field uses only one kind of decimal mark.
+  // Anything else – "71,73,72", "71, 73", "71.5 72,5", "abc" – is rejected with a message instead of being guessed.
+  var FORMAT_HINT = 'Separate runs with spaces, line breaks or semicolons, for example “71 73 72” or “71,5; 72,5; 73,5”.';
+  function read(text) {
+    var toks = String(text == null ? '' : text).split(/[\s;]+/).filter(Boolean), out = [], marks = {};
+    for (var i = 0; i < toks.length; i++) {
+      var tok = toks[i], m = /^(\d+)(?:([.,])(\d+))?$/.exec(tok);
+      if (!m) {
+        var why = /^[\d.,]+$/.test(tok) && /,/.test(tok) ? '“' + tok + '” is ambiguous: a comma is read as a decimal mark, not as a separator between runs.' : '“' + tok.slice(0, 20) + '” is not a frame rate.';
+        return { values: [], error: why + ' ' + FORMAT_HINT };
+      }
+      if (m[2]) marks[m[2]] = true;
+      if (marks['.'] && marks[',']) return { values: [], error: 'Use one decimal mark per field – either a point or a comma, not both. ' + FORMAT_HINT };
+      var n = Number(m[1] + (m[2] ? '.' + m[3] : ''));
+      if (!(n > 0 && n < 100000)) return { values: [], error: '“' + tok + '” is outside 0–100000. ' + FORMAT_HINT };
+      out.push(n);
+    }
+    var extra = out.length > MAX_RUNS ? out.length - MAX_RUNS : 0;
+    return { values: out.slice(0, MAX_RUNS), error: null, dropped: extra };
   }
+  // values only (empty when the input is rejected); the UI shows read(text).error next to the field
+  function parse(text) { return read(text).values; }
   function median(a) {
     if (!a.length) return null;
     var s = a.slice().sort(function (x, y) { return x - y; }), m = Math.floor(s.length / 2);
@@ -59,9 +69,9 @@
   var WORDS = {
     empty: 'Enter at least three runs for each setup.',
     few: 'Not enough runs yet: with fewer than three runs per setup, one odd run decides the result.',
-    overlap: 'No clear difference: the runs of the two setups overlap, so the gap is within your run-to-run spread.',
-    'b-clear': 'Clear difference: every run of setup B is faster than every run of setup A.',
-    'a-clear': 'Clear difference: every run of setup A is faster than every run of setup B.'
+    overlap: 'Inconclusive: the observed ranges overlap, so this strict rule does not identify a separated result. That does not establish equal performance – compare the medians and the spread, and repeat a controlled comparison if the decision matters.',
+    'b-clear': 'Separated: every run of setup B is faster than every run of setup A. The observed ranges do not overlap; this is no proof of what caused the difference.',
+    'a-clear': 'Separated: every run of setup A is faster than every run of setup B. The observed ranges do not overlap; this is no proof of what caused the difference.'
   };
   function summary(state) {
     var c = compare(state.a || [], state.b || []), L = [];
@@ -77,7 +87,7 @@
     return L.join('\n');
   }
 
-  var api = { MAX_RUNS: MAX_RUNS, WORDS: WORDS, parse: parse, median: median, stats: stats, choose: choose, luck: luck, compare: compare, csv: csv, summary: summary, r1: r1 };
+  var api = { MAX_RUNS: MAX_RUNS, FORMAT_HINT: FORMAT_HINT, WORDS: WORDS, read: read, parse: parse, median: median, stats: stats, choose: choose, luck: luck, compare: compare, csv: csv, summary: summary, r1: r1 };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PPGTestLog = api;
 })(this);

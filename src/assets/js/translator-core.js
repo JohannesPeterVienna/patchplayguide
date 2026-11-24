@@ -1,6 +1,7 @@
 /*
  * Settings Translator – pure logic (no DOM). Unit-tested in tests/logic.test.js.
- * Load levels are deliberately qualitative and conservative: 0 = minimal, 1 = low, 2 = moderate, 3 = high.
+ * Load levels are an EDITORIAL ESTIMATE of the publisher (since 2026-11-24 labeled as such on the page): qualitative,
+ * not measured and not taken from a source. 0 = minimal, 1 = low, 2 = moderate, 3 = high.
  * They describe the TYPICAL extra load of the higher setting compared with a lower one in modern
  * PC games. They are not benchmark numbers; individual games and engines differ.
  * "loss" = how noticeable a one- or two-step reduction typically is (1 = subtle, 3 = obvious).

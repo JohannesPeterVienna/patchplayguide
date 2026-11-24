@@ -25,11 +25,24 @@
     var h = '<h3>' + title + '</h3><table class="rt"><thead><tr><th scope="col">Setup</th><th scope="col">Runs</th><th scope="col">Median ' + unit + '</th><th scope="col">Lowest–highest</th><th scope="col">Spread</th></tr></thead><tbody>' + row('A' + (st.nameA ? ' · ' + st.nameA : ''), c.A) + row('B' + (st.nameB ? ' · ' + st.nameB : ''), c.B) + '</tbody></table>';
     if (c.A && c.B) {
       h += '<p class="verdict v-' + c.verdict + '"><b>' + T.WORDS[c.verdict] + '</b></p><p>Median B − A: ' + (c.diff >= 0 ? '+' : '') + n1(c.diff) + ' fps (' + (c.pct >= 0 ? '+' : '') + n1(c.pct) + '%), which is ' + Math.abs(Math.round(c.msDiff * 100) / 100) + ' ms ' + (c.msDiff <= 0 ? 'less' : 'more') + ' per frame (' + (Math.round(c.msA * 100) / 100) + ' → ' + (Math.round(c.msB * 100) / 100) + ' ms). Largest run-to-run spread: ' + n1(c.noise) + ' fps.' +
-        (c.luck ? ' If the setting made no difference at all, a clean split like this would still appear by chance in 1 of ' + c.luck + ' cases with ' + c.A.n + ' + ' + c.B.n + ' runs.' : '') + (c.verdict === 'overlap' ? ' Add runs, lengthen the test route, or accept that the two setups perform the same in this scene.' : '') + '</p>';
+        (c.luck ? ' If the setting made no difference at all, a clean split like this would still appear by chance in 1 of ' + c.luck + ' cases with ' + c.A.n + ' + ' + c.B.n + ' runs.' : '') + (c.verdict === 'overlap' ? ' Undecided, not shown to be equal: the medians differ by ' + n1(Math.abs(c.diff)) + ' fps, but the ranges overlap. If the decision matters, add runs or use a longer, more repeatable route and compare again.' : '') + '</p>';
     } else h += '<p class="verdict"><b>' + T.WORDS.empty + '</b></p>';
     return h;
   }
+  var LABEL = { a: 'Setup A, average FPS', la: 'Setup A, 1% low', b: 'Setup B, average FPS', lb: 'Setup B, 1% low' };
+  function errors() {
+    var r = raw(), list = [];
+    ['a', 'la', 'b', 'lb'].forEach(function (k) {
+      var x = T.read(r[k]), el = $(F[k]);
+      if (x.error) { list.push(LABEL[k] + ': ' + x.error); el.setAttribute('aria-invalid', 'true'); } else el.removeAttribute('aria-invalid');
+      if (!x.error && x.dropped) list.push(LABEL[k] + ': only the first ' + T.MAX_RUNS + ' runs are used.');
+    });
+    var box = $('tl-err');
+    box.hidden = !list.length;
+    box.innerHTML = list.map(function (t) { return '<span>' + K.esc(t) + '</span>'; }).join('<br>');
+  }
   function render(save) {
+    errors();
     var s = state();
     var main = T.compare(s.a, s.b), low = T.compare(s.la, s.lb);
     $('tl-summary').textContent = 'Setup A: ' + s.a.length + ' run' + (s.a.length === 1 ? '' : 's') + ' · Setup B: ' + s.b.length + ' run' + (s.b.length === 1 ? '' : 's') + (main.A && main.B ? ' · ' + T.WORDS[main.verdict] : '');

@@ -1,12 +1,13 @@
 /*
  * Setting-name map – data and filter (no DOM). Unit-tested in tests/logic.test.js.
  * Every row names its sources; nothing here is measured by us. Rows were compiled on 2026-11-18 from the
- * vendor and platform documents in SOURCES. "via": 'doc' = read in full from the vendor's public repository,
- * 'page' = official page whose relevant passage was taken from a search-engine extract of that page.
+ * vendor and platform documents in SOURCES and checked again on 2026-11-24. "via": 'doc' = developer document read in
+ * full from the vendor's public repository on 2026-11-18; 'page' = official support, product or news page read in full
+ * on 2026-11-24 (before that date these pages were only known from search-engine extracts).
  */
 (function (root) {
   'use strict';
-  var ACCESSED = '2026-11-18';
+  var ACCESSED = '2026-11-18', PAGES_READ = '2026-11-24';
   var GH = 'https://github.com/';
   var SOURCES = {
     'dlss-pg': ['NVIDIA – DLSS Super Resolution Programming Guide 310.6.0 (March 2026)', GH + 'NVIDIA/DLSS/blob/main/doc/DLSS_Programming_Guide_Release.pdf', 'doc'],
@@ -41,7 +42,14 @@
     'nin-specs': ['Nintendo – Nintendo Switch 2 tech specs', 'https://www.nintendo.com/us/gaming-systems/switch-2/tech-specs/', 'page'],
     'nin-feat': ['Nintendo – Nintendo Switch 2 system features and play modes', 'https://www.nintendo.com/us/gaming-systems/switch-2/features/', 'page'],
     'nin-set': ['Nintendo Support – Nintendo Switch 2 System Settings overview', 'https://www.nintendo.com/en-gb/Support/Nintendo-Switch-2/Nintendo-Switch-2-System-Settings-Overview-2892722.html', 'page'],
-    'deck': ['Valve – Steam Deck tech specs', 'https://www.steamdeck.com/en/tech', 'page']
+    'deck': ['Valve – Steam Deck OLED tech specs', 'https://www.steamdeck.com/en/tech', 'page'],
+    'deck-lcd': ['Valve – Steam Deck LCD tech specs', 'https://www.steamdeck.com/en/tech/deck', 'page'],
+    'steamos32': ['Valve – The SteamOS 3.2 Update (May 26, 2022)', 'https://store.steampowered.com/news/app/1675200/view/3297210455204349335', 'page'],
+    'nin-hist': ['Nintendo Support – System Update History for Nintendo Switch 2', 'https://en-americas-support.nintendo.com/app/answers/detail/a_id/68526/', 'page'],
+    'nin-boost': ['Nintendo Support – How to Use Handheld Mode Boost on Nintendo Switch 2', 'https://en-americas-support.nintendo.com/app/answers/detail/a_id/68475/', 'page'],
+    'ps-pssr2': ['PlayStation Blog – Upgraded PSSR rolling out to Silent Hill f, Monster Hunter Wilds, Final Fantasy VII Rebirth, Crimson Desert, and more (March 16, 2026)', 'https://blog.playstation.com/2026/03/16/upgraded-pssr-rolling-out-to-silent-hill-f-monster-hunter-wilds-final-fantasy-vii-rebirth-crimson-desert-and-more/', 'page'],
+    'ps-qssr': ['PlayStation Blog – AI upscaling is coming to PS5 (October 1, 2026)', 'https://blog.playstation.com/2026/10/01/ai-upscaling-is-coming-to-ps5/', 'page'],
+    'nv-app-2603': ['NVIDIA – NVIDIA app update adds DLSS 4.5 Dynamic Multi Frame Generation (March 31, 2026)', 'https://www.nvidia.com/en-us/geforce/news/nvidia-app-dlss-4-5-dynamic-multi-frame-generation-available-now/', 'page']
   };
   var CATS = {
     upscale: 'Upscaling (render fewer pixels, reconstruct the rest)',
@@ -75,11 +83,12 @@
     mode('intel', 'XeSS', 'Native Anti-Aliasing', 1.0, 'xess-sr'), mode('intel', 'XeSS', 'Ultra Quality Plus', 1.3, 'xess-sr'), mode('intel', 'XeSS', 'Ultra Quality', 1.5, 'xess-sr'),
     mode('intel', 'XeSS', 'Quality', 1.7, 'xess-sr'), mode('intel', 'XeSS', 'Balanced', 2.0, 'xess-sr'), mode('intel', 'XeSS', 'Performance', 2.3, 'xess-sr'), mode('intel', 'XeSS', 'Ultra Performance', 3.0, 'xess-sr'),
     { c: 'upscale', v: 'intel', n: 'XeSS presets before version 1.3', g: 'Older preset factors', d: 'Before XeSS 1.3 the same names rendered more pixels: Ultra Quality 1.3×, Quality 1.5×, Balanced 1.7×, Performance 2.0×. A game that moved to XeSS 1.3 or newer renders fewer pixels under the same preset name unless it keeps the legacy factors.', s: ['xess-sr'] },
-    { c: 'upscale', v: 'ps5', n: 'PSSR (PlayStation Spectral Super Resolution)', g: 'Temporal upscaler (machine learning)', d: 'Sony’s upscaler for PS5 Pro games that support it. Sony announced an upgraded PSSR on February 27, 2026.', s: ['ps-pssr'] },
-    { c: 'upscale', v: 'ps5', n: 'Enhance PSSR Image Quality', g: 'System-wide upscaler override', d: 'PS5 Pro system setting that applies the upgraded PSSR to PS5 Pro games that already support PSSR.', s: ['ps-pssr'] },
+    { c: 'upscale', v: 'ps5', n: 'PSSR (PlayStation Spectral Super Resolution)', g: 'Temporal upscaler (machine learning)', d: 'Sony’s upscaler for PS5 Pro games that support it. Sony announced an upgraded PSSR on February 27, 2026; the PS5 system update that began rolling out on March 16, 2026 brought it to the console.', s: ['ps-pssr', 'ps-pssr2'] },
+    { c: 'upscale', v: 'ps5', n: 'Enhance PSSR Image Quality', g: 'System-wide upscaler override (PS5 Pro)', d: 'Settings → Screen and Video → Video Output, on by default, PS5 Pro (CFI-7000 model group) only. Sony: it lets PS5 Pro games that already support PSSR use the upgraded PSSR; results vary by title, and it can be turned off if a game shows unexpected visual effects.', s: ['ps-res', 'ps-pssr2'] },
+    { c: 'upscale', v: 'ps5', n: 'QSSR (Quick Spectral Super Resolution)', g: 'Temporal upscaler (machine learning), standard PS5', d: 'Sony’s AI upscaler for the standard PS5, announced on October 1, 2026 as a faster tier built on PSSR. Games add it through their own updates as a graphics option; Sony named Marvel’s Wolverine and Ghost of Yōtei as the first two.', s: ['ps-qssr'] },
 
     { c: 'framegen', v: 'nvidia', n: 'DLSS Frame Generation', g: 'In-game frame generation, 2×', d: 'One generated frame per rendered frame. NVIDIA requires the game to integrate Reflex, Windows 10 version 2004 or newer and hardware-accelerated GPU scheduling.', s: ['sl-fg'] },
-    { c: 'framegen', v: 'nvidia', n: 'DLSS Multi Frame Generation', g: 'In-game frame generation, 3× and more', d: 'Several generated frames per rendered frame; three generated frames give a 4× multiplier. The maximum depends on the hardware: NVIDIA’s cost table lists 4× for the RTX 5080 and RTX 5090 and none for the RTX 4090.', s: ['sl-fg'] },
+    { c: 'framegen', v: 'nvidia', n: 'DLSS Multi Frame Generation', g: 'In-game frame generation, 3× and more', d: 'Several generated frames per rendered frame; three generated frames give a 4× multiplier. The maximum depends on the hardware: NVIDIA’s cost table lists 4× for the RTX 5080 and RTX 5090 and none for the RTX 4090. NVIDIA’s app update of March 31, 2026 added 5× and 6× modes for GeForce RTX 50 Series cards.', s: ['sl-fg', 'nv-app-2603'] },
     { c: 'framegen', v: 'nvidia', n: 'Dynamic Multi Frame Generation', g: 'Frame generation with a variable multiplier', d: 'Adjusts the number of generated frames automatically to reach the display’s refresh rate or a chosen target. Needs driver 595.41 or newer and Direct3D 12, and is designed to work with the Reflex frame-rate limiter.', s: ['sl-fg'] },
     { c: 'framegen', v: 'nvidia', n: 'Smooth Motion', g: 'Driver-level frame generation', d: 'Adds one interpolated frame between two rendered frames in games without DLSS Frame Generation. Switched on per game in the NVIDIA app under Graphics → Program settings, for DirectX 11, DirectX 12 and Vulkan games on RTX 50 and RTX 40 series cards.', s: ['nv-smooth'] },
     { c: 'framegen', v: 'amd', n: 'FSR Frame Generation (FSR 3.1)', g: 'In-game frame generation, 2×', d: 'Analytically generates one intermediate frame from two consecutive rendered frames. AMD’s pacing notes say the rendered frame rate should sit slightly below half the desired output frame rate.', s: ['fsr-fg', 'fsr-sc'] },
@@ -94,23 +103,24 @@
     { c: 'latency', v: 'intel', n: 'Xe Low Latency (XeLL)', g: 'In-game latency reduction', d: 'For Intel Arc A-Series and newer; on other vendors’ GPUs only together with XeSS-FG. Intel requires other latency-reduction solutions to be off while XeLL runs.', s: ['xell'] },
 
     { c: 'vrr', v: 'amd', n: 'FreeSync', g: 'Variable refresh rate (VRR)', d: 'AMD’s name for VRR on monitors, laptops and TVs. The AMD FSR documentation lists AMD FreeSync, NVIDIA G-SYNC and VESA AdaptiveSync as VRR technologies.', s: ['freesync', 'fsr-sc'] },
-    { c: 'vrr', v: 'amd', n: 'FreeSync Premium', g: 'VRR tier', d: 'Adds two requirements to FreeSync: mandatory low framerate compensation and at least 120 Hz at a minimum of Full HD resolution.', s: ['freesync'] },
-    { c: 'vrr', v: 'amd', n: 'FreeSync Premium Pro', g: 'VRR tier with HDR', d: 'Adds AMD’s FreeSync Premium Pro compliance tests on top of FreeSync Premium; AMD lists FreeSync HDR as a Premium Pro feature.', s: ['freesync'] },
+    { c: 'vrr', v: 'amd', n: 'FreeSync Premium', g: 'VRR tier', d: 'AMD’s tier table for monitors, TVs and projectors asks for a higher maximum refresh rate than base FreeSync: at least 200 Hz below 3440 pixels of width (FreeSync: 144 Hz) and at least 120 Hz from 3440 pixels. The table marks low framerate compensation for all three tiers; AMD’s FAQ calls it mandatory for Premium and Premium Pro.', s: ['freesync'] },
+    { c: 'vrr', v: 'amd', n: 'FreeSync Premium Pro', g: 'VRR tier with HDR', d: 'Same refresh-rate requirements as FreeSync Premium; in AMD’s tier table the addition is AMD FreeSync HDR, for HDR games, movies and other content.', s: ['freesync'] },
     { c: 'vrr', v: 'nvidia', n: 'G-SYNC', g: 'Variable refresh rate (VRR)', d: 'NVIDIA’s name for VRR. This map does not list NVIDIA’s display tiers because we could not check their current definitions against an official NVIDIA page.', s: ['fsr-sc'] },
     { c: 'vrr', v: 'ps5', n: 'VRR', g: 'Variable refresh rate (HDMI 2.1)', d: 'Settings → Screen and Video → Video Output. Sony: enabled automatically for supported games when the console is connected to an HDMI 2.1 VRR-compatible TV or monitor.', s: ['ps-vrr', 'ps-res'] },
     { c: 'vrr', v: 'ps5', n: 'Apply to Unsupported Games', g: 'VRR for games without VRR support', d: 'Option on the same PS5 screen: applies VRR to PS5 games that do not support it. Sony says it may improve video quality for some games and can be turned off if you see unexpected behavior.', s: ['ps-vrr', 'ps-res'] },
-    { c: 'vrr', v: 'xbox', n: 'Allow variable refresh rate', g: 'Variable refresh rate', d: 'Checkbox under Settings → General → TV & display options → Video modes (Xbox Wire’s 2020 article places Video modes under Advanced).', s: ['xb-wire'] },
+    { c: 'vrr', v: 'xbox', n: 'Allow variable refresh rate', g: 'Variable refresh rate', d: 'Checkbox under Profile & system → Settings → General → TV & display options → Video modes. Xbox Support: only available with a TV that supports HDMI-VRR or AMD FreeSync; it may cause display issues through an AV receiver. Xbox Wire’s 2020 article placed Video modes under Advanced.', s: ['xb-tv', 'xb-wire'] },
     { c: 'vrr', v: 'windows', n: 'Variable refresh rate', g: 'VRR for games that lack native support', d: 'Settings → System → Display → Graphics, in the default or advanced graphics settings. Microsoft notes the switch only appears with suitable drivers and a VRR-capable monitor.', s: ['ms-gfx'] },
     { c: 'vrr', v: 'windows', n: 'Dynamic refresh rate (DRR)', g: 'Not VRR for games', d: 'Settings → System → Display → Advanced display. Lets Windows change the desktop refresh rate by itself; only offered on displays with VRR and at least 120 Hz. Easy to confuse with the VRR switch above.', s: ['ms-refresh'] },
-    { c: 'vrr', v: 'switch2', n: 'VRR (built-in screen)', g: 'Variable refresh rate', d: 'The built-in 1080p screen supports VRR up to 120 Hz. Nintendo notes that frame rate, HDR and VRR support vary by game.', s: ['nin-specs'] },
-    { c: 'vrr', v: 'switch2', n: 'VRR in TV mode', g: 'Variable refresh rate over HDMI', d: 'Added with system update 23.0.0 (September 10, 2026); needs the dock update and game support, plus a TV that supports VRR over HDMI.', s: ['nin-feat'] },
+    { c: 'vrr', v: 'switch2', n: 'VRR (built-in screen)', g: 'Variable refresh rate', d: 'Nintendo’s tech specs list VRR up to 120 Hz for the built-in 1920×1080 screen.', s: ['nin-specs'] },
+    { c: 'vrr', v: 'switch2', n: 'VRR in TV mode', g: 'Variable refresh rate over HDMI', d: 'Added with system update 23.0.0, together with VRR settings under Display in System Settings. When both the game and the TV support it, the video is output at a refresh rate that matches the game’s processing; the dock needs a firmware update. Nintendo’s update history dates 23.0.0 to September 9, 2026, its features page to September 10, 2026.', s: ['nin-hist', 'nin-feat'] },
 
-    { c: 'output', v: 'ps5', n: '120 Hz output setting', g: 'High refresh-rate output', d: 'The 120 Hz output setting under Settings → Screen and Video → Video Output; the exact label on the console may differ. Provides 120 Hz for the TV and for games that support a 120 Hz frame rate; Sony advises turning it off if the display shows output problems.', s: ['ps-res'] },
+    { c: 'output', v: 'ps5', n: '120 Hz output setting', g: 'High refresh-rate output', d: '“120 Hz Output” under Settings → Screen and Video → Video Output. Sony: turns on 120 Hz video output for the TV and for games that support a 120 Hz frame rate; turn it off if these games show output problems on a monitor or other display.', s: ['ps-res'] },
     { c: 'output', v: 'ps5', n: 'Game Presets – Performance Mode or Resolution Mode', g: 'Default graphics mode for games', d: 'Settings → Saved Data and Game/App Settings → Game Presets. Performance Mode favors smooth motion, Resolution Mode favors graphics quality; it sets the default that supporting games start with.', s: ['ps-presets'] },
-    { c: 'output', v: 'xbox', n: 'Refresh rate – 120 Hz', g: 'High refresh-rate output', d: 'Profile & system → Settings → General → TV & display options. For 4K at 120 Hz, Xbox Support names an Ultra High Speed HDMI cable and a TV with HDMI 2.1.', s: ['xb-tv', 'xb-120'] },
+    { c: 'output', v: 'xbox', n: 'Refresh rate – 120 Hz', g: 'High refresh-rate output', d: 'Profile & system → Settings → General → TV & display options. For 4K at 120 Hz, Xbox Support names an Xbox Series X, an Ultra High Speed HDMI cable that supports HDMI 2.1 and a TV that supports HDMI 2.1; a Series S, or a TV without HDMI 2.1, can still use 120 Hz at a lower resolution.', s: ['xb-tv', 'xb-120'] },
     { c: 'output', v: 'switch2', n: 'TV resolution', g: 'Output resolution in TV mode', d: 'System Settings option with the choices Automatic, 720p, 1080p, 1440p and 2160p (4K). At 4K the frame rate is limited to 60 fps; 120 fps is possible at 1080p and 1440p.', s: ['nin-set', 'nin-specs'] },
     { c: 'output', v: 'switch2', n: '120Hz output', g: 'High refresh-rate output', d: 'On/off toggle in System Settings. 120 fps in TV mode needs a display that supports 120 Hz.', s: ['nin-set', 'nin-specs'] },
-    { c: 'output', v: 'deck', n: 'Screen resolution and refresh rate', g: 'Handheld display limits', d: 'Both Steam Deck models have a 1280×800 screen. Valve lists up to 60 Hz and a 40 Whr battery for the LCD model, up to 90 Hz and a 50 Whr battery for the OLED model.', s: ['deck'] },
+    { c: 'output', v: 'switch2', n: 'Handheld Mode Boost', g: 'TV-mode performance for Switch 1 games on the go', d: 'System Settings → System → Nintendo Switch Software Handling, off by default, added in system update 22.0.0 (March 16, 2026). Runs compatible Nintendo Switch games in handheld and tabletop mode as if in TV mode; Nintendo says it can raise power use, can block touch controls, and has no effect on Nintendo Switch 2 software.', s: ['nin-boost', 'nin-hist'] },
+    { c: 'output', v: 'deck', n: 'Screen resolution and refresh rate', g: 'Handheld display limits', d: 'Both Steam Deck models have a 1280×800 screen and 4–15 W APU power. Valve lists 60 Hz and a 40 Whr battery (2–8 hours of gameplay) for the LCD model, up to 90 Hz and a 50 Whr battery (3–12 hours) for the OLED model. Since SteamOS 3.2 the refresh rate can be lowered to 40 Hz in the Performance tab.', s: ['deck', 'deck-lcd', 'steamos32'] },
     { c: 'output', v: 'windows', n: 'Optimizations for windowed games', g: 'Presentation mode for windowed games', d: 'System-wide switch on the Graphics settings page. Microsoft says it improves latency in DirectX 10 and 11 games in windowed and borderless modes and enables features such as Auto HDR and VRR there.', s: ['ms-gfx'] },
     { c: 'output', v: 'windows', n: 'Hardware-accelerated GPU scheduling', g: 'Windows graphics scheduler setting', d: 'Settings → System → Display → Graphics → Change default graphics settings. NVIDIA lists it as a requirement for DLSS Frame Generation.', s: ['sl-fg'] },
 
@@ -144,7 +154,7 @@
     })).join('\n') + '\n';
   }
 
-  var api = { ACCESSED: ACCESSED, SOURCES: SOURCES, CATS: CATS, VENDORS: VENDORS, ROWS: ROWS, filter: filter, csv: csv };
+  var api = { ACCESSED: ACCESSED, PAGES_READ: PAGES_READ, SOURCES: SOURCES, CATS: CATS, VENDORS: VENDORS, ROWS: ROWS, filter: filter, csv: csv };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PPGNames = api;
 })(this);

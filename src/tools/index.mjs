@@ -6,5 +6,6 @@ import finder from './bottleneck-finder.mjs';
 import translator from './settings-translator.mjs';
 import decoder from './patch-decoder.mjs';
 import names from './setting-names.mjs';
+import upgrades from './console-upgrades.mjs';
 export const TOOLS = [resolution, frametime, testlog, finder, translator, decoder];
-export const REFERENCES = [names];
+export const REFERENCES = [names, upgrades];

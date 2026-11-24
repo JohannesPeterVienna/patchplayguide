@@ -36,8 +36,7 @@
       html += card('In a ' + f2(s.min) + '–' + f2(s.max) + ' Hz VRR window', vb, v.kind === 'inside' ? 'hot' : '');
     }
     if (s.fg > 1) {
-      var g = F.generate(s.fps, s.fg, s.hz), gb = '<p>' + f2(s.fps) + ' rendered fps × ' + s.fg + ' = <b>' + f2(g.shown) + ' fps on screen</b>, one image every ' + f2(g.shownMs) + ' ms. ' + Math.round(g.generatedShare * 100) + '% of the images are generated. The game still reads your input and updates the world once per rendered frame – every ' + f2(g.renderedMs) + ' ms.</p>';
-      if (s.hz) gb += g.overRefresh ? '<p>' + f2(g.shown) + ' fps is more than the display’s ' + f2(s.hz) + ' Hz. To land exactly on the refresh rate at ' + s.fg + '×, the rendered rate would be ' + f2(g.baseForRefresh) + ' fps.</p>' : '<p>That fits a ' + f2(s.hz) + ' Hz display (' + f2(g.baseForRefresh) + ' rendered fps would fill it completely at ' + s.fg + '×).</p>';
+      var gb = F.describeGeneration(s.fps, s.fg, s.hz).map(function (t) { return '<p>' + K.esc(t) + '</p>'; }).join('');
       html += card('With ' + s.fg + '× frame generation', gb);
     }
     if (s.vs && s.vs !== s.fps) {
