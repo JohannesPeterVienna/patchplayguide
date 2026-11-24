@@ -14,7 +14,7 @@ const blog = (id) => { const [label, url] = U.SOURCES[id]; return read24(label, 
 const XSX = read24('Xbox – Xbox Series X, tech specs', 'https://www.xbox.com/en-US/consoles/xbox-series-x', 'processor, memory, video capabilities');
 const XSS = read24('Xbox – Xbox Series S, tech specs', 'https://www.xbox.com/en-US/consoles/xbox-series-s', 'memory, video capabilities; its CPU line (3.8 GHz) deviates from the Microsoft Store page');
 const MSS = read24('Microsoft Store – Xbox Series S, tech specs', 'https://www.microsoft.com/en-us/d/xbox-series-s/942j774tp9jn', 'CPU: 8 cores at 3.6 GHz (3.4 GHz with SMT)');
-const MSX = read24('Microsoft Store – Xbox Series X, tech specs', 'https://www.microsoft.com/en-us/d/xbox-series-x/8wj714n3rbtl', 'CPU: 8 cores at 3.8 GHz (3.66 GHz with SMT)');
+const MSX = read24('Microsoft Store – Xbox Series X, tech specs', 'https://www.microsoft.com/en-us/d/xbox-series-x/8wj714n3rbtl', 'CPU: 8 cores at 3.8 GHz (3.6 GHz with SMT)');
 
 export const ps5Modes = {
   slug: 'ps5-performance-vs-fidelity-mode',
@@ -81,14 +81,14 @@ ${tryBox('Check any frame rate against your TV’s refresh rate and VRR window.'
 };
 
 const spec = tbl('Xbox Series X and Series S as listed on Microsoft’s product and Store pages (read November 24, 2026)', ['', 'Series X', 'Series S'], [
-  ['CPU', '8 cores at 3.8 GHz (3.66 GHz with SMT), custom Zen 2', '8 cores at 3.6 GHz (3.4 GHz with SMT), custom Zen 2'],
+  ['CPU', '8 cores at 3.8 GHz (3.6 GHz with SMT), custom Zen 2', '8 cores at 3.6 GHz (3.4 GHz with SMT), custom Zen 2'],
   ['GPU', '12 TFLOPS, 52 compute units at 1.825 GHz, custom RDNA 2', '4 TFLOPS, 20 compute units at 1.565 GHz, custom RDNA 2'],
   ['Memory', '16 GB GDDR6, 320-bit bus', '10 GB GDDR6, 128-bit bus'],
   ['Memory bandwidth', '10 GB at 560 GB/s, 6 GB at 336 GB/s', '8 GB at 224 GB/s, 2 GB at 56 GB/s'],
   ['Gaming resolution', 'True 4K', '1440p'],
   ['Performance target', 'Up to 120 fps', 'Up to 120 fps'],
   ['HDMI features', 'ALLM, HDMI VRR, AMD FreeSync', 'ALLM, HDMI VRR, AMD FreeSync']
-], 'Microsoft’s wording, shortened. CPU clocks from the Microsoft Store pages. The xbox.com product page for the Series S lists the Series X clocks (3.8 GHz, 3.6 GHz with SMT) – apparently an error; we follow the Store page, which matches Microsoft’s figures since 2020. One block of the Store’s Series X page gives 3.6 GHz with SMT instead of 3.66.');
+], 'Microsoft’s wording, shortened. CPU clocks from the Microsoft Store pages. The xbox.com product page for the Series S lists the Series X clocks (3.8 GHz, 3.6 GHz with SMT) – apparently an error; we follow the Store page, which matches Microsoft’s figures since 2020.');
 
 export const xbox = {
   slug: 'xbox-series-s-vs-x-modes',
@@ -134,7 +134,7 @@ ${fig('xb-fig', 'Bars comparing Series S with Series X: CPU clock 3.6 of 3.8 gig
   ],
   faq: [
     ['Why does my game have fewer modes on Xbox Series S?', 'Microsoft lists a GPU with 4 instead of 12 TFLOPS, 10 instead of 16 GB of memory and a 1440p resolution target for the Series S. A developer may drop or change a mode to fit those limits; the game’s store page or patch notes say what it offers.'],
-    ['Is the Xbox Series S CPU slower than the Series X?', 'Only slightly. The Microsoft Store lists 8 Zen 2 cores at 3.6 GHz (3.4 GHz with SMT) for the Series S and 3.8 GHz (3.66 GHz with SMT) for the Series X. The big differences are GPU, memory and the resolution target.'],
+    ['Is the Xbox Series S CPU slower than the Series X?', 'Only slightly. The Microsoft Store lists 8 Zen 2 cores at 3.6 GHz (3.4 GHz with SMT) for the Series S and 3.8 GHz (3.6 GHz with SMT) for the Series X. The big differences are GPU, memory and the resolution target.'],
     ['Does Series S support 120 Hz?', 'Yes. Microsoft lists a performance target of up to 120 fps for both consoles, in games that offer it and with a compatible display. 4K at 120 Hz is a Series X feature.'],
     ['Why is the Series S image softer on my 4K TV?', 'Microsoft lists 1440p as the Series S gaming resolution, so a 4K TV has to show an image with fewer pixels than it has. The difference is easiest to see on large screens.']
   ],
