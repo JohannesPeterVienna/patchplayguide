@@ -115,6 +115,7 @@
     r('Mario Kart 8 Deluxe', 'switch2', 'free', 'Nintendo: update available September 1, 2026; image quality optimized for the Switch 2 screen; faster loading; up to 8 players in local multiplayer on one system.', '2026-09-01', A, ['nin-free']),
     r('New Super Mario Bros. U Deluxe', 'switch2', 'free', 'Nintendo: update available June 5, 2025; image quality optimized for the Switch 2 screen and high-resolution TVs.', '2025-06-05', A, ['nin-free']),
     r('Pikmin 3 Deluxe', 'switch2', 'free', 'Nintendo: update available August 31, 2026; image quality optimized for the Switch 2 screen and high-resolution TVs.', '2026-08-31', A, ['nin-free']),
+    r('Pokémon Champions', 'switch2', 'free', 'Nintendo: update available April 8, 2026; image quality optimized for the Switch 2 screen and high-resolution TVs.', '2026-04-08', A, ['nin-free']),
     r('Pokémon Scarlet', 'switch2', 'free', 'Nintendo: update available June 5, 2025; image quality optimized for the Switch 2 screen and high-resolution TVs; frame rate improved for smoother movement.', '2025-06-05', A, ['nin-free']),
     r('Pokémon Violet', 'switch2', 'free', 'Nintendo: update available June 5, 2025; image quality optimized for the Switch 2 screen and high-resolution TVs; frame rate improved for smoother movement.', '2025-06-05', A, ['nin-free']),
     r('Splatoon 3', 'switch2', 'free', 'Nintendo: update available June 12, 2025; image quality optimized for the Switch 2 screen and high-resolution TVs; smoother frame rate in the plaza and the Grand Festival Grounds.', '2025-06-12', A, ['nin-free']),
@@ -129,7 +130,7 @@
 
   // newest dated source of a row ('' when all its sources are undated Nintendo pages)
   function dateOf(x) { return x.s.map(function (id) { return SOURCES[id][2]; }).sort().pop() || ''; }
-  function norm(s) { return String(s || '').toLowerCase().replace(/[’']/g, '\''); }
+  function norm(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’']/g, '\''); }
   function filter(q, platform, kind) {
     var words = norm(q).split(/\s+/).filter(Boolean);
     return ROWS.filter(function (x) {

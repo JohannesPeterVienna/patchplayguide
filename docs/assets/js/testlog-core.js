@@ -8,20 +8,20 @@
 (function (root) {
   'use strict';
   var MAX_RUNS = 7;
-  // Input format (one rule, no guessing): runs are separated by spaces, line breaks or semicolons; a comma or a point
-  // inside a number is its decimal mark ("71,5" = "71.5"), and one field uses only one kind of decimal mark.
-  // Anything else – "71,73,72", "71, 73", "71.5 72,5", "abc" – is rejected with a message instead of being guessed.
-  var FORMAT_HINT = 'Separate runs with spaces, line breaks or semicolons, for example “71 73 72” or “71,5; 72,5; 73,5”.';
+  // Input format (no guessing): runs are separated by spaces, line breaks, semicolons or a comma followed by a space;
+  // a comma or point directly between digits is a decimal mark ("71,5" = "71.5"), one kind per field.
+  // Ambiguous input – "71,73,72" (commas without spaces), "71.5 72,5" (mixed marks), "abc" – is rejected with a message.
+  var FORMAT_HINT = 'Separate runs with a space, a line break, a semicolon or a comma followed by a space – for example “71 73 72”, “71, 73, 72” or “71,5; 72,5; 73,5”.';
   function read(text) {
-    var toks = String(text == null ? '' : text).split(/[\s;]+/).filter(Boolean), out = [], marks = {};
+    var toks = String(text == null ? '' : text).replace(/,(?=\s|$)/g, ' ').split(/[\s;]+/).filter(Boolean), out = [], marks = {};
     for (var i = 0; i < toks.length; i++) {
       var tok = toks[i], m = /^(\d+)(?:([.,])(\d+))?$/.exec(tok);
       if (!m) {
-        var why = /^[\d.,]+$/.test(tok) && /,/.test(tok) ? '“' + tok + '” is ambiguous: a comma is read as a decimal mark, not as a separator between runs.' : '“' + tok.slice(0, 20) + '” is not a frame rate.';
+        var why = /^[\d.,]+$/.test(tok) && /,/.test(tok) ? 'We cannot tell how to read “' + tok + '”: a comma directly between digits is a decimal mark, so “71,5” means 71.5. To list several runs, put a space after each comma.' : '“' + tok.slice(0, 20) + '” is not a frame rate.';
         return { values: [], error: why + ' ' + FORMAT_HINT };
       }
       if (m[2]) marks[m[2]] = true;
-      if (marks['.'] && marks[',']) return { values: [], error: 'Use one decimal mark per field – either a point or a comma, not both. ' + FORMAT_HINT };
+      if (marks['.'] && marks[',']) return { values: [], error: 'This field mixes decimal points and decimal commas. Please use one of them for all runs. ' + FORMAT_HINT };
       var n = Number(m[1] + (m[2] ? '.' + m[3] : ''));
       if (!(n > 0 && n < 100000)) return { values: [], error: '“' + tok + '” is outside 0–100000. ' + FORMAT_HINT };
       out.push(n);

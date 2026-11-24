@@ -69,7 +69,7 @@ for (const [oldUrl, newUrl] of OLD_URLS) {
   write(oldUrl, page({
     path: oldUrl, canonical: SITE.origin + newUrl, refresh: newUrl, noindex: true, ads: 'no', loader: false,
     title: 'This page has moved – Patch Play Guide',
-    description: `This address of the old Patch Play Guide site has moved. The content now lives at ${SITE.origin}${newUrl} – you are redirected automatically.`,
+    description: `This address of Patch Play Guide has moved. The content now lives at ${SITE.origin}${newUrl} – you are redirected automatically.`,
     body: `<article class="doc"><h1>This page has moved</h1><p>The new address is <a href="${newUrl}">${SITE.origin}${newUrl}</a>. If you are not redirected automatically, follow the link.</p></article>`
   }));
 }

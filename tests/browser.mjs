@@ -324,14 +324,16 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
     const dec = await page.innerText('#tl-out'), decErr = await page.isVisible('#tl-err');
     await page.fill('#tl-a', '71,73,72');
     const amb = await page.textContent('#tl-err'), ambShown = await page.isVisible('#tl-err'), ambInvalid = await page.getAttribute('#tl-a', 'aria-invalid');
+    await page.fill('#tl-a', '71, 73, 72');
+    const sep = await page.isVisible('#tl-err'), sepOut = await page.innerText('#tl-out');
     await page.fill('#tl-a', '71.5 72,5');
     const mixed = await page.textContent('#tl-err');
     await page.click('#tl-clear');
     const errAfterClear = await page.isVisible('#tl-err');
     await over('test log input');
     ok(/Inconclusive/.test(ce) && /\+20 fps \(\+33\.3%\)/.test(ce) && /Largest run-to-run spread: 11 fps/.test(ce) && !/\bsame\b|not notice/i.test(ce + ceSum) && /Undecided, not shown to be equal/.test(ce) &&
-      /72\.5/.test(dec) && /Separated/.test(dec) && !decErr && ambShown && /ambiguous/.test(amb) && ambInvalid === 'true' && /one decimal mark/.test(mixed) && !errAfterClear,
-      'test log: 60 60 70 vs 69 80 80 is inconclusive (+20 fps, never “same”); “71,50 72,50 73,50” reads as three decimal runs; “71,73,72” and mixed decimal marks are rejected visibly',
+      /72\.5/.test(dec) && /Separated/.test(dec) && !decErr && ambShown && /put a space after each comma/.test(amb) && ambInvalid === 'true' && /mixes decimal points/.test(mixed) && !errAfterClear && !sep && /71–73/.test(sepOut),
+      'test log: 60 60 70 vs 69 80 80 is inconclusive (+20 fps, never “same”); “71,50 72,50 73,50” reads as three decimal runs; “71, 73, 72” reads as three runs; “71,73,72” and mixed decimal marks are rejected visibly',
       `test log input: ce=${ce.replace(/\s+/g, ' ').slice(0, 160)} | dec=${dec.replace(/\s+/g, ' ').slice(0, 80)} err=${decErr} | amb=${amb} ${ambShown}/${ambInvalid} | mixed=${mixed} | clear=${errAfterClear}`);
 
     // Console upgrade reference: list readable, filters, link state, every source number resolves
@@ -341,6 +343,8 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
     const upPs5 = await page.locator('#up-list > li:visible').allInnerTexts();
     await page.selectOption('#up-p', 'all'); await page.fill('#up-q', 'metroid');
     const upMet = await page.locator('#up-list > li:visible').allInnerTexts();
+    await page.fill('#up-q', 'yotei');
+    const upYo = await page.locator('#up-list > li:visible').allInnerTexts();
     await page.fill('#up-q', 'zzzz');
     const upNone = await page.isVisible('#up-none');
     await page.click('#up-reset');
@@ -349,8 +353,8 @@ console.log('Ad boxes: ins never hidden; label and rule only with filled/unfill-
     const upLink = await page.locator('#up-list > li:visible').count();
     const upSrc = await page.evaluate(() => [...document.querySelectorAll('#up-list .nm-s a')].every((a) => document.getElementById(a.getAttribute('href').slice(1))));
     await over('console upgrades');
-    ok(upAll >= 60 && upPs5.length === 8 && upPs5.every((t) => /QSSR/.test(t)) && upMet.length === 1 && /720p/.test(upMet[0]) && upNone && upReset === upAll && upLink === 6 && upSrc,
-      `console upgrades: ${upAll} entries, PS5 filter → ${upPs5.length} QSSR entries, “metroid” → 1, no-match hint, reset, link ?on=switch2&kind=edition → ${upLink}, every source number resolves`,
+    ok(upAll >= 60 && upPs5.length === 8 && upPs5.every((t) => /QSSR/.test(t)) && upMet.length === 1 && /720p/.test(upMet[0]) && upYo.length === 1 && /Yōtei/.test(upYo[0]) && upNone && upReset === upAll && upLink === 6 && upSrc,
+      `console upgrades: ${upAll} entries, PS5 filter → ${upPs5.length} QSSR entries, “metroid” → 1, “yotei” finds Yōtei, no-match hint, reset, link ?on=switch2&kind=edition → ${upLink}, every source number resolves`,
       `console upgrades: all=${upAll} ps5=${upPs5.length} metroid=${upMet.length} none=${upNone} reset=${upReset} link=${upLink} src=${upSrc}`);
 
     // blank worksheet: in print mode only the worksheet stays visible

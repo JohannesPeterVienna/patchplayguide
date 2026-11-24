@@ -12,7 +12,9 @@ const holds = (fps, hz) => { const f = FT.fit(fps, hz); return f.kind === 'even'
 // a PlayStation Blog post from the upgrade reference as a source entry of this guide
 const blog = (id) => { const [label, url] = U.SOURCES[id]; return read24(label, url); };
 const XSX = read24('Xbox – Xbox Series X, tech specs', 'https://www.xbox.com/en-US/consoles/xbox-series-x', 'processor, memory, video capabilities');
-const XSS = read24('Xbox – Xbox Series S, tech specs', 'https://www.xbox.com/en-US/consoles/xbox-series-s', 'processor, memory, video capabilities');
+const XSS = read24('Xbox – Xbox Series S, tech specs', 'https://www.xbox.com/en-US/consoles/xbox-series-s', 'memory, video capabilities; its CPU line (3.8 GHz) deviates from the Microsoft Store page');
+const MSS = read24('Microsoft Store – Xbox Series S, tech specs', 'https://www.microsoft.com/en-us/d/xbox-series-s/942j774tp9jn', 'CPU: 8 cores at 3.6 GHz (3.4 GHz with SMT)');
+const MSX = read24('Microsoft Store – Xbox Series X, tech specs', 'https://www.microsoft.com/en-us/d/xbox-series-x/8wj714n3rbtl', 'CPU: 8 cores at 3.8 GHz (3.66 GHz with SMT)');
 
 export const ps5Modes = {
   slug: 'ps5-performance-vs-fidelity-mode',
@@ -36,7 +38,7 @@ ${tbl('What developers state about their PS5 modes (official sources, read Novem
   ['Assassin’s Creed Black Flag Resynced', 'Balanced and Fidelity: ray-traced global illumination and ray-traced specular reflections', 'Performance: ray-traced global illumination only', 'Ubisoft, PlayStation Blog, Jun 29, 2026'],
   ['Saros', 'Key story cinematics switch to 30 fps', 'Gameplay at 60 fps with dynamic resolution', 'Housemarque, PlayStation Blog, Apr 16, 2026']
 ], 'Statements about the standard PS5. What the same games change on PS5 Pro is listed in the <a href="/reference/console-upgrades/">console upgrade reference</a>.')}
-<p>The pattern across these examples: the quality side spends the frame time on resolution and ray tracing, the performance side on frame rate. Two of them show that the line is not always “ray tracing on or off” – Black Flag Resynced keeps ray-traced global illumination in every mode and drops only the reflections, and Saros keeps one mode but varies the resolution from scene to scene (dynamic resolution) to hold 60 fps.</p>
+<p>The pattern across these examples: the quality side spends the frame time on resolution and ray tracing, the performance side on frame rate. Two of them show that the line is not always “ray tracing on or off” – Black Flag Resynced keeps ray-traced global illumination in every mode and drops only the reflections, and Saros uses dynamic resolution to hold 60 fps in gameplay, switching to 30 fps only in key story cinematics.</p>
 <p>The arithmetic behind the trade is simple. At 30 frames per second each frame may take up to 33.3 milliseconds; at 60 only 16.7. To halve the time per frame, a game has to drop work – pixels, effects or both – which is what the performance side of every row above does.</p>`,
     `<h2 id="balanced">Why 40 fps balanced modes need 120 Hz</h2>
 <p>A 60 Hz TV refreshes every 16.7 ms. A 30 fps game shows each frame for exactly two refreshes, a 60 fps game for one – both are even. A 40 fps game would need 1.5 refreshes per frame, which a 60 Hz signal cannot do evenly, so motion would judder. A 120 Hz signal refreshes every 8.3 ms, and 40 fps fits exactly three refreshes per frame (25 ms). That is why 40 fps modes are tied to 120 Hz output.</p>
@@ -78,32 +80,32 @@ ${tryBox('Check any frame rate against your TV’s refresh rate and VRR window.'
   related: ['console-upgrades', 'frame-time-calculator', 'vrr-120hz-console-setup']
 };
 
-const spec = tbl('Xbox Series X and Series S as listed on Microsoft’s product pages (read November 24, 2026)', ['', 'Series X', 'Series S'], [
-  ['CPU', '8 cores at 3.8 GHz (3.6 GHz with SMT), custom Zen 2', '8 cores at 3.8 GHz (3.6 GHz with SMT), custom Zen 2'],
+const spec = tbl('Xbox Series X and Series S as listed on Microsoft’s product and Store pages (read November 24, 2026)', ['', 'Series X', 'Series S'], [
+  ['CPU', '8 cores at 3.8 GHz (3.66 GHz with SMT), custom Zen 2', '8 cores at 3.6 GHz (3.4 GHz with SMT), custom Zen 2'],
   ['GPU', '12 TFLOPS, 52 compute units at 1.825 GHz, custom RDNA 2', '4 TFLOPS, 20 compute units at 1.565 GHz, custom RDNA 2'],
   ['Memory', '16 GB GDDR6, 320-bit bus', '10 GB GDDR6, 128-bit bus'],
   ['Memory bandwidth', '10 GB at 560 GB/s, 6 GB at 336 GB/s', '8 GB at 224 GB/s, 2 GB at 56 GB/s'],
   ['Gaming resolution', 'True 4K', '1440p'],
   ['Performance target', 'Up to 120 fps', 'Up to 120 fps'],
   ['HDMI features', 'ALLM, HDMI VRR, AMD FreeSync', 'ALLM, HDMI VRR, AMD FreeSync']
-], 'Microsoft’s wording, shortened. The CPU line is identical on both pages; the differences are GPU, memory and the resolution target.');
+], 'Microsoft’s wording, shortened. CPU clocks from the Microsoft Store pages. The xbox.com product page for the Series S lists the Series X clocks (3.8 GHz, 3.6 GHz with SMT) – apparently an error; we follow the Store page, which matches Microsoft’s figures since 2020. One block of the Store’s Series X page gives 3.6 GHz with SMT instead of 3.66.');
 
 export const xbox = {
   slug: 'xbox-series-s-vs-x-modes',
   changelog: [['2026-11-02', 'First published.'],
     ['2026-11-18', 'Worked example added: pixel, GPU and memory ratios between Series X and Series S; menu path and 120 Hz requirements as given by Xbox Support.'],
-    ['2026-11-24', 'Specifications re-read on Microsoft’s product pages and corrected: both consoles are listed with the same CPU (8 cores at 3.8 GHz); memory bandwidth added. 120 Hz requirements quoted from Xbox Support as read in full; the other display settings moved to the VRR guide. Unsourced statements about what Series S versions “usually” drop removed, as was the section on Smart Delivery.']],
+    ['2026-11-24', 'Specifications re-read on Microsoft’s product and Store pages; memory bandwidth added. CPU clocks unchanged in substance: Series X 3.8 GHz, Series S slightly lower at 3.6 GHz (Microsoft Store); the xbox.com Series S page, which shows 3.8 GHz, deviates. 120 Hz requirements quoted from Xbox Support as read in full; the other display settings moved to the VRR guide. Unsourced statements about what Series S versions “usually” drop removed, as was the section on Smart Delivery.']],
   group: 'console',
   kicker: 'Guide · Xbox',
   short: 'Xbox Series S vs X modes',
   title: 'Xbox Series S vs X: why game modes differ',
   description: 'Why a game can offer fewer or different modes on Xbox Series S than on Series X: Microsoft’s GPU, memory and resolution figures, and the 120 Hz rules.',
   h1: 'Xbox Series S vs X: why game modes differ',
-  lede: 'The Xbox Series S and Series X play the same games, but not always with the same options: a game may offer a 60 fps mode and ray tracing on Series X and fewer choices on Series S. Microsoft’s own specifications explain why. They list the same CPU for both consoles, but a GPU with a third of the compute, less and slower memory, and a lower resolution target for the Series S.',
+  lede: 'The Xbox Series S and Series X play the same games, but not always with the same options: a game may offer a 60 fps mode and ray tracing on Series X and fewer choices on Series S. Microsoft’s own specifications explain why. The CPUs are nearly the same – the Series S runs at a slightly lower clock – but the Series S has a GPU with a third of the compute, less and slower memory, and a lower resolution target.',
   sections: [
     `<h2 id="hardware">What differs between the consoles</h2>
 ${spec}
-<p>Because the processors are listed identically, work that runs on the CPU – game logic, physics, simulation – has the same budget on both consoles. Everything that depends on the GPU and on memory has less on the Series S: a third of the compute, 10 instead of 16 GB, and a fast memory pool that is both smaller (8 against 10 GB) and less than half as fast (224 against 560 GB/s). Developers have to fit the same game into both.</p>`,
+<p>Because the processors are nearly the same – eight Zen 2 cores, 3.8 against 3.6 GHz – work that runs on the CPU, such as game logic, physics and simulation, has a similar budget on both consoles. Everything that depends on the GPU and on memory has less on the Series S: a third of the compute, 10 instead of 16 GB, and a fast memory pool that is both smaller (8 against 10 GB) and less than half as fast (224 against 560 GB/s). Developers have to fit the same game into both.</p>`,
     `<h2 id="ratio">Worked example: the gap in numbers</h2>
 <p>Microsoft’s figures allow a simple comparison of what each console is asked to do at its resolution target – 4K for the Series X, 1440p for the Series S.</p>
 ${tbl('Targets and resources side by side (Microsoft’s figures; ratios calculated)', ['', 'Series X', 'Series S', 'Ratio X : S'], [
@@ -115,14 +117,14 @@ ${tbl('Targets and resources side by side (Microsoft’s figures; ratios calcula
 <p>Two things follow from the arithmetic. The GPU gap (3 to 1) is larger than the pixel gap between the two targets (2.25 to 1): a Series X mode that uses its GPU fully at 4K cannot run with the same settings at 1440p on the Series S – it has to give up about a quarter more, through a lower internal resolution or cheaper effects. And memory shrinks least in the ratio, but textures and world data do not get smaller when the resolution does. Which of these a developer chooses is different in every game; the game’s store page and patch notes say what its Series S version offers.</p>
 ${tryBox('See what an upscaler renders for a 1440p or a 4K output.', '/tools/upscaler-resolution-calculator/?out=2560x1440&up=fsr', 'Open the Upscaler Resolution Calculator')}`,
     `<h2 id="why">What the figures mean for modes</h2>
-${fig('xb-fig', 'Bars comparing Series S with Series X: same CPU, GPU about one third, memory ten of sixteen gigabytes',
+${fig('xb-fig', 'Bars comparing Series S with Series X: CPU clock 3.6 of 3.8 gigahertz, GPU about one third, memory ten of sixteen gigabytes',
 `<rect class="g-bg" width="640" height="210"/>
 <text class="g-tm" x="20" y="30">SERIES S RELATIVE TO SERIES X (Series X = full bar)</text>
-<text class="g-t" x="20" y="74">CPU</text><rect class="g-panel" x="110" y="58" width="480" height="24"/><rect class="g-plus" x="110" y="58" width="480" height="24"/><text class="g-tk" x="120" y="75">same listed CPU</text>
+<text class="g-t" x="20" y="74">CPU</text><rect class="g-panel" x="110" y="58" width="480" height="24"/><rect class="g-plus" x="110" y="58" width="455" height="24"/><text class="g-tk" x="120" y="75">3.6 of 3.8 GHz</text>
 <text class="g-t" x="20" y="124">GPU</text><rect class="g-panel" x="110" y="108" width="480" height="24"/><rect x="110" y="108" width="160" height="24" fill="#7CC4FF"/><text class="g-tm" x="280" y="125">4 of 12 TFLOPS</text>
 <text class="g-t" x="20" y="174">Memory</text><rect class="g-panel" x="110" y="158" width="480" height="24"/><rect class="g-minus" x="110" y="158" width="300" height="24"/><text class="g-tm" x="420" y="175">10 of 16 GB</text>`,
-'From Microsoft’s product pages: CPU line, TFLOPS and total memory. Bandwidth, not shown, differs even more (224 against 560 GB/s in the fast pool).', '0 0 640 210')}
-<p>A <b>frame-rate mode</b> that relies on spare GPU time on the Series X is the one with the least room on the Series S, because the CPU budget is the same but the GPU budget is a third. A <b>resolution difference</b> is built into the specifications: Microsoft lists 1440p as the gaming resolution of the Series S, so on a large 4K TV its image is upscaled further. <b>Memory-heavy features</b> – high-resolution textures, ray-tracing data – compete for 10 instead of 16 GB. None of this says what a specific game does; it explains why the options can differ at all.</p>
+'From Microsoft’s product and Store pages: CPU clock, TFLOPS and total memory. Bandwidth, not shown, differs even more (224 against 560 GB/s in the fast pool).', '0 0 640 210')}
+<p>A <b>frame-rate mode</b> that relies on spare GPU time on the Series X is the one with the least room on the Series S, because the CPU budget is nearly the same but the GPU budget is a third. A <b>resolution difference</b> is built into the specifications: Microsoft lists 1440p as the gaming resolution of the Series S, so on a large 4K TV its image is upscaled further. <b>Memory-heavy features</b> – high-resolution textures, ray-tracing data – compete for 10 instead of 16 GB. None of this says what a specific game does; it explains why the options can differ at all.</p>
 <p>On either console, the choice between modes works as described in <a href="/guides/ps5-performance-vs-fidelity-mode/">PS5 performance vs fidelity modes</a>: quality settings against frame rate, with 40 and 120 fps modes depending on 120 Hz output.</p>`,
     `<h2 id="settings">120 Hz on Series X and Series S</h2>
 <p>Both consoles list a performance target of up to 120 fps, but not at every resolution. Xbox Support: 4K at 120 Hz needs an Xbox Series X, an Ultra High Speed HDMI cable that supports HDMI 2.1 and a TV that supports HDMI 2.1. On a Series S, or with a TV without HDMI 2.1, 120 Hz is still available at a lower resolution – set Refresh rate to 120 Hz under Profile &amp; system → Settings → General → TV &amp; display options, and the console adjusts the resolution if it was set to 4K. That matters for game modes: a 120 fps or 40 fps mode needs the 120 Hz output first.</p>
@@ -132,10 +134,10 @@ ${fig('xb-fig', 'Bars comparing Series S with Series X: same CPU, GPU about one 
   ],
   faq: [
     ['Why does my game have fewer modes on Xbox Series S?', 'Microsoft lists a GPU with 4 instead of 12 TFLOPS, 10 instead of 16 GB of memory and a 1440p resolution target for the Series S. A developer may drop or change a mode to fit those limits; the game’s store page or patch notes say what it offers.'],
-    ['Is the Xbox Series S CPU slower than the Series X?', 'Microsoft’s product pages list the same CPU line for both: 8 cores at 3.8 GHz (3.6 GHz with SMT), custom Zen 2. The differences are GPU, memory and the resolution target.'],
+    ['Is the Xbox Series S CPU slower than the Series X?', 'Only slightly. The Microsoft Store lists 8 Zen 2 cores at 3.6 GHz (3.4 GHz with SMT) for the Series S and 3.8 GHz (3.66 GHz with SMT) for the Series X. The big differences are GPU, memory and the resolution target.'],
     ['Does Series S support 120 Hz?', 'Yes. Microsoft lists a performance target of up to 120 fps for both consoles, in games that offer it and with a compatible display. 4K at 120 Hz is a Series X feature.'],
     ['Why is the Series S image softer on my 4K TV?', 'Microsoft lists 1440p as the Series S gaming resolution, so a 4K TV has to show an image with fewer pixels than it has. The difference is easiest to see on large screens.']
   ],
-  sources: [XSX, XSS, SRC.xbtv, SRC.xb120],
+  sources: [MSS, MSX, XSX, XSS, SRC.xbtv, SRC.xb120],
   related: ['vrr-120hz-console-setup', 'ps5-performance-vs-fidelity-mode', 'how-to-test-a-settings-change']
 };

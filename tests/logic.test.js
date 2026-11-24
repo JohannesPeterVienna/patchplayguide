@@ -426,6 +426,12 @@ test('frame time: average FPS and both 1% low readings (worked example of the gu
   assert.equal(FTM.round(b.lowFps, 1), 20.3); assert.equal(b.percentileMs, 16);
   assert.equal(FTM.lows([], 0.01), null);
 });
+test('console upgrades: every row sourced, search ignores diacritics', () => {
+  const U = require('../src/data/upgrades-core.js');
+  for (const r of U.ROWS) { assert.ok(r.s.length && r.s.every((id) => U.SOURCES[id]), r.g); assert.ok(['live', 'before'].includes(r.st), r.g); }
+  assert.deepEqual(U.filter('yotei', 'all', 'all').map((r) => r.g), ['Ghost of Yōtei']);
+  assert.equal(U.filter('', 'ps5', 'all').length, 8);
+});
 test('frame time: frame generation above the refresh rate is an output rate, not what the screen shows', () => {
   const t = FTM.describeGeneration(70, 2, 120).join(' ');
   assert.match(t, /generated output rate of 140 fps/);
@@ -442,14 +448,17 @@ test('test log: parsing, median, verdict rule and its error rate', () => {
   assert.deepEqual(TL.parse('71,5 72,5 73,5'), [71.5, 72.5, 73.5]);
   assert.deepEqual(TL.parse('71,50 72,50 73,50'), [71.5, 72.5, 73.5]);
   assert.deepEqual(TL.parse('71.50; 72.50; 73.50'), [71.5, 72.5, 73.5]);
-  for (const bad of ['71,73,72', '71, 73, 72', '60,61,62,63,64', '71.5 72,5', '71..5', '71,', ',5', 'abc', '-5 60', '0 60', '1e9', '<b>', '71.5.3']) {
+  assert.deepEqual(TL.parse('71, 73, 72'), [71, 73, 72]);
+  assert.deepEqual(TL.parse('71,5, 72,5, 73,5'), [71.5, 72.5, 73.5]);
+  assert.deepEqual(TL.parse('71,'), [71]);
+  for (const bad of ['71,73,72', '60,61,62,63,64', '71.5 72,5', '71..5', ',5', 'abc', '-5 60', '0 60', '1e9', '<b>', '71.5.3']) {
     const r = TL.read(bad);
     assert.ok(r.error && r.values.length === 0, 'rejected: ' + bad);
-    assert.match(r.error, /spaces, line breaks or semicolons/);
+    assert.match(r.error, /a space, a line break, a semicolon or a comma followed by a space/);
     assert.deepEqual(TL.parse(bad), []);
   }
-  assert.match(TL.read('71,73,72').error, /ambiguous/);
-  assert.match(TL.read('71.5 72,5').error, /one decimal mark/);
+  assert.match(TL.read('71,73,72').error, /put a space after each comma/);
+  assert.match(TL.read('71.5 72,5').error, /mixes decimal points and decimal commas/);
   assert.equal(TL.read('').error, null); assert.deepEqual(TL.parse(''), []);
   const many = TL.read('1 2 3 4 5 6 7 8 9');
   assert.equal(many.values.length, TL.MAX_RUNS); assert.equal(many.dropped, 2);

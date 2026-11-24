@@ -19,7 +19,7 @@ const toolHtml = `<section class="tool" id="testlog" aria-labelledby="tl-h">
 <label for="tl-lb">1% low of each run (optional)<input type="text" id="tl-lb" inputmode="decimal" autocomplete="off" placeholder="53 56 52"></label>
 </fieldset>
 </div>
-<p class="tool-sub">Separate runs with spaces, line breaks or semicolons; a comma inside a number is a decimal mark (71,5 = 71.5). Three to seven runs per setup.</p>
+<p class="tool-sub">Separate runs with spaces, line breaks, semicolons or a comma followed by a space; a comma directly between digits is a decimal mark (71,5 = 71.5). Three to seven runs per setup.</p>
 <p id="tl-err" class="tool-err" role="alert" hidden></p>
 <p id="tl-demo" class="fict" hidden><b>INVENTED EXAMPLE</b> – these numbers are made up to show how the log works. They are not measurements of any game or hardware.</p>
 <p id="tl-summary" class="sum" tabindex="-1" aria-live="polite"></p>
@@ -58,7 +58,7 @@ const worksheet = `<div class="worksheet" id="worksheet"><h3>Settings test works
 export default {
   slug: 'settings-test-log',
   published: '2026-11-18',
-  changelog: [['2026-11-18', 'First published.'], ['2026-11-24', 'Verdicts corrected: overlapping runs are reported as inconclusive – never as “the same” or “not noticeable” – and separated runs as separated, without a claim about the cause. Input format made unambiguous: runs are separated by spaces, line breaks or semicolons, a comma inside a number is a decimal mark, and ambiguous input such as “71,73,72” is rejected with a message. The six-step protocol, which repeated the testing guide, shortened to a link.']],
+  changelog: [['2026-11-18', 'First published.'], ['2026-11-24', 'Verdicts corrected: overlapping runs are reported as inconclusive – never as “the same” or “not noticeable” – and separated runs as separated, without a claim about the cause. Input format made unambiguous: runs are separated by spaces, line breaks, semicolons or a comma followed by a space, a comma directly between digits is a decimal mark, and ambiguous input such as “71,73,72” is rejected with a message. The six-step protocol, which repeated the testing guide, shortened to a link.']],
   short: 'Settings Test Log',
   title: 'Settings Test Log: is your FPS difference real or noise?',
   description: 'Type in the frame rates of your own test runs before and after a settings change. The log shows medians, run-to-run spread and whether the ranges separate.',

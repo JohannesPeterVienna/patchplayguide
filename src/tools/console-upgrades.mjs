@@ -16,16 +16,16 @@ const count = (f) => U.ROWS.filter(f).length;
 
 const toolHtml = `<section class="tool" id="upgrades" aria-labelledby="up-h">
 <div class="tool-head"><h2 id="up-h">Console upgrades by game</h2><p class="tool-sub">${U.ROWS.length} entries · ${srcIds.length} official sources · read November 24, 2026</p></div>
-<label for="up-q">Search a game or a feature (for example “Spider-Man”, “120 fps”, “HDR”)<input type="search" id="up-q" autocomplete="off"></label>
-<div class="filters">
+<label for="up-q" data-needs-js hidden>Search a game or a feature (for example “Spider-Man”, “120 fps”, “HDR”)<input type="search" id="up-q" autocomplete="off"></label>
+<div class="filters" data-needs-js hidden>
 <label for="up-p">Console<select id="up-p"><option value="all">All consoles</option>${opts(U.PLATFORMS)}</select></label>
 <label for="up-k">Kind of upgrade<select id="up-k"><option value="all">All kinds</option>${opts(U.KINDS)}</select></label>
 </div>
-<div class="examples"><span class="tool-sub">Try:</span><button type="button" class="chip" data-q="120 fps">120 fps</button><button type="button" class="chip" data-q="ray">ray tracing</button><button type="button" class="chip" data-q="4k">4K</button><button type="button" class="chip" data-q="hdr">HDR</button><button type="button" class="chip" data-q="">show all</button></div>
+<div class="examples" data-needs-js hidden><span class="tool-sub">Try:</span><button type="button" class="chip" data-q="120 fps">120 fps</button><button type="button" class="chip" data-q="ray">ray tracing</button><button type="button" class="chip" data-q="4k">4K</button><button type="button" class="chip" data-q="hdr">HDR</button><button type="button" class="chip" data-q="">show all</button></div>
 <p id="up-summary" class="sum" tabindex="-1" aria-live="polite">${U.ROWS.length} of ${U.ROWS.length} entries shown</p>
 <p id="up-none" hidden>No entry matches. Try a shorter word, or reset the filters.</p>
 <ul id="up-list" class="results names">${U.ROWS.map(item).join('')}</ul>
-<div class="row tool-actions"><button type="button" id="up-link">Copy link to this filter</button><button type="button" id="up-print" class="ghost">Print</button><button type="button" id="up-reset" class="ghost">Reset</button><span id="up-msg" class="tool-sub" aria-live="polite"></span></div>
+<div class="row tool-actions" data-needs-js hidden><button type="button" id="up-link">Copy link to this filter</button><button type="button" id="up-print" class="ghost">Print</button><button type="button" id="up-reset" class="ghost">Reset</button><span id="up-msg" class="tool-sub" aria-live="polite"></span></div>
 </section>`;
 
 // counts per kind, straight from the data, for the diagram and the text
@@ -36,7 +36,7 @@ const chart = fig('up-fig', `Bar chart: entries in this list by kind of upgrade 
 `<rect class="g-bg" width="640" height="230"/>
 <text class="g-tm" x="20" y="28">ENTRIES IN THIS LIST BY KIND · counted from the data on this page</text>
 ${kinds.map(bar).join('')}`,
-'A count of this list, not of all games: it contains only games whose upgrade we could read in an official source. Many more PS5 Pro Enhanced games exist; Sony counted more than 50 at the PS5 Pro launch.', '0 0 640 230');
+'A count of this list, not of all games: it contains only games whose upgrade we could read in an official source. Many more PS5 Pro Enhanced games exist: Sony’s launch post of November 4, 2024 listed a sample of more than 50 games with PS5 Pro enhancements, and on February 27, 2026 Sony said PSSR had been used in over 50 titles to date.', '0 0 640 230');
 
 const sony = tbl('PS5 Pro compared with PS5, as Sony announced it (September 10, 2024)', ['', 'What Sony stated'], [
   ['GPU', '67% more compute units and 28% faster memory than the current PS5; “up to 45% faster rendering for gameplay”'],
@@ -54,6 +54,7 @@ const pixels = tbl('Internal resolution and reconstruction to a 4K output (arith
 const sourcesList = [
   ...srcIds.map((id) => { const [label, url, d] = U.SOURCES[id]; return [`<span id="usrc-${id}">[${srcNo(id)}]</span> ${label}${d ? ` (${dateText(d)})` : ''}`, url, 'read in full on November 24, 2026']; }),
   read24('PlayStation Blog – Welcome PlayStation 5 Pro, the most visually impressive way to play games on PlayStation (September 10, 2024)', 'https://blog.playstation.com/2024/09/10/welcome-playstation-5-pro-the-most-visually-impressive-way-to-play-games-on-playstation/', 'hardware figures, Game Boost, the PS5 Pro Enhanced label'),
+  read24('PlayStation Blog – PS5 Pro: 50+ enhanced games available at launch November 7 (November 4, 2024)', 'https://blog.playstation.com/2024/11/04/ps5-pro-50-enhanced-games-available-at-launch-november-7/', 'launch date, sample list of more than 50 enhanced games'),
   SRC.psres, SRC.ninboost, SRC.ninhist
 ];
 
@@ -74,7 +75,7 @@ export default {
   toolHtml,
   sections: [
     `<h2 id="how">How this list was compiled</h2>
-<p>Each entry summarizes one official statement: a post on the PlayStation Blog written by the game’s developer or by Sony, or a page on nintendo.com. We read every source in full on November 24, 2026 and wrote the entry in our own words, keeping the numbers the source gives – resolutions, frame rates, update numbers and dates. We do not copy patch notes, add impressions of our own or rank the games. If a game is missing, it is because we did not find an official statement about it that says what changed, not because it has no upgrade.</p>
+<p>Each entry summarizes one official statement: a post on the PlayStation Blog written by the game’s developer or by Sony, or a page on nintendo.com. We read every source in full on November 24, 2026 and wrote the entry in our own words, keeping the numbers the source gives – resolutions, frame rates, update numbers and dates. We do not copy patch notes, add impressions of our own or rank the games. If a game is missing, it is because we did not find an official statement that says what changed in its picture or performance – or because, as for Big Brain Academy and Clubhouse Games, Nintendo lists only GameShare support – not because it has no upgrade.</p>
 <p>Every entry carries two dates in one: the date of the source, and whether that source <b>reports the change as released</b> (${live} entries) or <b>describes it before release</b> (${before} entries) – for example a developer post a few days before an update or before the console’s launch. Plans can change; for those entries, the game’s own patch notes are the final word. Nintendo’s two overview pages are not dated as a whole; their entries show the update date that Nintendo lists for each game.</p>
 ${chart}`,
     `<h2 id="pro">What the PS5 Pro adds – and what “PS5 Pro Enhanced” means</h2>

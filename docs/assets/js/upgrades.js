@@ -6,11 +6,12 @@
   if (!K || !tool) return;
   var $ = function (id) { return document.getElementById(id); };
   var q = $('up-q'), plat = $('up-p'), kind = $('up-k'), items = tool.querySelectorAll('#up-list > li'), total = items.length, hay = [];
-  for (var i = 0; i < total; i++) hay.push(items[i].textContent.toLowerCase().replace(/[’']/g, '\''));
+    function norm(t) { t = String(t); if (t.normalize) t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); return t.toLowerCase().replace(/[’']/g, '\''); }
+  for (var i = 0; i < total; i++) hay.push(norm(items[i].textContent));
   function valid(sel, v) { return typeof v === 'string' && /^[a-z0-9]+$/.test(v) && !!sel.querySelector('option[value="' + v + '"]'); }
   function state() { var p = {}; if (q.value.trim()) p.q = q.value.trim(); if (plat.value !== 'all') p.on = plat.value; if (kind.value !== 'all') p.kind = kind.value; return p; }
   function render() {
-    var words = q.value.toLowerCase().replace(/[’']/g, '\'').split(/\s+/).filter(Boolean), shown = 0;
+    var words = norm(q.value).split(/\s+/).filter(Boolean), shown = 0;
     for (var i = 0; i < total; i++) {
       var li = items[i], ok = (plat.value === 'all' || li.getAttribute('data-p') === plat.value) && (kind.value === 'all' || li.getAttribute('data-k') === kind.value);
       for (var w = 0; ok && w < words.length; w++) if (hay[i].indexOf(words[w]) === -1) ok = false;
@@ -31,6 +32,9 @@
     if (e.target.id === 'up-link') K.copy(K.url(state()), $('up-msg'), 'Link copied – it reopens this filter.');
     if (e.target.id === 'up-print') window.print();
   });
+  // controls are hidden in the markup and only shown when this script runs (without JS the full list stays)
+  var ctl = tool.querySelectorAll('[data-needs-js]');
+  for (var c = 0; c < ctl.length; c++) ctl[c].hidden = false;
   var p = K.read();
   if (typeof p.q === 'string') q.value = p.q.slice(0, 60);
   if (valid(plat, p.on)) plat.value = p.on;
